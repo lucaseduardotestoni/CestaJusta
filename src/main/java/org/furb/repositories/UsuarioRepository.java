@@ -1,4 +1,4 @@
-package org.furb.repositories.model;
+package org.furb.repositories;
 
 import org.furb.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;

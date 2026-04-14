@@ -20,7 +20,7 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
-    private String senhaHash;
+    private String senha;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -55,12 +55,12 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getSenhaHash() {
-        return senhaHash;
+    public String getSenha() {
+        return senha;
     }
 
-    public void setSenhaHash(String senhaHash) {
-        this.senhaHash = senhaHash;
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public TipoUsuario getTipoUsuario() {

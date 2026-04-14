@@ -1,4 +1,4 @@
-package org.furb.repositories.model;
+package org.furb.repositories;
 
 import org.furb.enums.StatusDenuncia;
 import org.furb.model.Denuncia;
