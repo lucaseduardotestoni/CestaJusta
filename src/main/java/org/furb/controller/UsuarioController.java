@@ -1,8 +1,8 @@
 package org.furb.controller;
 
 import jakarta.validation.Valid;
-import org.furb.dto.UsuarioCadastroDTO;
-import org.furb.dto.UsuarioResponseDTO;
+import org.furb.dto.usuario.UsuarioCadastroDTO;
+import org.furb.dto.usuario.UsuarioResponseDTO;
 import org.furb.services.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    @PostMapping
+    @PostMapping("/cadastro")
     public ResponseEntity<UsuarioResponseDTO> cadastrar(@Valid @RequestBody UsuarioCadastroDTO dto) {
         UsuarioResponseDTO response = usuarioService.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

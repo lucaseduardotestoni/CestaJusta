@@ -1,6 +1,6 @@
 package org.furb.services;
-import org.furb.dto.UsuarioCadastroDTO;
-import org.furb.dto.UsuarioResponseDTO;
+import org.furb.dto.usuario.UsuarioCadastroDTO;
+import org.furb.dto.usuario.UsuarioResponseDTO;
 import org.furb.enums.TipoUsuario;
 import org.furb.model.Usuario;
 import org.furb.repositories.UsuarioRepository;

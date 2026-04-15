@@ -1,4 +1,4 @@
-package org.furb.dto;
+package org.furb.dto.usuario;
 
 import org.furb.enums.TipoUsuario;
 
