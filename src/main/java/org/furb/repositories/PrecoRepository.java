@@ -11,4 +11,6 @@ public interface PrecoRepository extends JpaRepository<Preco, Long> {
     List<Preco> findByProdutoId(Long produtoId);
     List<Preco> findByMercadoId(Long mercadoId);
     List<Preco> findByProdutoIdAndMercadoId(Long produtoId, Long mercadoId);
+    List<Preco> findByProdutoIdOrderByDataColetaDesc(Long produtoId);
+    List<Preco> findByMercadoIdOrderByDataColetaDesc(Long mercadoId);
 }
