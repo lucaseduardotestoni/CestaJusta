@@ -9,6 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
-    List<Produto> findByNomeContainingIgnoreCase(String nome);
+    List<Produto> findByNomeContainingIgnoreCaseAndAtivoTrue(String nome);
+
     Optional<Produto> findByCodigoBarras(String codigoBarras);
+
+    boolean existsByCodigoBarras(String codigoBarras);
 }
