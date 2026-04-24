@@ -1,6 +1,7 @@
 package org.furb.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "categorias")
@@ -12,6 +13,12 @@ public class Categoria {
 
     @Column(nullable = false, unique = true, length = 100)
     private String nome;
+
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
+    @Column(nullable = false)
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
     public Categoria() {
     }
@@ -26,5 +33,21 @@ public class Categoria {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }
