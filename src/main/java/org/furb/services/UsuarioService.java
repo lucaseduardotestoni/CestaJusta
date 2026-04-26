@@ -4,6 +4,7 @@ import org.furb.dto.usuario.UsuarioResponseDTO;
 import org.furb.enums.TipoUsuario;
 import org.furb.model.Usuario;
 import org.furb.repositories.UsuarioRepository;
+import org.furb.services.exeptions.BusinessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,10 @@ public class UsuarioService {
 
     public UsuarioResponseDTO cadastrar(UsuarioCadastroDTO dto) {
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Já existe um usuário cadastrado com este e-mail.");
+            throw new BusinessException("Já existe um usuário cadastrado com este e-mail.");
         }
         if (dto.getTipoUsuario() == TipoUsuario.ADMIN) {
-            throw new RuntimeException("Não é permitido cadastrar usuário administrador.");
+            throw new BusinessException("Não é permitido cadastrar usuário administrador.");
         }
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
