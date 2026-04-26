@@ -31,6 +31,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cestajusta
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: 7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=
     networks:
       - cestajusta-net
 

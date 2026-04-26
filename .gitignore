@@ -38,4 +38,11 @@ Prioridades.md
 ### Mac OS ###
 .DS_Store
 /Readme-visão_projeto.md
-/.claude/settings.json
+
+.claude/
+
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
