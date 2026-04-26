@@ -1,0 +1,708 @@
+{
+  "info": {
+    "name": "CestaJusta V2",
+    "description": "Collection de testes do backend CestaJusta V2.\n\nVariáveis:\n- base_url: http://localhost:8080\n- token: preenchido automaticamente após rodar Login\n\nFluxo recomendado (ADMIN):\n1. Auth > Cadastrar usuário (CONSUMIDOR)\n2. Auth > Login (token é salvo automático)\n3. Produtos > Cadastrar (exige ADMIN)\n4. Mercados > Cadastrar (exige ADMIN)\n5. Mercado ↔ Comerciante > Associar (exige ADMIN)\n6. Preços > Cadastrar (qualquer autenticado)\n7. Comparações > Comparar preços por produto\n\nEndpoints protegidos por role ADMIN:\n- POST /produtos/cadastro\n- DELETE /produtos/{id}\n- PATCH /produtos/{id}/ativar\n- POST /mercados/cadastro\n- DELETE /mercados/{id}\n- PATCH /mercados/{id}/ativar\n- POST|DELETE /mercados/{id}/comerciantes/{id}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Cadastrar usuário (CONSUMIDOR)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lucas Testoni\",\n  \"email\": \"lucas@cestajusta.com\",\n  \"senha\": \"senha123\",\n  \"tipoUsuario\": \"CONSUMIDOR\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar usuário (COMERCIANTE)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Koch\",\n  \"email\": \"joao@koch.com\",\n  \"senha\": \"senha123\",\n  \"tipoUsuario\": \"COMERCIANTE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "cadastro"]
+            },
+            "description": "Cria um COMERCIANTE para ser vinculado depois a um mercado via /mercados/{id}/comerciantes/{id}"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const token = pm.response.text().trim();",
+                  "    pm.collectionVariables.set('token', token);",
+                  "    console.log('Token salvo na collection variable.');",
+                  "} else {",
+                  "    console.warn('Login falhou, token não foi salvo.');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"lucas@cestajusta.com\",\n  \"senha\": \"senha123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "Cadastrar produto (Arroz) [ADMIN]",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Arroz Branco 5kg\",\n  \"codigoBarras\": \"7891234567890\",\n  \"marca\": \"Tio João\",\n  \"unidadeMedida\": \"5kg\",\n  \"categoriaId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar produto (Feijão) [ADMIN]",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Feijão Preto 1kg\",\n  \"codigoBarras\": \"7891111111111\",\n  \"marca\": \"Camil\",\n  \"unidadeMedida\": \"1kg\",\n  \"categoriaId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar produto (Leite) [ADMIN]",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Leite Integral 1L\",\n  \"codigoBarras\": \"7892222222222\",\n  \"marca\": \"Piracanjuba\",\n  \"unidadeMedida\": \"1L\",\n  \"categoriaId\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Listar produtos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": ["{{base_url}}"],
+              "path": ["produtos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar produto por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/produtos/1",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar produto por nome",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/produtos/buscar?nome=arroz",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "buscar"],
+              "query": [
+                { "key": "nome", "value": "arroz" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Inativar produto [ADMIN]",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/produtos/1",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "1"]
+            },
+            "description": "Soft delete. Retorna 200 OK com ProdutoResponseDTO (ativo: false). Se já estiver inativo, 400."
+          }
+        },
+        {
+          "name": "Ativar produto [ADMIN]",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/produtos/1/ativar",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "1", "ativar"]
+            },
+            "description": "Reativa produto inativo. Retorna 200 OK com ProdutoResponseDTO (ativo: true). Se já estiver ativo, 400."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mercados",
+      "item": [
+        {
+          "name": "Cadastrar mercado (Koch) [ADMIN]",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomeFantasia\": \"Supermercado Koch\",\n  \"cnpj\": \"84.683.408/0001-03\",\n  \"cidade\": \"Blumenau\",\n  \"estado\": \"SC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mercados/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar mercado (Angeloni) [ADMIN]",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomeFantasia\": \"Angeloni Blumenau\",\n  \"cnpj\": \"83.646.984/0001-12\",\n  \"cidade\": \"Blumenau\",\n  \"estado\": \"SC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mercados/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar mercado (Giassi) [ADMIN]",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomeFantasia\": \"Giassi Supermercados\",\n  \"cnpj\": \"79.084.053/0001-00\",\n  \"cidade\": \"Blumenau\",\n  \"estado\": \"SC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mercados/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Listar mercados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/mercados",
+              "host": ["{{base_url}}"],
+              "path": ["mercados"]
+            }
+          }
+        },
+        {
+          "name": "Buscar mercado por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/mercados/1",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1"]
+            }
+          }
+        },
+        {
+          "name": "Buscar mercado por nome",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/mercados/buscar?nome=koch",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "buscar"],
+              "query": [
+                { "key": "nome", "value": "koch" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Inativar mercado [ADMIN]",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/mercados/1",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1"]
+            },
+            "description": "Soft delete. Retorna 200 OK com MercadoResponseDTO (ativo: false). Se já estiver inativo, 400."
+          }
+        },
+        {
+          "name": "Ativar mercado [ADMIN]",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/mercados/1/ativar",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1", "ativar"]
+            },
+            "description": "Reativa mercado inativo. Retorna 200 OK com MercadoResponseDTO (ativo: true). Se já estiver ativo, 400."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mercado ↔ Comerciante",
+      "item": [
+        {
+          "name": "Associar comerciante ao mercado [ADMIN]",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/mercados/1/comerciantes/2",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1", "comerciantes", "2"]
+            },
+            "description": "Vincula um usuário COMERCIANTE ao mercado. Após isso, preços cadastrados por este comerciante para este mercado entram como StatusPreco.CONFIRMADO automaticamente. Ajuste os IDs de mercado e comerciante conforme seus dados."
+          }
+        },
+        {
+          "name": "Desassociar comerciante do mercado [ADMIN]",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/mercados/1/comerciantes/2",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1", "comerciantes", "2"]
+            },
+            "description": "Remove o vínculo. Preços futuros deste usuário para este mercado voltam a entrar como PENDENTE."
+          }
+        },
+        {
+          "name": "Listar donos de um mercado",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/mercados/1/comerciantes",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1", "comerciantes"]
+            }
+          }
+        },
+        {
+          "name": "Listar mercados de um comerciante",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/comerciantes/2/mercados",
+              "host": ["{{base_url}}"],
+              "path": ["comerciantes", "2", "mercados"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Preços",
+      "item": [
+        {
+          "name": "Cadastrar preço (Koch)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 1,\n  \"mercadoId\": 1,\n  \"valor\": 24.90,\n  \"dataColeta\": \"2026-04-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/precos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "cadastro"]
+            },
+            "description": "Se o usuário logado for COMERCIANTE vinculado ao mercado 1, o preço entra como CONFIRMADO. Senão, entra como PENDENTE."
+          }
+        },
+        {
+          "name": "Cadastrar preço (Angeloni)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 1,\n  \"mercadoId\": 2,\n  \"valor\": 27.40,\n  \"dataColeta\": \"2026-04-21\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/precos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar preço (Giassi)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 1,\n  \"mercadoId\": 3,\n  \"valor\": 31.50,\n  \"dataColeta\": \"2026-04-19\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/precos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "cadastro"]
+            }
+          }
+        },
+        {
+          "name": "Buscar preço por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/precos/1",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Listar preços por produto",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/precos/produto/1",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "produto", "1"]
+            }
+          }
+        },
+        {
+          "name": "Listar preços por mercado",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/precos/mercado/1",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "mercado", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comparações",
+      "item": [
+        {
+          "name": "Comparar preços por produto",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/comparacoes/produto/1",
+              "host": ["{{base_url}}"],
+              "path": ["comparacoes", "produto", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Testes de erro",
+      "item": [
+        {
+          "name": "400 - Validação (campos faltando)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"marca\": \"Apenas marca\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "cadastro"]
+            },
+            "description": "Espera 400 com array errors[] contendo nome e categoriaId obrigatórios (se rodado como ADMIN)."
+          }
+        },
+        {
+          "name": "400 - Tentar cadastrar usuário ADMIN",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Hacker\",\n  \"email\": \"hack@hack.com\",\n  \"senha\": \"senha123\",\n  \"tipoUsuario\": \"ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "cadastro"]
+            },
+            "description": "Espera 400 'Não é permitido cadastrar usuário administrador.' — rota pública mas com regra de negócio."
+          }
+        },
+        {
+          "name": "400 - Código de barras duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Arroz Duplicado\",\n  \"codigoBarras\": \"7891234567890\",\n  \"marca\": \"Qualquer\",\n  \"unidadeMedida\": \"5kg\",\n  \"categoriaId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "cadastro"]
+            },
+            "description": "Requer que o produto 'Arroz Branco 5kg' já exista. Espera 400."
+          }
+        },
+        {
+          "name": "404 - Produto não encontrado",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/produtos/99999",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "99999"]
+            },
+            "description": "Espera 404 'Produto não encontrado.'"
+          }
+        },
+        {
+          "name": "400 - Parâmetro com tipo errado",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/produtos/abc",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "abc"]
+            },
+            "description": "Espera 400 'Parâmetro id com valor inválido.'"
+          }
+        },
+        {
+          "name": "400 - Preço em produto inativo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 1,\n  \"mercadoId\": 1,\n  \"valor\": 25.00,\n  \"dataColeta\": \"2026-04-22\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/precos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "cadastro"]
+            },
+            "description": "Requer executar 'Inativar produto' antes. Espera 400 'Produto inativo não aceita registro de preço.'"
+          }
+        },
+        {
+          "name": "400 - Data de coleta no futuro",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 2,\n  \"mercadoId\": 1,\n  \"valor\": 8.90,\n  \"dataColeta\": \"2099-01-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/precos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "cadastro"]
+            },
+            "description": "Espera 400 com errors[] contendo 'Data de coleta não pode ser futura'."
+          }
+        },
+        {
+          "name": "400 - Valor de preço zero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 2,\n  \"mercadoId\": 1,\n  \"valor\": 0,\n  \"dataColeta\": \"2026-04-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/precos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["precos", "cadastro"]
+            },
+            "description": "Espera 400 com errors[] contendo 'Valor deve ser maior que zero'."
+          }
+        },
+        {
+          "name": "403 - Cadastrar produto sem ser ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Tentativa\",\n  \"codigoBarras\": \"0000000000000\",\n  \"marca\": \"X\",\n  \"unidadeMedida\": \"1kg\",\n  \"categoriaId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos/cadastro",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "cadastro"]
+            },
+            "description": "Rode com token de CONSUMIDOR ou COMERCIANTE (faça Login com outro usuário primeiro). Espera 403 'Acesso negado: permissão insuficiente.'"
+          }
+        },
+        {
+          "name": "400 - Inativar produto já inativo",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/produtos/1",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "1"]
+            },
+            "description": "Rode Inativar produto duas vezes seguidas. Segunda chamada: 400 'Produto já está inativo.'"
+          }
+        },
+        {
+          "name": "400 - Ativar produto já ativo",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/produtos/1/ativar",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "1", "ativar"]
+            },
+            "description": "Rode contra um produto que já está ativo. Espera 400 'Produto já está ativo.'"
+          }
+        },
+        {
+          "name": "400 - Associar usuário não-COMERCIANTE",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/mercados/1/comerciantes/1",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1", "comerciantes", "1"]
+            },
+            "description": "Tenta vincular um usuário CONSUMIDOR ao mercado. Espera 400 'Apenas usuários do tipo COMERCIANTE podem ser vinculados a mercados.'"
+          }
+        },
+        {
+          "name": "400 - Vincular comerciante duas vezes",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/mercados/1/comerciantes/2",
+              "host": ["{{base_url}}"],
+              "path": ["mercados", "1", "comerciantes", "2"]
+            },
+            "description": "Tenta criar vínculo já existente. Espera 400 'Comerciante já está vinculado a este mercado.'"
+          }
+        }
+      ]
+    }
+  ]
+}
