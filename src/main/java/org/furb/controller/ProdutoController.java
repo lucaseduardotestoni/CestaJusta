@@ -6,6 +6,7 @@ import org.furb.services.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ProdutoController {
     }
 
     @PostMapping("/cadastro")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProdutoResponseDTO> cadastrar(@Valid @RequestBody ProdutoCadastroDTO dto) {
         ProdutoResponseDTO response = produtoService.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -42,8 +44,14 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> inativar(@PathVariable Long id) {
-        produtoService.inativar(id);
-        return ResponseEntity.noContent().build();
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProdutoResponseDTO> inativar(@PathVariable Long id) {
+        return ResponseEntity.ok(produtoService.inativar(id));
+    }
+
+    @PatchMapping("/{id}/ativar")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProdutoResponseDTO> ativar(@PathVariable Long id) {
+        return ResponseEntity.ok(produtoService.ativar(id));
     }
 }

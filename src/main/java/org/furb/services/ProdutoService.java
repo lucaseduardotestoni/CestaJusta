@@ -69,12 +69,32 @@ public class ProdutoService {
                 .toList();
     }
 
-    public void inativar(Long id) {
+    public ProdutoResponseDTO inativar(Long id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado."));
 
+        if (!produto.getAtivo()) {
+            throw new BusinessException("Produto já está inativo.");
+        }
+
         produto.setAtivo(false);
-        produtoRepository.save(produto);
+        Produto atualizado = produtoRepository.save(produto);
+
+        return toResponseDTO(atualizado);
+    }
+
+    public ProdutoResponseDTO ativar(Long id) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado."));
+
+        if (produto.getAtivo()) {
+            throw new BusinessException("Produto já está ativo.");
+        }
+
+        produto.setAtivo(true);
+        Produto atualizado = produtoRepository.save(produto);
+
+        return toResponseDTO(atualizado);
     }
 
     private ProdutoResponseDTO toResponseDTO(Produto produto) {

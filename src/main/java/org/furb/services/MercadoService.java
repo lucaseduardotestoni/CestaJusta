@@ -58,12 +58,32 @@ public class MercadoService {
                 .toList();
     }
 
-    public void inativar(Long id) {
+    public MercadoResponseDTO inativar(Long id) {
         Mercado mercado = mercadoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Mercado não encontrado."));
 
+        if (!mercado.getAtivo()) {
+            throw new BusinessException("Mercado já está inativo.");
+        }
+
         mercado.setAtivo(false);
-        mercadoRepository.save(mercado);
+        Mercado atualizado = mercadoRepository.save(mercado);
+
+        return toResponseDTO(atualizado);
+    }
+
+    public MercadoResponseDTO ativar(Long id) {
+        Mercado mercado = mercadoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Mercado não encontrado."));
+
+        if (mercado.getAtivo()) {
+            throw new BusinessException("Mercado já está ativo.");
+        }
+
+        mercado.setAtivo(true);
+        Mercado atualizado = mercadoRepository.save(mercado);
+
+        return toResponseDTO(atualizado);
     }
 
     private MercadoResponseDTO toResponseDTO(Mercado mercado) {
