@@ -55,7 +55,6 @@ INSERT INTO produtos (nome, codigo_barras, marca, unidade_medida, categoria_id, 
     ('Leite Integral 1L',         '7896666666666', 'Piracanjuba', '1L',    (SELECT id FROM categorias WHERE nome='Lácteos'), true),
     ('Manteiga sem Sal 200g',     '7897777777777', 'Aviação',     '200g',  (SELECT id FROM categorias WHERE nome='Lácteos'), true),
     ('Queijo Mussarela 500g',     '7898888888888', 'Tirolez',     '500g',  (SELECT id FROM categorias WHERE nome='Lácteos'), true),
-    ('Refrigerante Cola 2L',      '7899999999999', 'Coca-Cola',   '2L',    (SELECT id FROM categorias WHERE nome='Bebidas'), true),
     ('Água Mineral 1,5L',         '7891010101010', 'Crystal',     '1,5L',  (SELECT id FROM categorias WHERE nome='Bebidas'), true),
     ('Suco de Laranja 1L',        '7891212121212', 'Del Valle',   '1L',    (SELECT id FROM categorias WHERE nome='Bebidas'), true),
     ('Banana Prata 1kg',          '7892020202020', NULL,          '1kg',   (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
@@ -146,11 +145,6 @@ FROM (VALUES
     (28.90, '2026-04-20', 'CONFIRMADO', '7898888888888', '84.683.408/0001-03', 'joao@koch.com'),
     (31.50, '2026-04-21', 'CONFIRMADO', '7898888888888', '83.646.984/0001-12', 'maria@angeloni.com'),
     (30.00, '2026-04-23', 'PENDENTE',   '7898888888888', '79.084.053/0001-00', 'bruno@cestajusta.com'),
-
-    -- Refrigerante Cola (3 mercados)
-    (9.99,  '2026-04-22', 'PENDENTE',   '7899999999999', '84.683.408/0001-03', 'ana@cestajusta.com'),
-    (10.49, '2026-04-21', 'CONFIRMADO', '7899999999999', '83.646.984/0001-12', 'maria@angeloni.com'),
-    (10.99, '2026-04-19', 'CONFIRMADO', '7899999999999', '79.084.053/0001-00', 'pedro@giassi.com'),
 
     -- Água (2 mercados)
     (2.50,  '2026-04-20', 'CONFIRMADO', '7891010101010', '84.683.408/0001-03', 'joao@koch.com'),
