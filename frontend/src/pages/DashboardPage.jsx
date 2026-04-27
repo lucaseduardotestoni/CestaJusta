@@ -9,6 +9,7 @@ export default function DashboardPage() {
   const [comparacoes, setComparacoes] = useState({})
   const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState('media')
+  const [expandidoId, setExpandidoId] = useState(null)
   const [loading, setLoading] = useState(true)
   const { logout } = useAuth()
   const navigate = useNavigate()
@@ -39,6 +40,10 @@ export default function DashboardPage() {
   function handleLogout() {
     logout()
     navigate('/')
+  }
+
+  function toggleExpandido(id) {
+    setExpandidoId(prev => prev === id ? null : id)
   }
 
   function getInfoCard(produto) {
@@ -138,22 +143,54 @@ export default function DashboardPage() {
           <div className="db-lista">
             {lista.map(produto => {
               const info = getInfoCard(produto)
+              const comp = comparacoes[produto.id]
+              const aberto = expandidoId === produto.id
               return (
-                <div key={produto.id} className="db-card">
-                  <div className="db-card-img">
-                    <span className="db-card-categoria">{produto.categoria}</span>
+                <div key={produto.id} className={`db-card ${aberto ? 'db-card-aberto' : ''}`}>
+                  <div className="db-card-row" onClick={() => toggleExpandido(produto.id)}>
+                    <div className="db-card-img">
+                      <span className="db-card-categoria">{produto.categoria}</span>
+                    </div>
+                    <div className="db-card-info">
+                      <span className="db-card-nome">{produto.nome}</span>
+                      {produto.marca && (
+                        <span className="db-card-meta">
+                          {produto.marca}{produto.unidadeMedida ? ` · ${produto.unidadeMedida}` : ''}
+                        </span>
+                      )}
+                      {info?.data && <span className="db-card-data">{formatData(info.data)}</span>}
+                      {info?.loja && <span className="db-card-loja">{info.loja}</span>}
+                    </div>
+                    <span className="db-card-preco">{formatPreco(info?.valor)}</span>
+                    <span className={`db-card-chevron ${aberto ? 'db-card-chevron-aberto' : ''}`} aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E85C35" strokeWidth="2.5">
+                        <polyline points="6 9 12 15 18 9"/>
+                      </svg>
+                    </span>
                   </div>
-                  <div className="db-card-info">
-                    <span className="db-card-nome">{produto.nome}</span>
-                    {produto.marca && (
-                      <span className="db-card-meta">
-                        {produto.marca}{produto.unidadeMedida ? ` · ${produto.unidadeMedida}` : ''}
+
+                  {aberto && comp?.precosPorMercado?.length > 0 && (
+                    <div className="db-mercados">
+                      <span className="db-mercados-titulo">
+                        Disponível em {comp.totalMercados} mercado{comp.totalMercados !== 1 ? 's' : ''}
                       </span>
-                    )}
-                    {info?.data && <span className="db-card-data">{formatData(info.data)}</span>}
-                    {info?.loja && <span className="db-card-loja">{info.loja}</span>}
-                  </div>
-                  <span className="db-card-preco">{formatPreco(info?.valor)}</span>
+                      <ul className="db-mercados-lista">
+                        {[...comp.precosPorMercado]
+                          .sort((a, b) => a.valor - b.valor)
+                          .map(m => (
+                            <li key={m.mercadoId} className="db-mercado-item">
+                              <div className="db-mercado-info">
+                                <span className="db-mercado-nome">{m.mercadoNomeFantasia}</span>
+                                <span className="db-mercado-cidade">
+                                  {m.cidade}/{m.estado} · {formatData(m.dataColeta)}
+                                </span>
+                              </div>
+                              <span className="db-mercado-preco">{formatPreco(m.valor)}</span>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )
             })}
