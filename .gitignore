@@ -8,6 +8,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/sqldialects.xml
 *.iws
 *.iml
 *.ipr
@@ -34,7 +35,6 @@ Readme.md
 Prioridades.md
 ### VS Code ###
 .vscode/
-
 ### Mac OS ###
 .DS_Store
 /Readme-visão_projeto.md
@@ -46,3 +46,4 @@ frontend/dist/
 frontend/.env
 frontend/.env.local
 frontend/.env.*.local
+/docs/

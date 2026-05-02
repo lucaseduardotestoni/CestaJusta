@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>org.example</groupId>
-    <artifactId>cestajusta-v2</artifactId>
+    <artifactId>cestajusta</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>CestaJustaV2</name>
     <description>Projeto Spring Boot com PostgreSQL</description>
