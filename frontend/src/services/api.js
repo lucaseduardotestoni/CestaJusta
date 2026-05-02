@@ -1,5 +1,13 @@
 const BASE_URL = '/api'
 
+const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true'
+
+let mocksModule = null
+async function lazyMocks() {
+  if (!mocksModule) mocksModule = await import('./mocks.js')
+  return mocksModule
+}
+
 function authHeaders() {
   const token = localStorage.getItem('token')
   return token ? { Authorization: `Bearer ${token}` } : {}
@@ -56,4 +64,30 @@ export async function cadastrar(nome, email, senha, tipoUsuario) {
     body: JSON.stringify({ nome, email, senha, tipoUsuario }),
   })
   return handleResponse(res) // retorna UsuarioResponseDTO
+}
+
+export async function getDashboardKpis() {
+  if (USE_MOCKS) return (await lazyMocks()).getDashboardKpis()
+  const res = await fetch(`${BASE_URL}/dashboard/kpis`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res)
+}
+
+export async function getDashboardProdutos(opts) {
+  if (USE_MOCKS) return (await lazyMocks()).getDashboardProdutos(opts)
+  const { ordem = 'todos', page = 0, size = 20 } = opts || {}
+  const params = new URLSearchParams({ ordem, page, size })
+  const res = await fetch(`${BASE_URL}/dashboard/produtos?${params}`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res)
+}
+
+export async function getHistoricoProduto(produtoId, dias = 30) {
+  if (USE_MOCKS) return (await lazyMocks()).getHistoricoProduto(produtoId, dias)
+  const res = await fetch(`${BASE_URL}/comparacoes/produto/${produtoId}/historico?dias=${dias}`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res)
 }
