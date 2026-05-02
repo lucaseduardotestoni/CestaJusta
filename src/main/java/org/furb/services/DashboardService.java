@@ -1,5 +1,6 @@
 package org.furb.services;
 
+import org.furb.dto.dashboard.KpiDashboardDTO;
 import org.furb.model.Preco;
 import org.furb.repositories.MercadoRepository;
 import org.furb.repositories.PrecoRepository;
@@ -87,5 +88,15 @@ public class DashboardService {
 
         BigDecimal soma = economias.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         return soma.divide(new BigDecimal(economias.size()), 2, RoundingMode.HALF_UP);
+    }
+
+    public KpiDashboardDTO montarKpis() {
+        return new KpiDashboardDTO(
+                calcularValorCesta(),
+                calcularVariacaoSemanal(),
+                (int) produtoRepository.count(),
+                (int) mercadoRepository.count(),
+                calcularEconomiaMedia()
+        );
     }
 }

@@ -1,5 +1,6 @@
 package org.furb.services;
 
+import org.furb.dto.dashboard.KpiDashboardDTO;
 import org.furb.enums.StatusPreco;
 import org.furb.model.Mercado;
 import org.furb.model.Preco;
@@ -127,6 +128,22 @@ DashboardServiceTest {
         BigDecimal economia = dashboardService.calcularEconomiaMedia();
 
         assertThat(economia).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void montarKpis_retornaDtoCompleto() {
+        when(produtoRepository.count()).thenReturn(42L);
+        when(mercadoRepository.count()).thenReturn(7L);
+        // sem preços nos repositórios → cesta=0, variacao=0, economia=0
+        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of());
+
+        KpiDashboardDTO kpis = dashboardService.montarKpis();
+
+        assertThat(kpis.getTotalProdutos()).isEqualTo(42);
+        assertThat(kpis.getTotalMercados()).isEqualTo(7);
+        assertThat(kpis.getValorCesta()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(kpis.getVariacaoSemanal()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(kpis.getEconomiaMedia()).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     private Produto produtoMock(Long id, String nome) {
