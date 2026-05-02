@@ -3,6 +3,7 @@ package org.furb.services;
 import org.furb.dto.dashboard.HistoricoPrecoDTO;
 import org.furb.dto.dashboard.KpiDashboardDTO;
 import org.furb.dto.dashboard.PontoSparklineDTO;
+import org.furb.dto.dashboard.ProdutoDashboardDTO;
 import org.furb.enums.StatusPreco;
 import org.furb.model.Mercado;
 import org.furb.model.Preco;
@@ -202,6 +203,49 @@ DashboardServiceTest {
         assertThat(dto.getProdutoId()).isEqualTo(1L);
         assertThat(dto.getProdutoNome()).isEqualTo("Leite Italac 1L");
         assertThat(dto.getPontos()).isNotEmpty();
+    }
+
+    @Test
+    void listarProdutosDashboard_ordemQuedas_ordenaDoMaisNegativoParaMenosNegativo() {
+        Produto leite = produtoMock(1L, "Leite");
+        Produto arroz = produtoMock(2L, "Arroz");
+
+        leite.setMarca("Italac");
+        leite.setUnidadeMedida("1L");
+        leite.setImagemPath("img-leite.jpg");
+        arroz.setMarca("Tio João");
+        arroz.setUnidadeMedida("5kg");
+        arroz.setImagemPath("img-arroz.jpg");
+
+        org.furb.model.Categoria cat = new org.furb.model.Categoria();
+        cat.setNome("Laticínios");
+        leite.setCategoria(cat);
+        arroz.setCategoria(cat);
+
+        Mercado m1 = mercadoMock(1L, "Mercado A");
+        LocalDate hoje = LocalDate.now();
+
+        when(produtoRepository.findAll()).thenReturn(List.of(leite, arroz));
+        // leite: caiu de 10 → 5 (queda forte)
+        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+                .thenReturn(List.of(
+                        precoMock(leite, m1, "10.00", hoje.minusDays(20)),
+                        precoMock(leite, m1, "5.00",  hoje.minusDays(1))
+                ));
+        // arroz: caiu de 25 → 24 (queda leve)
+        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(2L), any(), any()))
+                .thenReturn(List.of(
+                        precoMock(arroz, m1, "25.00", hoje.minusDays(20)),
+                        precoMock(arroz, m1, "24.00", hoje.minusDays(1))
+                ));
+
+        org.springframework.data.domain.Page<ProdutoDashboardDTO> page =
+                dashboardService.listarProdutosDashboard("quedas",
+                        org.springframework.data.domain.PageRequest.of(0, 10));
+
+        assertThat(page.getContent()).hasSize(2);
+        // primeiro = maior queda = leite
+        assertThat(page.getContent().get(0).getNome()).isEqualTo("Leite");
     }
 
     private Produto produtoMock(Long id, String nome) {
