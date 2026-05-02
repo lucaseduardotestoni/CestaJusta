@@ -93,6 +93,42 @@ DashboardServiceTest {
         assertThat(variacao).isEqualByComparingTo(new BigDecimal("-20.00"));
     }
 
+    @Test
+    void calcularEconomiaMedia_calculaPorProdutoEMedia() {
+        Produto leite = produtoMock(1L, "Leite");
+        Produto arroz = produtoMock(2L, "Arroz");
+        Mercado m1 = mercadoMock(1L, "M1");
+        Mercado m2 = mercadoMock(2L, "M2");
+
+        // Leite: maior 10, menor 8 → economia 20%
+        // Arroz: maior 25, menor 20 → economia 20%
+        // Média: 20%
+        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of(
+                precoMock(leite, m1, "10.00", LocalDate.now().minusDays(5)),
+                precoMock(leite, m2, "8.00",  LocalDate.now().minusDays(5)),
+                precoMock(arroz, m1, "25.00", LocalDate.now().minusDays(5)),
+                precoMock(arroz, m2, "20.00", LocalDate.now().minusDays(5))
+        ));
+
+        BigDecimal economia = dashboardService.calcularEconomiaMedia();
+
+        assertThat(economia).isEqualByComparingTo(new BigDecimal("20.00"));
+    }
+
+    @Test
+    void calcularEconomiaMedia_quandoProdutoTemUmSoMercado_naoEntraNaMedia() {
+        Produto leite = produtoMock(1L, "Leite");
+        Mercado m1 = mercadoMock(1L, "M1");
+
+        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of(
+                precoMock(leite, m1, "10.00", LocalDate.now().minusDays(5))
+        ));
+
+        BigDecimal economia = dashboardService.calcularEconomiaMedia();
+
+        assertThat(economia).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
     private Produto produtoMock(Long id, String nome) {
         Produto p = new Produto();
         p.setNome(nome);

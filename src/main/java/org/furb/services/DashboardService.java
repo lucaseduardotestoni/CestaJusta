@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,5 +60,32 @@ public class DashboardService {
                 .divide(anterior, 4, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal("100"))
                 .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calcularEconomiaMedia() {
+        LocalDate fim = LocalDate.now();
+        LocalDate inicio = fim.minusDays(30);
+        List<Preco> precos = precoRepository.findByDataColetaBetween(inicio, fim);
+
+        Map<Long, List<BigDecimal>> precosPorProduto = precos.stream()
+                .collect(Collectors.groupingBy(
+                        p -> p.getProduto().getId(),
+                        Collectors.mapping(Preco::getValor, Collectors.toList())));
+
+        List<BigDecimal> economias = precosPorProduto.values().stream()
+                .filter(lista -> lista.size() >= 2)
+                .map(lista -> {
+                    BigDecimal maior = lista.stream().max(BigDecimal::compareTo).get();
+                    BigDecimal menor = lista.stream().min(BigDecimal::compareTo).get();
+                    return maior.subtract(menor)
+                            .divide(maior, 4, RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal("100"));
+                })
+                .toList();
+
+        if (economias.isEmpty()) return BigDecimal.ZERO;
+
+        BigDecimal soma = economias.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        return soma.divide(new BigDecimal(economias.size()), 2, RoundingMode.HALF_UP);
     }
 }
