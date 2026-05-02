@@ -22,7 +22,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DashboardServiceTest {
+class
+DashboardServiceTest {
 
     @Mock private PrecoRepository precoRepository;
     @Mock private ProdutoRepository produtoRepository;
@@ -58,6 +59,38 @@ class DashboardServiceTest {
 
         // 4.50 (menor leite) + 20.00 (único arroz) = 24.50
         assertThat(valor).isEqualByComparingTo(new BigDecimal("24.50"));
+    }
+
+    @Test
+    void calcularVariacaoSemanal_quandoSemanaAnteriorEhZero_retornaZero() {
+        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of());
+
+        BigDecimal variacao = dashboardService.calcularVariacaoSemanal();
+
+        assertThat(variacao).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void calcularVariacaoSemanal_quandoCestaCai_retornaPercentualNegativo() {
+        Produto leite = produtoMock(1L, "Leite");
+        Mercado m = mercadoMock(1L, "M");
+
+        // semana anterior (8-14 dias atrás): R$ 10
+        Preco anterior = precoMock(leite, m, "10.00", LocalDate.now().minusDays(10));
+        // semana atual (0-7 dias atrás): R$ 8
+        Preco atual = precoMock(leite, m, "8.00", LocalDate.now().minusDays(2));
+
+        when(precoRepository.findByDataColetaBetween(
+                LocalDate.now().minusDays(7), LocalDate.now()))
+                .thenReturn(List.of(atual));
+        when(precoRepository.findByDataColetaBetween(
+                LocalDate.now().minusDays(14), LocalDate.now().minusDays(8)))
+                .thenReturn(List.of(anterior));
+
+        BigDecimal variacao = dashboardService.calcularVariacaoSemanal();
+
+        // (8 - 10) / 10 * 100 = -20%
+        assertThat(variacao).isEqualByComparingTo(new BigDecimal("-20.00"));
     }
 
     private Produto produtoMock(Long id, String nome) {

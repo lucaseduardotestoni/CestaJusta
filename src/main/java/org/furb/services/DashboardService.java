@@ -7,9 +7,10 @@ import org.furb.repositories.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,24 +29,35 @@ public class DashboardService {
     }
 
     public BigDecimal calcularValorCesta() {
-        LocalDate fim = LocalDate.now();
-        LocalDate inicio = fim.minusDays(7);
-        List<Preco> precos = precoRepository.findByDataColetaBetween(inicio, fim);
+        return calcularValorCestaNoIntervalo(LocalDate.now().minusDays(7), LocalDate.now());
+    }
 
-        if (precos.isEmpty()) {
+    private BigDecimal calcularValorCestaNoIntervalo(LocalDate inicio, LocalDate fim) {
+        List<Preco> precos = precoRepository.findByDataColetaBetween(inicio, fim);
+        if (precos.isEmpty()) return BigDecimal.ZERO;
+
+        return precos.stream()
+                .collect(Collectors.groupingBy(p -> p.getProduto().getId(),
+                        Collectors.mapping(Preco::getValor,
+                                Collectors.minBy(BigDecimal::compareTo))))
+                .values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal calcularVariacaoSemanal() {
+        BigDecimal atual = calcularValorCestaNoIntervalo(LocalDate.now().minusDays(7), LocalDate.now());
+        BigDecimal anterior = calcularValorCestaNoIntervalo(
+                LocalDate.now().minusDays(14), LocalDate.now().minusDays(8));
+
+        if (anterior.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
 
-        Map<Long, BigDecimal> menorPorProduto = precos.stream()
-                .collect(Collectors.groupingBy(
-                        p -> p.getProduto().getId(),
-                        Collectors.mapping(Preco::getValor,
-                                Collectors.minBy(BigDecimal::compareTo))))
-                .entrySet().stream()
-                .filter(e -> e.getValue().isPresent())
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get()));
-
-        return menorPorProduto.values().stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return atual.subtract(anterior)
+                .divide(anterior, 4, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100"))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }
