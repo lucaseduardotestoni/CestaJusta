@@ -1,5 +1,6 @@
 package org.furb.services;
 
+import org.furb.dto.dashboard.HistoricoPrecoDTO;
 import org.furb.dto.dashboard.KpiDashboardDTO;
 import org.furb.dto.dashboard.PontoSparklineDTO;
 import org.furb.enums.StatusPreco;
@@ -177,6 +178,30 @@ DashboardServiceTest {
         assertThat(pontos.get(0).getValor()).isEqualByComparingTo(new BigDecimal("5.00"));
         assertThat(pontos.get(1).getValor()).isEqualByComparingTo(new BigDecimal("5.00"));
         assertThat(pontos.get(2).getValor()).isEqualByComparingTo(new BigDecimal("6.00"));
+    }
+
+    @Test
+    void montarHistorico_produtoInexistente_lancaResourceNotFound() {
+        when(produtoRepository.findById(999L)).thenReturn(java.util.Optional.empty());
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(
+                () -> dashboardService.montarHistorico(999L, 30))
+                .isInstanceOf(org.furb.services.exeptions.ResourceNotFoundException.class);
+    }
+
+    @Test
+    void montarHistorico_retornaDtoComNomeEPontos() {
+        Produto leite = produtoMock(1L, "Leite Italac 1L");
+        Mercado m = mercadoMock(1L, "M");
+        when(produtoRepository.findById(1L)).thenReturn(java.util.Optional.of(leite));
+        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+                .thenReturn(List.of(precoMock(leite, m, "5.00", LocalDate.now())));
+
+        HistoricoPrecoDTO dto = dashboardService.montarHistorico(1L, 30);
+
+        assertThat(dto.getProdutoId()).isEqualTo(1L);
+        assertThat(dto.getProdutoNome()).isEqualTo("Leite Italac 1L");
+        assertThat(dto.getPontos()).isNotEmpty();
     }
 
     private Produto produtoMock(Long id, String nome) {

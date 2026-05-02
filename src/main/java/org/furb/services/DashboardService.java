@@ -1,8 +1,11 @@
 package org.furb.services;
 
+import org.furb.dto.dashboard.HistoricoPrecoDTO;
 import org.furb.dto.dashboard.KpiDashboardDTO;
 import org.furb.dto.dashboard.PontoSparklineDTO;
 import org.furb.model.Preco;
+import org.furb.model.Produto;
+import org.furb.services.exeptions.ResourceNotFoundException;
 import org.furb.repositories.MercadoRepository;
 import org.furb.repositories.PrecoRepository;
 import org.furb.repositories.ProdutoRepository;
@@ -132,6 +135,18 @@ public class DashboardService {
         }
 
         return resultado;
+    }
+
+    public HistoricoPrecoDTO montarHistorico(Long produtoId, int dias) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Produto não encontrado: id=" + produtoId));
+
+        return new HistoricoPrecoDTO(
+                produto.getId(),
+                produto.getNome(),
+                montarSparkline(produtoId, dias)
+        );
     }
 
     private BigDecimal media(List<BigDecimal> valores) {
