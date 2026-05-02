@@ -1,6 +1,7 @@
 package org.furb.services;
 
 import org.furb.dto.dashboard.KpiDashboardDTO;
+import org.furb.dto.dashboard.PontoSparklineDTO;
 import org.furb.enums.StatusPreco;
 import org.furb.model.Mercado;
 import org.furb.model.Preco;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -144,6 +146,37 @@ DashboardServiceTest {
         assertThat(kpis.getValorCesta()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(kpis.getVariacaoSemanal()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(kpis.getEconomiaMedia()).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void montarSparkline_quandoSemPrecos_retornaListaVazia() {
+        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+                .thenReturn(List.of());
+
+        List<PontoSparklineDTO> pontos = dashboardService.montarSparkline(1L, 30);
+
+        assertThat(pontos).isEmpty();
+    }
+
+    @Test
+    void montarSparkline_diaSemPrecoRepetiUltimoConhecido() {
+        Produto p = produtoMock(1L, "Leite");
+        Mercado m = mercadoMock(1L, "M");
+        LocalDate hoje = LocalDate.now();
+
+        // só temos preço em hoje-2 e hoje (R$ 5 e R$ 6); dia intermediário hoje-1 repete 5
+        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+                .thenReturn(List.of(
+                        precoMock(p, m, "5.00", hoje.minusDays(2)),
+                        precoMock(p, m, "6.00", hoje)
+                ));
+
+        List<PontoSparklineDTO> pontos = dashboardService.montarSparkline(1L, 3);
+
+        assertThat(pontos).hasSize(3);
+        assertThat(pontos.get(0).getValor()).isEqualByComparingTo(new BigDecimal("5.00"));
+        assertThat(pontos.get(1).getValor()).isEqualByComparingTo(new BigDecimal("5.00"));
+        assertThat(pontos.get(2).getValor()).isEqualByComparingTo(new BigDecimal("6.00"));
     }
 
     private Produto produtoMock(Long id, String nome) {

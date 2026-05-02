@@ -1,6 +1,7 @@
 package org.furb.services;
 
 import org.furb.dto.dashboard.KpiDashboardDTO;
+import org.furb.dto.dashboard.PontoSparklineDTO;
 import org.furb.model.Preco;
 import org.furb.repositories.MercadoRepository;
 import org.furb.repositories.PrecoRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -98,5 +100,43 @@ public class DashboardService {
                 (int) mercadoRepository.count(),
                 calcularEconomiaMedia()
         );
+    }
+
+    public List<PontoSparklineDTO> montarSparkline(Long produtoId, int dias) {
+        LocalDate fim = LocalDate.now();
+        LocalDate inicio = fim.minusDays(dias - 1L);
+
+        List<Preco> precos = precoRepository
+                .findByProdutoIdAndDataColetaBetween(produtoId, inicio, fim);
+
+        if (precos.isEmpty()) return List.of();
+
+        Map<LocalDate, BigDecimal> mediaPorDia = precos.stream()
+                .collect(Collectors.groupingBy(
+                        Preco::getDataColeta,
+                        Collectors.mapping(Preco::getValor,
+                                Collectors.collectingAndThen(Collectors.toList(), this::media))));
+
+        List<PontoSparklineDTO> resultado = new ArrayList<>();
+        BigDecimal ultimoConhecido = null;
+
+        for (int i = 0; i < dias; i++) {
+            LocalDate dia = inicio.plusDays(i);
+            BigDecimal valor = mediaPorDia.get(dia);
+            if (valor != null) {
+                ultimoConhecido = valor;
+            }
+            if (ultimoConhecido != null) {
+                resultado.add(new PontoSparklineDTO(dia, ultimoConhecido));
+            }
+        }
+
+        return resultado;
+    }
+
+    private BigDecimal media(List<BigDecimal> valores) {
+        if (valores.isEmpty()) return BigDecimal.ZERO;
+        BigDecimal soma = valores.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        return soma.divide(new BigDecimal(valores.size()), 2, RoundingMode.HALF_UP);
     }
 }
