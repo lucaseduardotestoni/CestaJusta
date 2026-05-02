@@ -45,24 +45,24 @@ ON CONFLICT (cnpj) DO NOTHING;
 -- =====================================================================
 -- Produtos — 18 itens espalhados em 5 categorias
 -- =====================================================================
-INSERT INTO produtos (nome, codigo_barras, marca, unidade_medida, categoria_id, ativo) VALUES
-    ('Arroz Branco 5kg',          '7891234567890', 'Tio João',    '5kg',   (SELECT id FROM categorias WHERE nome='Alimentos'), true),
-    ('Feijão Preto 1kg',          '7891111111111', 'Camil',       '1kg',   (SELECT id FROM categorias WHERE nome='Alimentos'), true),
-    ('Açúcar Cristal 1kg',        '7892222222222', 'União',       '1kg',   (SELECT id FROM categorias WHERE nome='Alimentos'), true),
-    ('Café Torrado 500g',         '7893333333333', 'Pilão',       '500g',  (SELECT id FROM categorias WHERE nome='Alimentos'), true),
-    ('Óleo de Soja 900ml',        '7894444444444', 'Liza',        '900ml', (SELECT id FROM categorias WHERE nome='Alimentos'), true),
-    ('Macarrão Espaguete 500g',   '7895555555555', 'Renata',      '500g',  (SELECT id FROM categorias WHERE nome='Alimentos'), true),
-    ('Leite Integral 1L',         '7896666666666', 'Piracanjuba', '1L',    (SELECT id FROM categorias WHERE nome='Lácteos'), true),
-    ('Manteiga sem Sal 200g',     '7897777777777', 'Aviação',     '200g',  (SELECT id FROM categorias WHERE nome='Lácteos'), true),
-    ('Queijo Mussarela 500g',     '7898888888888', 'Tirolez',     '500g',  (SELECT id FROM categorias WHERE nome='Lácteos'), true),
-    ('Água Mineral 1,5L',         '7891010101010', 'Crystal',     '1,5L',  (SELECT id FROM categorias WHERE nome='Bebidas'), true),
-    ('Suco de Laranja 1L',        '7891212121212', 'Del Valle',   '1L',    (SELECT id FROM categorias WHERE nome='Bebidas'), true),
-    ('Banana Prata 1kg',          '7892020202020', NULL,          '1kg',   (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
-    ('Tomate 1kg',                '7893030303030', NULL,          '1kg',   (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
-    ('Batata Inglesa 1kg',        '7893131313131', NULL,          '1kg',   (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
-    ('Sabão em Pó 1kg',           '7894040404040', 'Omo',         '1kg',   (SELECT id FROM categorias WHERE nome='Higiene e Limpeza'), true),
-    ('Detergente Líquido 500ml',  '7895050505050', 'Ypê',         '500ml', (SELECT id FROM categorias WHERE nome='Higiene e Limpeza'), true),
-    ('Papel Higiênico 12 rolos',  '7895151515151', 'Neve',        '12un',  (SELECT id FROM categorias WHERE nome='Higiene e Limpeza'), true)
+INSERT INTO produtos (nome, codigo_barras, marca, unidade_medida, imagem_path, categoria_id, ativo) VALUES
+    ('Arroz Branco 5kg',          '7891234567890', 'Tio João',    '5kg',   'https://images.unsplash.com/photo-1568347877321-f8935c7dc5a8?w=200', (SELECT id FROM categorias WHERE nome='Alimentos'), true),
+    ('Feijão Preto 1kg',          '7891111111111', 'Camil',       '1kg',   'https://images.unsplash.com/photo-1600353068440-9a7d3b71ce62?w=200', (SELECT id FROM categorias WHERE nome='Alimentos'), true),
+    ('Açúcar Cristal 1kg',        '7892222222222', 'União',       '1kg',   'https://images.unsplash.com/photo-1581600140682-d4e68c8e3d9c?w=200', (SELECT id FROM categorias WHERE nome='Alimentos'), true),
+    ('Café Torrado 500g',         '7893333333333', 'Pilão',       '500g',  'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=200',    (SELECT id FROM categorias WHERE nome='Alimentos'), true),
+    ('Óleo de Soja 900ml',        '7894444444444', 'Liza',        '900ml', 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200', (SELECT id FROM categorias WHERE nome='Alimentos'), true),
+    ('Macarrão Espaguete 500g',   '7895555555555', 'Renata',      '500g',  'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Alimentos'), true),
+    ('Leite Integral 1L',         '7896666666666', 'Piracanjuba', '1L',    'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200',    (SELECT id FROM categorias WHERE nome='Lácteos'), true),
+    ('Manteiga sem Sal 200g',     '7897777777777', 'Aviação',     '200g',  'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Lácteos'), true),
+    ('Queijo Mussarela 500g',     '7898888888888', 'Tirolez',     '500g',  'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200',    (SELECT id FROM categorias WHERE nome='Lácteos'), true),
+    ('Água Mineral 1,5L',         '7891010101010', 'Crystal',     '1,5L',  'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Bebidas'), true),
+    ('Suco de Laranja 1L',        '7891212121212', 'Del Valle',   '1L',    'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Bebidas'), true),
+    ('Banana Prata 1kg',          '7892020202020', NULL,          '1kg',   'https://images.unsplash.com/photo-1599909533734-7e7e2e07c1d6?w=200', (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
+    ('Tomate 1kg',                '7893030303030', NULL,          '1kg',   'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
+    ('Batata Inglesa 1kg',        '7893131313131', NULL,          '1kg',   'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Frutas e Verduras'), true),
+    ('Sabão em Pó 1kg',           '7894040404040', 'Omo',         '1kg',   'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Higiene e Limpeza'), true),
+    ('Detergente Líquido 500ml',  '7895050505050', 'Ypê',         '500ml', 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Higiene e Limpeza'), true),
+    ('Papel Higiênico 12 rolos',  '7895151515151', 'Neve',        '12un',  'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200',    (SELECT id FROM categorias WHERE nome='Higiene e Limpeza'), true)
 ON CONFLICT (codigo_barras) DO NOTHING;
 
 -- =====================================================================

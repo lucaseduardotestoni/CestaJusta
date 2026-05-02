@@ -22,6 +22,9 @@ public class Produto {
     @Column(length = 30)
     private String unidadeMedida;
 
+    @Column(length = 500)
+    private String imagemPath;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
@@ -66,6 +69,14 @@ public class Produto {
 
     public void setUnidadeMedida(String unidadeMedida) {
         this.unidadeMedida = unidadeMedida;
+    }
+
+    public String getImagemPath() {
+        return imagemPath;
+    }
+
+    public void setImagemPath(String imagemPath) {
+        this.imagemPath = imagemPath;
     }
 
     public Categoria getCategoria() {
