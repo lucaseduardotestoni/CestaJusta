@@ -29,7 +29,7 @@ export default function ProdutoRow({ produto, onClick }) {
         {produto.tendenciaPercentual > 0 ? '↑' : produto.tendenciaPercentual < 0 ? '↓' : '—'}
         {' '}{Math.abs(produto.tendenciaPercentual).toFixed(1)}%
       </td>
-      <td><button>Ver detalhes</button></td>
+      <td><button type="button" className="vg-btn-detalhes">Ver detalhes</button></td>
     </tr>
   )
 }
