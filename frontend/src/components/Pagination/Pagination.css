@@ -1,0 +1,14 @@
+.pagination {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4) 0;
+  justify-content: center;
+}
+.pagination button {
+  padding: var(--space-2) var(--space-3);
+  background: var(--cor-surface);
+  border: 1px solid var(--cor-border);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+}
+.pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.pagination-status { font-size: var(--fs-sm); color: var(--cor-text-muted); }
