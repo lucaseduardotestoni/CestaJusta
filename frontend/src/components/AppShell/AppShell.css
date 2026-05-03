@@ -12,6 +12,11 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-5) 0;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
 }
 .sidebar-logo {
   padding: 0 var(--space-5) var(--space-6);
@@ -60,16 +65,6 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-.sidebar-logout {
-  padding: var(--space-3) var(--space-5);
-  color: var(--cor-text-muted);
-  font-size: var(--fs-sm);
-  background: none;
-  border: none;
-  text-align: left;
-}
-.sidebar-logout:hover { color: var(--cor-text); }
-
 /* Layout direito */
 .shell-main {
   display: flex;
@@ -111,10 +106,21 @@
   border: none;
   font-size: var(--fs-lg);
 }
+.header-user-wrap {
+  position: relative;
+}
 .header-user {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+.header-user:hover {
+  background: var(--cor-primary-soft);
 }
 .header-avatar {
   width: 36px;
@@ -129,6 +135,67 @@
 .header-nome {
   font-size: var(--fs-sm);
   font-weight: 500;
+}
+.header-chevron {
+  font-size: var(--fs-xs);
+  color: var(--cor-text-muted);
+}
+
+/* Dropdown do usuário */
+.header-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  min-width: 220px;
+  background: var(--cor-surface);
+  border: 1px solid var(--cor-border);
+  border-radius: var(--r-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: var(--space-2);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.header-menu-info {
+  padding: var(--space-2) var(--space-3);
+}
+.header-menu-nome {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--cor-text);
+}
+.header-menu-email {
+  font-size: var(--fs-xs);
+  color: var(--cor-text-muted);
+}
+.header-menu-sep {
+  height: 1px;
+  background: var(--cor-border);
+  margin: var(--space-1) 0;
+}
+.header-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  color: var(--cor-text);
+  text-align: left;
+  cursor: pointer;
+}
+.header-menu-item:hover:not(:disabled) {
+  background: var(--cor-primary-soft);
+}
+.header-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.header-menu-sair {
+  color: var(--cor-danger);
 }
 
 .shell-content {
