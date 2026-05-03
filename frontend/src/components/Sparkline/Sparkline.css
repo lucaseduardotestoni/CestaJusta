@@ -1,0 +1,11 @@
+.sparkline-skeleton {
+  background: var(--cor-bg);
+  border-radius: var(--r-sm);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.sparkline-vazio {
+  color: var(--cor-text-muted);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
