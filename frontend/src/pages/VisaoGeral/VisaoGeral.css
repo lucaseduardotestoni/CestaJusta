@@ -31,3 +31,14 @@
 .vg-tendencia-positiva { color: var(--cor-danger); }
 .vg-tendencia-negativa { color: var(--cor-success); }
 .vg-loading, .vg-empty { padding: var(--space-7); text-align: center; color: var(--cor-text-muted); }
+
+.vg-modal-secao { margin-bottom: var(--space-5); }
+.vg-modal-secao h3 { font-size: var(--fs-md); margin: 0 0 var(--space-3); }
+.vg-modal-mercados { display: flex; flex-direction: column; gap: var(--space-2); }
+.vg-modal-mercados li {
+  display: flex; justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--cor-bg);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+}
