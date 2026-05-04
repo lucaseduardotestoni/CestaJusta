@@ -20,9 +20,11 @@
 }
 .sidebar-logo {
   padding: 0 var(--space-5) var(--space-6);
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--cor-primary);
+}
+.sidebar-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .sidebar-nav {
   flex: 1;
@@ -50,6 +52,22 @@
   opacity: 0.4;
   pointer-events: none;
 }
+.sidebar-icone {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+.sidebar-icone-home     { -webkit-mask-image: url('/icones/home.svg');     mask-image: url('/icones/home.svg'); }
+.sidebar-icone-comparar { -webkit-mask-image: url('/icones/comparar.svg'); mask-image: url('/icones/comparar.svg'); }
+.sidebar-icone-mercado  { -webkit-mask-image: url('/icones/mercado.svg');  mask-image: url('/icones/mercado.svg'); }
+.sidebar-icone-denuncia { -webkit-mask-image: url('/icones/denuncia.svg'); mask-image: url('/icones/denuncia.svg'); }
 .sidebar-cta {
   margin: var(--space-5) var(--space-4) var(--space-3);
   padding: var(--space-3);

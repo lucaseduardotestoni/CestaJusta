@@ -1,16 +1,18 @@
 import { NavLink } from 'react-router-dom'
 
 const ITEMS = [
-  { rota: '/dashboard',  rotulo: 'Visão geral', icone: '🏠' },
-  { rota: '/comparar',   rotulo: 'Comparar',    icone: '⚖️',  desabilitado: true },
-  { rota: '/mercados',   rotulo: 'Mercados',    icone: '🏪',  desabilitado: true },
-  { rota: '/denuncias',  rotulo: 'Denúncias',   icone: '🚩',  desabilitado: true },
+  { rota: '/dashboard',  rotulo: 'Visão geral', icone: 'home' },
+  { rota: '/comparar',   rotulo: 'Comparar',    icone: 'comparar', desabilitado: true },
+  { rota: '/mercados',   rotulo: 'Mercados',    icone: 'mercado',  desabilitado: true },
+  { rota: '/denuncias',  rotulo: 'Denúncias',   icone: 'denuncia', desabilitado: true },
 ]
 
 export default function Sidebar() {
   return (
     <aside className="sidebar">
-      <div className="sidebar-logo">CestaJusta</div>
+      <div className="sidebar-logo">
+        <img src="/logo.png" alt="CestaJusta" />
+      </div>
 
       <nav className="sidebar-nav">
         {ITEMS.map(item => (
@@ -22,7 +24,7 @@ export default function Sidebar() {
             }
             onClick={(e) => { if (item.desabilitado) e.preventDefault() }}
           >
-            <span aria-hidden="true">{item.icone}</span>
+            <span className={`sidebar-icone sidebar-icone-${item.icone}`} aria-hidden="true" />
             <span>{item.rotulo}</span>
           </NavLink>
         ))}
