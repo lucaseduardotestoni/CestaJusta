@@ -1,0 +1,22 @@
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: grid; place-items: center;
+  z-index: 100;
+}
+.modal-content {
+  background: var(--cor-surface);
+  border-radius: var(--r-lg);
+  width: min(720px, 90vw);
+  max-height: 85vh;
+  overflow: auto;
+  box-shadow: var(--shadow-md);
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--cor-border);
+}
+.modal-titulo { margin: 0; font-size: var(--fs-lg); font-weight: 700; }
+.modal-fechar { background: none; border: none; font-size: 24px; line-height: 1; }
+.modal-body { padding: var(--space-5); }

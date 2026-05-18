@@ -1,0 +1,59 @@
+.vg-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.vg-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.vg-tabela {
+  background: var(--cor-surface);
+  border: 1px solid var(--cor-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.vg-tabela table { width: 100%; border-collapse: collapse; }
+.vg-tabela th, .vg-tabela td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--cor-border);
+}
+.vg-tabela th { font-size: var(--fs-xs); text-transform: uppercase; color: var(--cor-text-muted); }
+.vg-tabela tbody tr:hover { background: var(--cor-bg); cursor: pointer; }
+.vg-produto-img {
+  width: 40px; height: 40px; border-radius: var(--r-sm);
+  object-fit: cover; background: var(--cor-bg);
+}
+.vg-produto-info { display: flex; align-items: center; gap: var(--space-3); }
+.vg-produto-meta { color: var(--cor-text-muted); font-size: var(--fs-xs); }
+.vg-tendencia-positiva { color: var(--cor-danger); }
+.vg-tendencia-negativa { color: var(--cor-success); }
+.vg-loading, .vg-empty { padding: var(--space-7); text-align: center; color: var(--cor-text-muted); }
+.vg-btn-detalhes {
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  color: var(--cor-primary);
+  border: 1px solid var(--cor-primary);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.vg-btn-detalhes:hover {
+  background: var(--cor-primary);
+  color: white;
+}
+
+.vg-modal-secao { margin-bottom: var(--space-5); }
+.vg-modal-secao h3 { font-size: var(--fs-md); margin: 0 0 var(--space-3); }
+.vg-modal-mercados { display: flex; flex-direction: column; gap: var(--space-2); }
+.vg-modal-mercados li {
+  display: flex; justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--cor-bg);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+}

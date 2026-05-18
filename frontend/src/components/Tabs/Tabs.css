@@ -1,0 +1,20 @@
+.tabs {
+  display: flex; gap: var(--space-1);
+  background: var(--cor-surface);
+  padding: var(--space-1);
+  border: 1px solid var(--cor-border);
+  border-radius: var(--r-md);
+  width: fit-content;
+}
+.tab {
+  padding: var(--space-2) var(--space-4);
+  background: transparent; border: none;
+  border-radius: var(--r-sm);
+  color: var(--cor-text-muted);
+  font-size: var(--fs-sm);
+}
+.tab-ativa {
+  background: var(--cor-primary);
+  color: white;
+  font-weight: 600;
+}

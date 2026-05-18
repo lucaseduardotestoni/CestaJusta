@@ -1,0 +1,36 @@
+:root {
+  /* Cores da marca */
+  --cor-primary:        #0E7C42;
+  --cor-primary-hover:  #0a6336;
+  --cor-primary-soft:   #E8F4EE;
+  --cor-accent:         #EF6E35;
+  --cor-accent-hover:   #d95e28;
+
+  /* Neutros */
+  --cor-bg:        #F7F8FA;
+  --cor-surface:   #FFFFFF;
+  --cor-border:    #E5E7EB;
+  --cor-text:      #1F1F1F;
+  --cor-text-muted:#6B7280;
+
+  /* Estados */
+  --cor-success: #15803D;
+  --cor-danger:  #DC2626;
+  --cor-warning: #D97706;
+
+  /* Espaçamentos (escala 4px) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 24px; --space-6: 32px;
+  --space-7: 48px; --space-8: 64px;
+
+  /* Tipografia */
+  --fs-xs: 12px; --fs-sm: 14px; --fs-md: 16px;
+  --fs-lg: 20px; --fs-xl: 24px; --fs-2xl: 32px;
+
+  /* Radius */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-full: 999px;
+
+  /* Sombra */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+}
