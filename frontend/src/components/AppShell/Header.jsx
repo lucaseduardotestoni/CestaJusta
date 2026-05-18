@@ -36,9 +36,6 @@ export default function Header() {
 
   return (
     <header className="header">
-      <div className="header-search">
-        <input type="text" placeholder="Buscar..." aria-label="Buscar" />
-      </div>
       <div className="header-actions">
         <button className="header-bell" type="button" aria-label="Notificações">🔔</button>
 
@@ -77,7 +74,6 @@ export default function Header() {
                 className="header-menu-item header-menu-sair"
                 onClick={handleLogout}
               >
-                <span aria-hidden="true">↩️</span>
                 <span>Sair</span>
               </button>
             </div>

@@ -32,7 +32,7 @@ export default function VisaoGeralPage() {
 
   return (
     <>
-      <h1>Olá{nome ? `, ${nome}!` : '!'} </h1>
+      <h1>Olá{nome ? `, ${nome}!` : '!'}</h1>
       <p style={{ color: 'var(--cor-text-muted)' }}>
         Veja os preços e economize na sua região.
       </p>

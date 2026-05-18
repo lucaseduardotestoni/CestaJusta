@@ -103,21 +103,11 @@
   top: 0;
   z-index: 10;
 }
-.header-search input {
-  width: 360px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--cor-border);
-  border-radius: var(--r-md);
-  font-size: var(--fs-sm);
-}
-.header-search input:focus {
-  outline: none;
-  border-color: var(--cor-primary);
-}
 .header-actions {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  margin-left: auto;
 }
 .header-bell {
   background: none;
