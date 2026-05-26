@@ -41,6 +41,7 @@ Prioridades.md1
 
 .claude/
 .idea
+logs/
 
 frontend/node_modules/
 frontend/dist/
