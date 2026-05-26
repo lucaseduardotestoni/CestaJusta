@@ -25,12 +25,14 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> handleResourceNotFound(ResourceNotFoundException ex,
                                                                  HttpServletRequest request) {
+        logger.warn("Recurso não encontrado em {}: {}", request.getRequestURI(), ex.getMessage());
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<StandardError> handleBusiness(BusinessException ex,
                                                          HttpServletRequest request) {
+        logger.warn("Regra de negócio violada em {}: {}", request.getRequestURI(), ex.getMessage());
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
@@ -41,6 +43,7 @@ public class ControllerExceptionHandler {
                 .map(fe -> new CampoError(fe.getField(), fe.getDefaultMessage()))
                 .toList();
 
+        logger.warn("Validação falhou em {}: {} campo(s) inválido(s)", request.getRequestURI(), errors.size());
         StandardError body = new StandardError(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -55,12 +58,14 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<StandardError> handleUnreadable(HttpMessageNotReadableException ex,
                                                            HttpServletRequest request) {
+        logger.warn("Corpo inválido em {}: {}", request.getRequestURI(), ex.getMessage());
         return build(HttpStatus.BAD_REQUEST, "Corpo da requisição inválido ou malformado.", request);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<StandardError> handleTypeMismatch(MethodArgumentTypeMismatchException ex,
                                                              HttpServletRequest request) {
+        logger.warn("Parâmetro inválido em {}: {}", request.getRequestURI(), ex.getName());
         String message = "Parâmetro '" + ex.getName() + "' com valor inválido.";
         return build(HttpStatus.BAD_REQUEST, message, request);
     }
@@ -68,6 +73,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<StandardError> handleAccessDenied(AccessDeniedException ex,
                                                              HttpServletRequest request) {
+        logger.warn("Acesso negado em {}", request.getRequestURI());
         return build(HttpStatus.FORBIDDEN, "Acesso negado: permissão insuficiente.", request);
     }
 
