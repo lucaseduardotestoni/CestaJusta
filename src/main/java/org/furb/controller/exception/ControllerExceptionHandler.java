@@ -58,7 +58,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<StandardError> handleUnreadable(HttpMessageNotReadableException ex,
                                                            HttpServletRequest request) {
-        logger.warn("Corpo inválido em {}: {}", request.getRequestURI(), ex.getMessage());
+        logger.warn("Corpo inválido em {}: {}", request.getRequestURI(), ex.getClass().getSimpleName());
         return build(HttpStatus.BAD_REQUEST, "Corpo da requisição inválido ou malformado.", request);
     }
 
