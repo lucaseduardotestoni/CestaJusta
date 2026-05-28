@@ -43,6 +43,11 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.buscarPorNome(nome));
     }
 
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorCategoria(@PathVariable Long categoriaId) {
+        return ResponseEntity.ok(produtoService.buscarPorCategoria(categoriaId));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProdutoResponseDTO> inativar(@PathVariable Long id) {
