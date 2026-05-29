@@ -14,11 +14,9 @@ import org.furb.repositories.MercadoComercianteRepository;
 import org.furb.repositories.MercadoRepository;
 import org.furb.repositories.PrecoRepository;
 import org.furb.repositories.ProdutoRepository;
-import org.furb.repositories.UsuarioRepository;
+import org.furb.security.UsuarioAutenticadoProvider;
 import org.furb.services.exeptions.BusinessException;
 import org.furb.services.exeptions.ResourceNotFoundException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,19 +32,19 @@ public class PrecoService {
     private final PrecoRepository precoRepository;
     private final ProdutoRepository produtoRepository;
     private final MercadoRepository mercadoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final MercadoComercianteRepository mercadoComercianteRepository;
+    private final UsuarioAutenticadoProvider usuarioAutenticadoProvider;
 
     public PrecoService(PrecoRepository precoRepository,
                         ProdutoRepository produtoRepository,
                         MercadoRepository mercadoRepository,
-                        UsuarioRepository usuarioRepository,
-                        MercadoComercianteRepository mercadoComercianteRepository) {
+                        MercadoComercianteRepository mercadoComercianteRepository,
+                        UsuarioAutenticadoProvider usuarioAutenticadoProvider) {
         this.precoRepository = precoRepository;
         this.produtoRepository = produtoRepository;
         this.mercadoRepository = mercadoRepository;
-        this.usuarioRepository = usuarioRepository;
         this.mercadoComercianteRepository = mercadoComercianteRepository;
+        this.usuarioAutenticadoProvider = usuarioAutenticadoProvider;
     }
 
     public PrecoResponseDTO cadastrar(PrecoCadastroDTO dto) {
@@ -64,7 +62,7 @@ public class PrecoService {
             throw new BusinessException("Mercado inativo não aceita registro de preço.");
         }
 
-        Usuario usuario = getUsuarioAutenticado();
+        Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
 
         StatusPreco statusInicial = resolverStatusInicial(usuario, mercado);
 
@@ -178,18 +176,6 @@ public class PrecoService {
                 preco.getDataColeta(),
                 preco.getStatus()
         );
-    }
-
-    private Usuario getUsuarioAutenticado() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || authentication.getName() == null) {
-            throw new BusinessException("Usuário não autenticado.");
-        }
-
-        String email = authentication.getName();
-        return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário autenticado não encontrado."));
     }
 
     private PrecoResponseDTO toResponseDTO(Preco preco) {
