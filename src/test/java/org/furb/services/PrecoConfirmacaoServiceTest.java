@@ -131,4 +131,27 @@ class PrecoConfirmacaoServiceTest {
 
         assertThat(preco.getStatus()).isEqualTo(StatusPreco.PENDENTE);
     }
+
+    @Test
+    void retirarConfirmacao_existente_remove() {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(confirmador);
+        when(precoRepository.findById(10L)).thenReturn(Optional.of(preco));
+        when(confirmacaoPrecoRepository.existsByPrecoIdAndUsuarioId(10L, 2L)).thenReturn(true);
+
+        service.retirarConfirmacao(10L);
+
+        verify(confirmacaoPrecoRepository).deleteByPrecoIdAndUsuarioId(10L, 2L);
+    }
+
+    @Test
+    void retirarConfirmacao_inexistente_lancaResourceNotFound() {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(confirmador);
+        when(precoRepository.findById(10L)).thenReturn(Optional.of(preco));
+        when(confirmacaoPrecoRepository.existsByPrecoIdAndUsuarioId(10L, 2L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.retirarConfirmacao(10L))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        verify(confirmacaoPrecoRepository, never()).deleteByPrecoIdAndUsuarioId(any(), any());
+    }
 }
