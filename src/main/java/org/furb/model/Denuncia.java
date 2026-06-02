@@ -34,6 +34,13 @@ public class Denuncia {
     @Column(nullable = false)
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
+    @Column
+    private LocalDateTime dataResolucao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private org.furb.enums.OrigemResolucao resolvidoPor;
+
     public Denuncia() {
     }
 
@@ -87,5 +94,21 @@ public class Denuncia {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public LocalDateTime getDataResolucao() {
+        return dataResolucao;
+    }
+
+    public void setDataResolucao(LocalDateTime dataResolucao) {
+        this.dataResolucao = dataResolucao;
+    }
+
+    public org.furb.enums.OrigemResolucao getResolvidoPor() {
+        return resolvidoPor;
+    }
+
+    public void setResolvidoPor(org.furb.enums.OrigemResolucao resolvidoPor) {
+        this.resolvidoPor = resolvidoPor;
     }
 }
