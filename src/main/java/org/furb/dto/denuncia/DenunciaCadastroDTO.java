@@ -13,6 +13,7 @@ public class DenunciaCadastroDTO {
     @Size(max = 255, message = "Motivo deve ter no máximo 255 caracteres")
     private String motivo;
 
+    @Size(max = 1000, message = "Descrição deve ter no máximo 1000 caracteres")
     private String descricao;
 
     public Long getPrecoId() {

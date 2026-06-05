@@ -143,6 +143,22 @@ class DenunciaServiceTest {
     }
 
     @Test
+    void votar_votoJaRegistrado_lancaBusinessException() {
+        Usuario votante = new Usuario();
+        setId(votante, 7L);
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(votante);
+        when(denunciaRepository.findById(100L)).thenReturn(Optional.of(denunciaPendente(denunciante)));
+        when(mercadoComercianteRepository.existsByMercadoIdAndComercianteId(5L, 7L)).thenReturn(false);
+        when(votoDenunciaRepository.existsByDenunciaIdAndUsuarioId(100L, 7L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.votar(100L, org.furb.enums.TipoVoto.CONFIRMA))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("já votou");
+
+        verify(votoDenunciaRepository, never()).save(any());
+    }
+
+    @Test
     void votar_terceiroConfirma_aprovaEDenunciaRejeitaPreco() {
         Usuario votante = new Usuario();
         setId(votante, 7L);
