@@ -1,0 +1,22 @@
+{
+  "rabbit_version": "3.13.0",
+  "users": [
+    {
+      "name": "cestajusta",
+      "password_hash": "tCB7Vzs5jg5ulkguzkv/DbJTik9XnYOHPpHQyvux5/8lM2B1",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ["administrator"]
+    }
+  ],
+  "vhosts": [
+    { "name": "cestajusta" },
+    { "name": "cestajusta_dev" }
+  ],
+  "permissions": [
+    { "user": "cestajusta", "vhost": "cestajusta", "configure": ".*", "write": ".*", "read": ".*" },
+    { "user": "cestajusta", "vhost": "cestajusta_dev", "configure": ".*", "write": ".*", "read": ".*" }
+  ],
+  "queues": [],
+  "exchanges": [],
+  "bindings": []
+}
