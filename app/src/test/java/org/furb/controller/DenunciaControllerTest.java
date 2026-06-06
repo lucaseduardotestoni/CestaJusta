@@ -1,7 +1,5 @@
 package org.furb.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.furb.dto.denuncia.DenunciaCadastroDTO;
 import org.furb.dto.denuncia.DenunciaResponseDTO;
 import org.furb.enums.StatusDenuncia;
 import org.furb.enums.TipoVoto;
@@ -22,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -32,7 +31,6 @@ class DenunciaControllerTest {
 
     private MockMvc mockMvc;
     private DenunciaService service;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -43,15 +41,12 @@ class DenunciaControllerTest {
 
     @Test
     void criar_retorna201() throws Exception {
-        DenunciaCadastroDTO dto = new DenunciaCadastroDTO();
-        dto.setPrecoId(10L);
-        dto.setMotivo("Abusivo");
         Denuncia criada = new Denuncia();
-        when(service.criar(any())).thenReturn(criada);
+        when(service.criar(any(), any())).thenReturn(criada);
 
-        mockMvc.perform(post("/denuncias")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto)))
+        mockMvc.perform(multipart("/denuncias")
+                        .param("precoId", "10")
+                        .param("motivo", "Abusivo"))
                 .andExpect(status().isCreated());
     }
 
@@ -75,7 +70,7 @@ class DenunciaControllerTest {
     void buscarPorId_retorna200() throws Exception {
         DenunciaResponseDTO dto = new DenunciaResponseDTO(
                 5L, 10L, 1L, "abusivo", null, StatusDenuncia.PENDENTE,
-                2L, 1L, null, null, null);
+                2L, 1L, null, null, null, null, null, null);
         when(service.buscarPorId(5L)).thenReturn(dto);
 
         mockMvc.perform(get("/denuncias/5"))
@@ -87,7 +82,7 @@ class DenunciaControllerTest {
     void listarPorPreco_retorna200() throws Exception {
         DenunciaResponseDTO dto = new DenunciaResponseDTO(
                 100L, 10L, 1L, "preco errado", null, StatusDenuncia.PENDENTE,
-                0L, 0L, null, null, null);
+                0L, 0L, null, null, null, null, null, null);
         when(service.listarPorPreco(10L)).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/denuncias/preco/10"))

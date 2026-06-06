@@ -6,6 +6,12 @@ import org.furb.enums.OrigemResolucao;
 import org.furb.enums.StatusDenuncia;
 import org.furb.enums.StatusPreco;
 import org.furb.enums.TipoVoto;
+import org.furb.enums.FotoStatus;
+import org.furb.messaging.contract.FotoSolicitadaEvent;
+import org.furb.messaging.contract.RoutingKeys;
+import org.furb.outbox.OutboxService;
+import org.furb.storage.FotoStorage;
+import org.springframework.web.multipart.MultipartFile;
 import org.furb.model.Denuncia;
 import org.furb.model.Preco;
 import org.furb.model.Usuario;
@@ -23,8 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class DenunciaService {
@@ -33,6 +41,7 @@ public class DenunciaService {
     private static final long VOTOS_PARA_RESOLVER = 3;
     private static final int DIAS_ANTISPAM = 3;
     private static final int DIAS_EXPIRACAO = 30;
+    private static final Set<String> MIME_PERMITIDOS = Set.of("image/jpeg", "image/png", "image/webp");
 
     private final DenunciaRepository denunciaRepository;
     private final VotoDenunciaRepository votoDenunciaRepository;
@@ -40,23 +49,29 @@ public class DenunciaService {
     private final MercadoComercianteRepository mercadoComercianteRepository;
     private final UsuarioAutenticadoProvider usuarioAutenticadoProvider;
     private final Clock clock;
+    private final FotoStorage fotoStorage;
+    private final OutboxService outboxService;
 
     public DenunciaService(DenunciaRepository denunciaRepository,
                            VotoDenunciaRepository votoDenunciaRepository,
                            PrecoRepository precoRepository,
                            MercadoComercianteRepository mercadoComercianteRepository,
                            UsuarioAutenticadoProvider usuarioAutenticadoProvider,
-                           Clock clock) {
+                           Clock clock,
+                           FotoStorage fotoStorage,
+                           OutboxService outboxService) {
         this.denunciaRepository = denunciaRepository;
         this.votoDenunciaRepository = votoDenunciaRepository;
         this.precoRepository = precoRepository;
         this.mercadoComercianteRepository = mercadoComercianteRepository;
         this.usuarioAutenticadoProvider = usuarioAutenticadoProvider;
         this.clock = clock;
+        this.fotoStorage = fotoStorage;
+        this.outboxService = outboxService;
     }
 
     @Transactional
-    public Denuncia criar(DenunciaCadastroDTO dto) {
+    public Denuncia criar(DenunciaCadastroDTO dto, MultipartFile foto) {
         Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
         Preco preco = precoRepository.findById(dto.getPrecoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Preço não encontrado."));
@@ -73,10 +88,45 @@ public class DenunciaService {
         denuncia.setMotivo(dto.getMotivo());
         denuncia.setDescricao(dto.getDescricao());
         denuncia.setStatus(StatusDenuncia.PENDENTE);
+
+        boolean temFoto = foto != null && !foto.isEmpty();
+        if (temFoto) {
+            String fotoPath = armazenarFoto(foto);
+            denuncia.setFotoPath(fotoPath);
+            denuncia.setFotoStatus(FotoStatus.PROCESSANDO);
+        } else {
+            denuncia.setFotoStatus(FotoStatus.SEM_FOTO);
+        }
+
         Denuncia salva = denunciaRepository.save(denuncia);
-        log.info("Denúncia {} criada para o preço {} pelo usuário {}",
-                salva.getId(), preco.getId(), usuario.getId());
+        log.info("Denúncia {} criada para o preço {} pelo usuário {} (foto: {})",
+                salva.getId(), preco.getId(), usuario.getId(), temFoto);
+
+        if (temFoto) {
+            String eventoId = outboxService.novoEventoId();
+            outboxService.registrar(eventoId, RoutingKeys.FOTO_SOLICITADA,
+                    new FotoSolicitadaEvent(eventoId, salva.getId(), salva.getFotoPath()));
+        }
         return salva;
+    }
+
+    private String armazenarFoto(MultipartFile foto) {
+        String mime = foto.getContentType();
+        if (mime == null || !MIME_PERMITIDOS.contains(mime)) {
+            throw new BusinessException("Formato de imagem não suportado. Use JPG, PNG ou WEBP.");
+        }
+        String extensao = switch (mime) {
+            case "image/png" -> "png";
+            case "image/webp" -> "webp";
+            default -> "jpg";
+        };
+        LocalDate hoje = LocalDate.now(clock);
+        String subpasta = String.format("denuncias/%d/%02d", hoje.getYear(), hoje.getMonthValue());
+        try {
+            return fotoStorage.store(subpasta, foto.getBytes(), extensao);
+        } catch (java.io.IOException e) {
+            throw new BusinessException("Falha ao ler a imagem enviada.");
+        }
     }
 
     @Transactional

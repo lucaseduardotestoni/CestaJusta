@@ -42,6 +42,8 @@ class DenunciaServiceTest {
     @Mock private PrecoRepository precoRepository;
     @Mock private MercadoComercianteRepository mercadoComercianteRepository;
     @Mock private UsuarioAutenticadoProvider usuarioAutenticadoProvider;
+    @Mock private org.furb.storage.FotoStorage fotoStorage;
+    @Mock private org.furb.outbox.OutboxService outboxService;
 
     private DenunciaService service;
 
@@ -54,7 +56,7 @@ class DenunciaServiceTest {
     @BeforeEach
     void setUp() {
         service = new DenunciaService(denunciaRepository, votoDenunciaRepository, precoRepository,
-                mercadoComercianteRepository, usuarioAutenticadoProvider, clock);
+                mercadoComercianteRepository, usuarioAutenticadoProvider, clock, fotoStorage, outboxService);
 
         mercado = new Mercado();
         setId(mercado, 5L);
@@ -93,7 +95,7 @@ class DenunciaServiceTest {
                 .thenReturn(false);
         when(denunciaRepository.save(any(Denuncia.class))).thenAnswer(i -> i.getArgument(0));
 
-        Denuncia criada = service.criar(dto());
+        Denuncia criada = service.criar(dto(), null);
 
         assertThat(criada.getStatus()).isEqualTo(StatusDenuncia.PENDENTE);
         assertThat(criada.getMotivo()).isEqualTo("Preço muito acima do mercado");
@@ -106,7 +108,7 @@ class DenunciaServiceTest {
         when(denunciaRepository.existsByUsuarioIdAndPrecoIdAndDataCriacaoAfter(eq(1L), eq(10L), any()))
                 .thenReturn(true);
 
-        assertThatThrownBy(() -> service.criar(dto()))
+        assertThatThrownBy(() -> service.criar(dto(), null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("3 dias");
 
