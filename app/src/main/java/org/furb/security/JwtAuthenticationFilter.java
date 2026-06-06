@@ -39,7 +39,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return "OPTIONS".equalsIgnoreCase(method)
                 || "/login".equals(uri)
                 || "/usuarios/cadastro".equals(uri)
-                || uri.startsWith("/login/");
+                || uri.startsWith("/login/")
+                || uri.startsWith("/uploads/");
     }
 
     @Override

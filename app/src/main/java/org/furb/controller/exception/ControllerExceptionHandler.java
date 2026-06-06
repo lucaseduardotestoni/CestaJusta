@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,6 +76,11 @@ public class ControllerExceptionHandler {
                                                              HttpServletRequest request) {
         logger.warn("Acesso negado em {}", request.getRequestURI());
         return build(HttpStatus.FORBIDDEN, "Acesso negado: permissão insuficiente.", request);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<StandardError> handleMaxUpload(MaxUploadSizeExceededException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "A imagem excede o tamanho máximo permitido (5MB).", request);
     }
 
     @ExceptionHandler(Exception.class)

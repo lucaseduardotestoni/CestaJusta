@@ -242,7 +242,8 @@ public class DenunciaService {
         return new DenunciaResponseDTO(
                 d.getId(), d.getPreco().getId(), d.getUsuario().getId(),
                 d.getMotivo(), d.getDescricao(), d.getStatus(),
-                confirma, rejeita, d.getDataCriacao(), d.getDataResolucao(), d.getResolvidoPor());
+                confirma, rejeita, d.getDataCriacao(), d.getDataResolucao(), d.getResolvidoPor(),
+                d.getFotoPath(), d.getThumbPath(), d.getFotoStatus());
     }
 
     private void aprovar(Denuncia denuncia, OrigemResolucao origem) {

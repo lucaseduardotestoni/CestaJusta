@@ -1,5 +1,6 @@
 package org.furb.dto.denuncia;
 
+import org.furb.enums.FotoStatus;
 import org.furb.enums.OrigemResolucao;
 import org.furb.enums.StatusDenuncia;
 
@@ -18,10 +19,14 @@ public class DenunciaResponseDTO {
     private final LocalDateTime dataCriacao;
     private final LocalDateTime dataResolucao;
     private final OrigemResolucao resolvidoPor;
+    private final String fotoPath;
+    private final String thumbPath;
+    private final FotoStatus fotoStatus;
 
     public DenunciaResponseDTO(Long id, Long precoId, Long denuncianteId, String motivo, String descricao,
                                StatusDenuncia status, long votosConfirma, long votosRejeita,
-                               LocalDateTime dataCriacao, LocalDateTime dataResolucao, OrigemResolucao resolvidoPor) {
+                               LocalDateTime dataCriacao, LocalDateTime dataResolucao, OrigemResolucao resolvidoPor,
+                               String fotoPath, String thumbPath, FotoStatus fotoStatus) {
         this.id = id;
         this.precoId = precoId;
         this.denuncianteId = denuncianteId;
@@ -33,6 +38,9 @@ public class DenunciaResponseDTO {
         this.dataCriacao = dataCriacao;
         this.dataResolucao = dataResolucao;
         this.resolvidoPor = resolvidoPor;
+        this.fotoPath = fotoPath;
+        this.thumbPath = thumbPath;
+        this.fotoStatus = fotoStatus;
     }
 
     public Long getId() { return id; }
@@ -46,4 +54,7 @@ public class DenunciaResponseDTO {
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public LocalDateTime getDataResolucao() { return dataResolucao; }
     public OrigemResolucao getResolvidoPor() { return resolvidoPor; }
+    public String getFotoPath() { return fotoPath; }
+    public String getThumbPath() { return thumbPath; }
+    public FotoStatus getFotoStatus() { return fotoStatus; }
 }
