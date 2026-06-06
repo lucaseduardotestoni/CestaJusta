@@ -69,6 +69,16 @@ public class ProdutoService {
                 .toList();
     }
 
+    public List<ProdutoResponseDTO> buscarPorCategoria(Long categoriaId) {
+        if (!categoriaRepository.existsById(categoriaId)) {
+            throw new ResourceNotFoundException("Categoria não encontrada.");
+        }
+        return produtoRepository.findByCategoriaIdAndAtivoTrue(categoriaId)
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
     public ProdutoResponseDTO inativar(Long id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado."));

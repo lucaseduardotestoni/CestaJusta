@@ -1,6 +1,7 @@
 package org.furb.model;
 
 import jakarta.persistence.*;
+import org.furb.enums.OrigemResolucao;
 import org.furb.enums.StatusDenuncia;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,13 @@ public class Denuncia {
 
     @Column(nullable = false)
     private LocalDateTime dataCriacao = LocalDateTime.now();
+
+    @Column
+    private LocalDateTime dataResolucao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private OrigemResolucao resolvidoPor;
 
     public Denuncia() {
     }
@@ -87,5 +95,21 @@ public class Denuncia {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public LocalDateTime getDataResolucao() {
+        return dataResolucao;
+    }
+
+    public void setDataResolucao(LocalDateTime dataResolucao) {
+        this.dataResolucao = dataResolucao;
+    }
+
+    public OrigemResolucao getResolvidoPor() {
+        return resolvidoPor;
+    }
+
+    public void setResolvidoPor(OrigemResolucao resolvidoPor) {
+        this.resolvidoPor = resolvidoPor;
     }
 }

@@ -12,18 +12,15 @@ import org.furb.repositories.MercadoComercianteRepository;
 import org.furb.repositories.MercadoRepository;
 import org.furb.repositories.PrecoRepository;
 import org.furb.repositories.ProdutoRepository;
-import org.furb.repositories.UsuarioRepository;
+import org.furb.security.UsuarioAutenticadoProvider;
 import org.furb.services.exeptions.BusinessException;
 import org.furb.services.exeptions.ResourceNotFoundException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,8 +39,8 @@ class PrecoServiceTest {
     @Mock private PrecoRepository precoRepository;
     @Mock private ProdutoRepository produtoRepository;
     @Mock private MercadoRepository mercadoRepository;
-    @Mock private UsuarioRepository usuarioRepository;
     @Mock private MercadoComercianteRepository mercadoComercianteRepository;
+    @Mock private UsuarioAutenticadoProvider usuarioAutenticadoProvider;
 
     @InjectMocks
     private PrecoService precoService;
@@ -73,22 +70,13 @@ class PrecoServiceTest {
         usuario.setNome("Lucas");
         usuario.setEmail("lucas@teste.com");
         usuario.setTipoUsuario(TipoUsuario.CONSUMIDOR);
-
-        SecurityContextHolder.getContext().setAuthentication(
-                new TestingAuthenticationToken("lucas@teste.com", null)
-        );
-    }
-
-    @AfterEach
-    void tearDown() {
-        SecurityContextHolder.clearContext();
     }
 
     @Test
     void cadastrar_consumidor_salvaComStatusPendente() {
         when(produtoRepository.findById(1L)).thenReturn(Optional.of(produto));
         when(mercadoRepository.findById(2L)).thenReturn(Optional.of(mercado));
-        when(usuarioRepository.findByEmail("lucas@teste.com")).thenReturn(Optional.of(usuario));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario);
         when(precoRepository.save(any(Preco.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         PrecoResponseDTO response = precoService.cadastrar(dto);
@@ -103,7 +91,7 @@ class PrecoServiceTest {
 
         when(produtoRepository.findById(1L)).thenReturn(Optional.of(produto));
         when(mercadoRepository.findById(2L)).thenReturn(Optional.of(mercado));
-        when(usuarioRepository.findByEmail("lucas@teste.com")).thenReturn(Optional.of(usuario));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario);
         when(mercadoComercianteRepository.existsByMercadoIdAndComercianteId(any(), any())).thenReturn(true);
         when(precoRepository.save(any(Preco.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
