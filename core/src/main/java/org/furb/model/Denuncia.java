@@ -1,6 +1,7 @@
 package org.furb.model;
 
 import jakarta.persistence.*;
+import org.furb.enums.FotoStatus;
 import org.furb.enums.OrigemResolucao;
 import org.furb.enums.StatusDenuncia;
 
@@ -41,6 +42,16 @@ public class Denuncia {
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private OrigemResolucao resolvidoPor;
+
+    @Column(name = "foto_path", length = 255)
+    private String fotoPath;
+
+    @Column(name = "thumb_path", length = 255)
+    private String thumbPath;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "foto_status", nullable = false, length = 20)
+    private FotoStatus fotoStatus = FotoStatus.SEM_FOTO;
 
     public Denuncia() {
     }
@@ -111,5 +122,29 @@ public class Denuncia {
 
     public void setResolvidoPor(OrigemResolucao resolvidoPor) {
         this.resolvidoPor = resolvidoPor;
+    }
+
+    public String getFotoPath() {
+        return fotoPath;
+    }
+
+    public void setFotoPath(String fotoPath) {
+        this.fotoPath = fotoPath;
+    }
+
+    public String getThumbPath() {
+        return thumbPath;
+    }
+
+    public void setThumbPath(String thumbPath) {
+        this.thumbPath = thumbPath;
+    }
+
+    public FotoStatus getFotoStatus() {
+        return fotoStatus;
+    }
+
+    public void setFotoStatus(FotoStatus fotoStatus) {
+        this.fotoStatus = fotoStatus;
     }
 }
