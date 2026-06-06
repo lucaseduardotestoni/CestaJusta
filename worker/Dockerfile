@@ -5,13 +5,12 @@ COPY pom.xml .
 COPY core/pom.xml core/pom.xml
 COPY app/pom.xml app/pom.xml
 COPY worker/pom.xml worker/pom.xml
-RUN mvn -q -B -pl app -am -DskipTests dependency:go-offline
+RUN mvn -q -B -pl worker -am -DskipTests dependency:go-offline
 COPY core/src core/src
-COPY app/src app/src
-RUN mvn -q -B -pl app -am -DskipTests package
+COPY worker/src worker/src
+RUN mvn -q -B -pl worker -am -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=build /workspace/app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+COPY --from=build /workspace/worker/target/*.jar worker.jar
+ENTRYPOINT ["java", "-jar", "/app/worker.jar"]
