@@ -18,9 +18,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.furb.dto.denuncia.DenunciaResponseDTO;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -265,5 +268,39 @@ class DenunciaServiceTest {
         assertThat(total).isEqualTo(1);
         assertThat(antiga.getStatus()).isEqualTo(StatusDenuncia.REJEITADA);
         assertThat(antiga.getResolvidoPor()).isEqualTo(org.furb.enums.OrigemResolucao.SISTEMA);
+    }
+
+    @Test
+    void buscarPorId_retornaDtoComContagens() {
+        Denuncia d = denunciaPendente(denunciante);
+        d.setMotivo("abusivo");
+        when(denunciaRepository.findById(100L)).thenReturn(Optional.of(d));
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(100L, org.furb.enums.TipoVoto.CONFIRMA)).thenReturn(2L);
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(100L, org.furb.enums.TipoVoto.REJEITA)).thenReturn(1L);
+
+        DenunciaResponseDTO dto = service.buscarPorId(100L);
+
+        assertThat(dto.getId()).isEqualTo(100L);
+        assertThat(dto.getPrecoId()).isEqualTo(10L);
+        assertThat(dto.getDenuncianteId()).isEqualTo(1L);
+        assertThat(dto.getMotivo()).isEqualTo("abusivo");
+        assertThat(dto.getStatus()).isEqualTo(StatusDenuncia.PENDENTE);
+        assertThat(dto.getVotosConfirma()).isEqualTo(2L);
+        assertThat(dto.getVotosRejeita()).isEqualTo(1L);
+    }
+
+    @Test
+    void listarPorPreco_retornaLista() {
+        Denuncia d = denunciaPendente(denunciante);
+        d.setMotivo("preco errado");
+        when(denunciaRepository.findByPrecoId(10L)).thenReturn(List.of(d));
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(100L, org.furb.enums.TipoVoto.CONFIRMA)).thenReturn(0L);
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(100L, org.furb.enums.TipoVoto.REJEITA)).thenReturn(0L);
+
+        List<DenunciaResponseDTO> lista = service.listarPorPreco(10L);
+
+        assertThat(lista).hasSize(1);
+        assertThat(lista.get(0).getStatus()).isEqualTo(StatusDenuncia.PENDENTE);
+        assertThat(lista.get(0).getPrecoId()).isEqualTo(10L);
     }
 }
