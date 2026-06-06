@@ -268,3 +268,6 @@ INNER JOIN mercados m ON m.cnpj = base.cnpj
 INNER JOIN usuarios u ON u.email = base.email
 CROSS JOIN generate_series(0, 27, 3) AS gs(day_offset)
 WHERE NOT EXISTS (SELECT 1 FROM precos LIMIT 1);
+
+-- Índice parcial para o relay da outbox (idempotente)
+CREATE INDEX IF NOT EXISTS idx_outbox_pendente_parcial ON outbox (criado_em) WHERE enviado = false;
