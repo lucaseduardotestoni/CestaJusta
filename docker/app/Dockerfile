@@ -4,7 +4,7 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY core/pom.xml core/pom.xml
 COPY app/pom.xml app/pom.xml
-COPY worker/pom.xml worker/pom.xml
+COPY rabbitmq-worker/pom.xml rabbitmq-worker/pom.xml
 RUN mvn -q -B -pl app -am -DskipTests dependency:go-offline
 COPY core/src core/src
 COPY app/src app/src

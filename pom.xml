@@ -29,7 +29,7 @@
     <modules>
         <module>core</module>
         <module>app</module>
-        <module>worker</module>
+        <module>rabbitmq-worker</module>
     </modules>
 
     <dependencyManagement>

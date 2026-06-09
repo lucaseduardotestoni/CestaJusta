@@ -1,4 +1,4 @@
-package org.furb.worker;
+package org.furb.rabbitmqworker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.furb.enums.FotoStatus;

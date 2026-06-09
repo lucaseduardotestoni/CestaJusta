@@ -1,4 +1,4 @@
-package org.furb.worker;
+package org.furb.rabbitmqworker;
 
 import org.springframework.stereotype.Component;
 

@@ -25,8 +25,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
@@ -39,7 +39,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: app/Dockerfile
+      dockerfile: docker/app/Dockerfile
     container_name: cestajusta-app
     depends_on:
       db:
@@ -64,11 +64,11 @@ services:
     networks:
       - cestajusta-net
 
-  worker:
+  rabbitmq-worker:
     build:
       context: .
-      dockerfile: worker/Dockerfile
-    container_name: cestajusta-worker
+      dockerfile: docker/rabbitmq-worker/Dockerfile
+    container_name: cestajusta-rabbitmq-worker
     depends_on:
       db:
         condition: service_healthy
