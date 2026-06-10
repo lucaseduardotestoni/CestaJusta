@@ -102,6 +102,65 @@ class DenunciaServiceTest {
     }
 
     @Test
+    void criar_comFoto_armazenaMarcaProcessandoEEmiteEventoOutbox() {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
+        when(precoRepository.findById(10L)).thenReturn(Optional.of(preco));
+        when(denunciaRepository.existsByUsuarioIdAndPrecoIdAndDataCriacaoAfter(eq(1L), eq(10L), any()))
+                .thenReturn(false);
+        when(denunciaRepository.save(any(Denuncia.class))).thenAnswer(i -> i.getArgument(0));
+        when(fotoStorage.store(eq("denuncias/2026/06"), any(byte[].class), eq("jpg")))
+                .thenReturn("denuncias/2026/06/foto.jpg");
+        when(outboxService.novoEventoId()).thenReturn("evt-9");
+
+        var foto = new org.springframework.mock.web.MockMultipartFile(
+                "foto", "f.jpg", "image/jpeg", new byte[]{1, 2, 3});
+
+        Denuncia criada = service.criar(dto(), foto);
+
+        assertThat(criada.getFotoStatus()).isEqualTo(org.furb.enums.FotoStatus.PROCESSANDO);
+        assertThat(criada.getFotoPath()).isEqualTo("denuncias/2026/06/foto.jpg");
+        verify(outboxService).registrar(eq("evt-9"),
+                eq(org.furb.messaging.contract.RoutingKeys.FOTO_SOLICITADA),
+                any(org.furb.messaging.contract.FotoSolicitadaEvent.class));
+    }
+
+    @Test
+    void criar_comFotoMimeInvalido_lancaBusinessException() {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
+        when(precoRepository.findById(10L)).thenReturn(Optional.of(preco));
+        when(denunciaRepository.existsByUsuarioIdAndPrecoIdAndDataCriacaoAfter(eq(1L), eq(10L), any()))
+                .thenReturn(false);
+
+        var foto = new org.springframework.mock.web.MockMultipartFile(
+                "foto", "doc.pdf", "application/pdf", new byte[]{1, 2, 3});
+
+        assertThatThrownBy(() -> service.criar(dto(), foto))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("não suportado");
+
+        verify(denunciaRepository, never()).save(any());
+    }
+
+    @Test
+    void criar_comFotoIllegivel_lancaBusinessException() throws Exception {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
+        when(precoRepository.findById(10L)).thenReturn(Optional.of(preco));
+        when(denunciaRepository.existsByUsuarioIdAndPrecoIdAndDataCriacaoAfter(eq(1L), eq(10L), any()))
+                .thenReturn(false);
+
+        var foto = org.mockito.Mockito.mock(org.springframework.web.multipart.MultipartFile.class);
+        when(foto.isEmpty()).thenReturn(false);
+        when(foto.getContentType()).thenReturn("image/jpeg");
+        when(foto.getBytes()).thenThrow(new java.io.IOException("falha de leitura"));
+
+        assertThatThrownBy(() -> service.criar(dto(), foto))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("ler a imagem");
+
+        verify(denunciaRepository, never()).save(any());
+    }
+
+    @Test
     void criar_dentroDoIntervaloAntiSpam_lancaBusinessException() {
         when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
         when(precoRepository.findById(10L)).thenReturn(Optional.of(preco));
