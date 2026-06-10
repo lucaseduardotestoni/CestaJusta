@@ -24,6 +24,12 @@
         <sonar.organization>lucaseduardotestoni</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <!--
+          Cobertura focada na lógica. Excluídos (ainda analisados p/ bugs/smells, só não contam cobertura):
+          - rabbitmq-worker (processamento de foto/listeners) por decisão de não testar este módulo;
+          - boilerplate sem lógica: entidades, DTOs, records de contrato, enums, @Configuration e entrypoints.
+        -->
+        <sonar.coverage.exclusions>**/rabbitmqworker/**,**/*Application.java,**/Main.java,**/model/**,**/dto/**,**/messaging/contract/**,**/enums/**,**/config/**</sonar.coverage.exclusions>
     </properties>
 
     <modules>
