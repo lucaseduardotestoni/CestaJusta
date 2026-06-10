@@ -18,11 +18,33 @@ services:
     networks:
       - cestajusta-net
 
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: cestajusta-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cestajusta-net
+
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
     container_name: cestajusta-app
     depends_on:
       db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     ports:
       - "8080:8080"
@@ -32,11 +54,47 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       JWT_SECRET: 7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: cestajusta
+      RABBITMQ_PASS: cestajusta
+      RABBITMQ_VHOST: cestajusta
+      APP_UPLOADS_DIR: /data/uploads
+    volumes:
+      - uploads_data:/data/uploads
+    networks:
+      - cestajusta-net
+
+  rabbitmq-worker:
+    build:
+      context: .
+      dockerfile: docker/rabbitmq-worker/Dockerfile
+    container_name: cestajusta-rabbitmq-worker
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      app:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cestajusta
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: cestajusta
+      RABBITMQ_PASS: cestajusta
+      RABBITMQ_VHOST: cestajusta
+      APP_UPLOADS_DIR: /data/uploads
+    volumes:
+      - uploads_data:/data/uploads
     networks:
       - cestajusta-net
 
 volumes:
   postgres_data:
+  rabbitmq_data:
+  uploads_data:
 
 networks:
   cestajusta-net:
