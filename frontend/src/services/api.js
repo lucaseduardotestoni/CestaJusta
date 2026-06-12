@@ -50,13 +50,6 @@ export async function getProdutos() {
   return handleResponse(res)
 }
 
-export async function getComparacaoProduto(produtoId) {
-  const res = await fetch(`${BASE_URL}/comparacoes/produto/${produtoId}`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
-}
-
 export async function cadastrar(nome, email, senha, tipoUsuario) {
   const res = await fetch(`${BASE_URL}/usuarios/cadastro`, {
     method: 'POST',
