@@ -111,3 +111,7 @@
 .pm-btn-den:hover { background: var(--cor-accent, #EF6E35); color: #fff; }
 .pm-rejeitado .pm-valor { text-decoration: line-through; color: var(--cor-text-muted, #6B7280); }
 .pm-ok { font-size: 12px; color: var(--cor-success, #15803D); font-weight: 600; margin-top: 8px; }
+
+.pm-legenda { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px;
+              color: var(--cor-text-muted, #6B7280); margin-top: 16px; }
+.pm-legenda span { display: flex; align-items: center; gap: 6px; }
