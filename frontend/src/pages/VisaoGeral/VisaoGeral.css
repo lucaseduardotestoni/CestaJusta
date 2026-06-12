@@ -57,3 +57,17 @@
   border-radius: var(--r-sm);
   font-size: var(--fs-sm);
 }
+
+/* ---- Preços por mercado (US08/US09) ---- */
+.pm-dot { width: 9px; height: 9px; border-radius: 999px; display: inline-block; flex: none; }
+.dot-conf  { background: var(--cor-success, #15803D); }
+.dot-pend  { background: var(--cor-warning, #D97706); }
+.dot-desat { background: var(--cor-text-muted, #6B7280); }
+.dot-rej   { background: var(--cor-danger, #DC2626); }
+
+.pm-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+            text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+.badge-conf  { background: var(--cor-primary-soft, #E8F4EE); color: var(--cor-success, #15803D); }
+.badge-pend  { background: #FEF3C7; color: var(--cor-warning, #D97706); }
+.badge-desat { background: #F3F4F6; color: var(--cor-text-muted, #6B7280); }
+.badge-rej   { background: #FEE2E2; color: var(--cor-danger, #DC2626); }
