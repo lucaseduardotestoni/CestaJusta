@@ -94,3 +94,20 @@
 .pm-btn-cancelar { background: transparent; border: 1px solid var(--cor-border, #E5E7EB);
   color: var(--cor-text, #1F1F1F); padding: 9px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
 .pm-nota { font-size: 12px; color: var(--cor-text-muted, #6B7280); margin-top: 8px; }
+
+.pm-linha { border: 1px solid var(--cor-border, #E5E7EB); border-radius: 10px;
+            padding: 12px 16px; margin-bottom: 12px; }
+.pm-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pm-merc { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.pm-valor { font-weight: 700; font-size: 16px; }
+.pm-meta { color: var(--cor-text-muted, #6B7280); font-size: 12px; margin-top: 2px; }
+.pm-acoes { display: flex; gap: 8px; margin-top: 12px; }
+.pm-btn { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px;
+          cursor: pointer; border: 1px solid transparent; }
+.pm-btn:disabled { opacity: .6; cursor: default; }
+.pm-btn-conf { background: transparent; color: var(--cor-primary, #0E7C42); border-color: var(--cor-primary, #0E7C42); }
+.pm-btn-conf:hover:not(:disabled) { background: var(--cor-primary, #0E7C42); color: #fff; }
+.pm-btn-den { background: transparent; color: var(--cor-accent, #EF6E35); border-color: var(--cor-accent, #EF6E35); }
+.pm-btn-den:hover { background: var(--cor-accent, #EF6E35); color: #fff; }
+.pm-rejeitado .pm-valor { text-decoration: line-through; color: var(--cor-text-muted, #6B7280); }
+.pm-ok { font-size: 12px; color: var(--cor-success, #15803D); font-weight: 600; margin-top: 8px; }
