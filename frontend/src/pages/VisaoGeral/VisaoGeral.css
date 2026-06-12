@@ -71,3 +71,26 @@
 .badge-pend  { background: #FEF3C7; color: var(--cor-warning, #D97706); }
 .badge-desat { background: #F3F4F6; color: var(--cor-text-muted, #6B7280); }
 .badge-rej   { background: #FEE2E2; color: var(--cor-danger, #DC2626); }
+
+.pm-form-den { border: 1px solid var(--cor-accent, #EF6E35); border-radius: 10px;
+               padding: 16px; background: #FFF8F4; margin-top: 12px; }
+.pm-form-den h4 { margin: 0 0 4px; font-size: 14px; }
+.pm-form-alvo { font-size: 12px; color: var(--cor-text-muted, #6B7280); margin-bottom: 12px; }
+.pm-form-den label { display: block; font-size: 12px; font-weight: 600; margin: 12px 0 4px; }
+.pm-form-den select, .pm-form-den textarea { width: 100%; padding: 8px 10px;
+  border: 1px solid var(--cor-border, #E5E7EB); border-radius: 6px; font: inherit;
+  font-size: 14px; background: #fff; }
+.pm-form-den textarea { resize: vertical; min-height: 60px; }
+.pm-contador { font-size: 11px; color: var(--cor-text-muted, #6B7280); text-align: right; }
+.pm-foto-preview { margin-top: 8px; display: flex; align-items: center; gap: 12px; }
+.pm-foto-preview img { max-height: 80px; border-radius: 6px; border: 1px solid var(--cor-border, #E5E7EB); }
+.pm-foto-remover { background: none; border: none; color: var(--cor-danger, #DC2626);
+  font-size: 12px; font-weight: 600; cursor: pointer; }
+.pm-erro { margin-top: 12px; font-size: 12px; color: var(--cor-danger, #DC2626); font-weight: 600; }
+.pm-form-acoes { display: flex; gap: 8px; margin-top: 16px; }
+.pm-btn-enviar { background: var(--cor-accent, #EF6E35); color: #fff; border: none;
+  padding: 9px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+.pm-btn-enviar:disabled { opacity: .6; cursor: default; }
+.pm-btn-cancelar { background: transparent; border: 1px solid var(--cor-border, #E5E7EB);
+  color: var(--cor-text, #1F1F1F); padding: 9px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+.pm-nota { font-size: 12px; color: var(--cor-text-muted, #6B7280); margin-top: 8px; }
