@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { confirmarPreco } from '../../services/api'
+import { useToast } from '../../components/Toast/ToastContext'
+import { useAcoesPrecoSessao } from '../../context/AcoesPrecoSessaoContext'
 import { StatusDot, StatusBadge } from './StatusPrecoBadge'
 import DenunciaInlineForm from './DenunciaInlineForm'
 
@@ -13,11 +15,13 @@ function formatarData(iso) {
 
 export default function PrecoLinha({ preco }) {
   const [confirmando, setConfirmando] = useState(false)
-  const [confirmado, setConfirmado] = useState(false)
   const [erroConfirmar, setErroConfirmar] = useState(null)
   const [mostrarForm, setMostrarForm] = useState(false)
-  const [denunciado, setDenunciado] = useState(false)
+  const { mostrarToast } = useToast()
+  const { foiConfirmado, marcarConfirmado, foiDenunciado, marcarDenunciado } = useAcoesPrecoSessao()
 
+  const confirmado = foiConfirmado(preco.id)
+  const denunciado = foiDenunciado(preco.id)
   const podeConfirmar = preco.status === 'PENDENTE' && !confirmado
   const podeDenunciar = preco.status !== 'REJEITADO' && !denunciado && !confirmado
   const rejeitado = preco.status === 'REJEITADO'
@@ -27,7 +31,7 @@ export default function PrecoLinha({ preco }) {
     setErroConfirmar(null)
     try {
       await confirmarPreco(preco.id)
-      setConfirmado(true)
+      marcarConfirmado(preco.id)
     } catch (e) {
       setErroConfirmar(e.message)
     } finally {
@@ -68,7 +72,11 @@ export default function PrecoLinha({ preco }) {
         <DenunciaInlineForm
           preco={preco}
           onCancelar={() => setMostrarForm(false)}
-          onSucesso={() => { setMostrarForm(false); setDenunciado(true) }}
+          onSucesso={() => {
+            setMostrarForm(false)
+            marcarDenunciado(preco.id)
+            mostrarToast('Denúncia cadastrada com sucesso!')
+          }}
         />
       )}
     </div>

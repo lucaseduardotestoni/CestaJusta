@@ -92,6 +92,13 @@ export async function getPrecosPorProduto(produtoId) {
   return handleResponse(res)
 }
 
+export async function getMeusPrecosDenunciados() {
+  const res = await fetch(`${BASE_URL}/denuncias/meus-precos`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // retorna number[] (ids de preço já denunciados na janela)
+}
+
 export async function confirmarPreco(precoId) {
   const res = await fetch(`${BASE_URL}/precos/${precoId}/confirmacoes`, {
     method: 'POST',
