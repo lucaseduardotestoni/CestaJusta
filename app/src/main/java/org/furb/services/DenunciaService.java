@@ -236,6 +236,14 @@ public class DenunciaService {
         return denunciaRepository.findByPrecoId(precoId).stream().map(this::toResponseDTO).toList();
     }
 
+    /** Ids dos preços que o usuário autenticado já denunciou dentro da janela anti-spam. */
+    @Transactional(readOnly = true)
+    public List<Long> precosDenunciadosPeloUsuarioNaJanela() {
+        Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
+        LocalDateTime limite = LocalDateTime.now(clock).minusDays(DIAS_ANTISPAM);
+        return denunciaRepository.findPrecoIdsDenunciadosPeloUsuario(usuario.getId(), limite);
+    }
+
     private DenunciaResponseDTO toResponseDTO(Denuncia d) {
         long confirma = votoDenunciaRepository.countByDenunciaIdAndTipo(d.getId(), TipoVoto.CONFIRMA);
         long rejeita = votoDenunciaRepository.countByDenunciaIdAndTipo(d.getId(), TipoVoto.REJEITA);

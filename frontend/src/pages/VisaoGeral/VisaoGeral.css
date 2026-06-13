@@ -49,11 +49,68 @@
 
 .vg-modal-secao { margin-bottom: var(--space-5); }
 .vg-modal-secao h3 { font-size: var(--fs-md); margin: 0 0 var(--space-3); }
-.vg-modal-mercados { display: flex; flex-direction: column; gap: var(--space-2); }
-.vg-modal-mercados li {
-  display: flex; justify-content: space-between;
-  padding: var(--space-2) var(--space-3);
-  background: var(--cor-bg);
-  border-radius: var(--r-sm);
-  font-size: var(--fs-sm);
-}
+
+/* Detalhe do produto: gráfico fixo no topo, só a lista de preços rola */
+.vg-modal-detalhe { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.vg-modal-secao-fixa { flex: 0 0 auto; }
+.vg-modal-secao-precos { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; margin-bottom: 0; }
+.vg-modal-secao-precos h3 { flex: 0 0 auto; }
+.vg-modal-precos-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
+/* ---- Preços por mercado (US08/US09) ---- */
+.pm-dot { width: 9px; height: 9px; border-radius: 999px; display: inline-block; flex: none; }
+.dot-conf  { background: var(--cor-success, #15803D); }
+.dot-pend  { background: var(--cor-warning, #D97706); }
+.dot-desat { background: var(--cor-text-muted, #6B7280); }
+.dot-rej   { background: var(--cor-danger, #DC2626); }
+
+.pm-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+            text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+.badge-conf  { background: var(--cor-primary-soft, #E8F4EE); color: var(--cor-success, #15803D); }
+.badge-pend  { background: #FEF3C7; color: var(--cor-warning, #D97706); }
+.badge-desat { background: #F3F4F6; color: var(--cor-text-muted, #6B7280); }
+.badge-rej   { background: #FEE2E2; color: var(--cor-danger, #DC2626); }
+
+.pm-form-den { border: 1px solid var(--cor-accent, #EF6E35); border-radius: 10px;
+               padding: 16px; background: #FFF8F4; margin-top: 12px; }
+.pm-form-den h4 { margin: 0 0 4px; font-size: 14px; }
+.pm-form-alvo { font-size: 12px; color: var(--cor-text-muted, #6B7280); margin-bottom: 12px; }
+.pm-form-den label { display: block; font-size: 12px; font-weight: 600; margin: 12px 0 4px; }
+.pm-form-den select, .pm-form-den textarea { width: 100%; padding: 8px 10px;
+  border: 1px solid var(--cor-border, #E5E7EB); border-radius: 6px; font: inherit;
+  font-size: 14px; background: #fff; }
+.pm-form-den textarea { resize: vertical; min-height: 60px; }
+.pm-contador { font-size: 11px; color: var(--cor-text-muted, #6B7280); text-align: right; }
+.pm-foto-preview { margin-top: 8px; display: flex; align-items: center; gap: 12px; }
+.pm-foto-preview img { max-height: 80px; border-radius: 6px; border: 1px solid var(--cor-border, #E5E7EB); }
+.pm-foto-remover { background: none; border: none; color: var(--cor-danger, #DC2626);
+  font-size: 12px; font-weight: 600; cursor: pointer; }
+.pm-erro { margin-top: 12px; font-size: 12px; color: var(--cor-danger, #DC2626); font-weight: 600; }
+.pm-form-acoes { display: flex; gap: 8px; margin-top: 16px; }
+.pm-btn-enviar { background: var(--cor-accent, #EF6E35); color: #fff; border: none;
+  padding: 9px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+.pm-btn-enviar:disabled { opacity: .6; cursor: default; }
+.pm-btn-cancelar { background: transparent; border: 1px solid var(--cor-border, #E5E7EB);
+  color: var(--cor-text, #1F1F1F); padding: 9px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+.pm-nota { font-size: 12px; color: var(--cor-text-muted, #6B7280); margin-top: 8px; }
+
+.pm-linha { border: 1px solid var(--cor-border, #E5E7EB); border-radius: 10px;
+            padding: 12px 16px; margin-bottom: 12px; }
+.pm-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pm-merc { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.pm-valor { font-weight: 700; font-size: 16px; }
+.pm-meta { color: var(--cor-text-muted, #6B7280); font-size: 12px; margin-top: 2px; }
+.pm-acoes { display: flex; gap: 8px; margin-top: 12px; }
+.pm-btn { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px;
+          cursor: pointer; border: 1px solid transparent; }
+.pm-btn:disabled { opacity: .6; cursor: default; }
+.pm-btn-conf { background: transparent; color: var(--cor-primary, #0E7C42); border-color: var(--cor-primary, #0E7C42); }
+.pm-btn-conf:hover:not(:disabled) { background: var(--cor-primary, #0E7C42); color: #fff; }
+.pm-btn-den { background: transparent; color: var(--cor-accent, #EF6E35); border-color: var(--cor-accent, #EF6E35); }
+.pm-btn-den:hover { background: var(--cor-accent, #EF6E35); color: #fff; }
+.pm-rejeitado .pm-valor { text-decoration: line-through; color: var(--cor-text-muted, #6B7280); }
+.pm-ok { font-size: 12px; color: var(--cor-success, #15803D); font-weight: 600; margin-top: 8px; }
+
+.pm-legenda { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px;
+              color: var(--cor-text-muted, #6B7280); margin-top: 16px; }
+.pm-legenda span { display: flex; align-items: center; gap: 6px; }

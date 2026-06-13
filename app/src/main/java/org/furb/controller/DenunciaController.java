@@ -42,6 +42,11 @@ public class DenunciaController {
         return ResponseEntity.ok(denunciaService.listarPorPreco(precoId));
     }
 
+    @GetMapping("/meus-precos")
+    public ResponseEntity<List<Long>> meusPrecosDenunciados() {
+        return ResponseEntity.ok(denunciaService.precosDenunciadosPeloUsuarioNaJanela());
+    }
+
     @PostMapping("/{id}/votos")
     public ResponseEntity<Void> votar(@PathVariable Long id, @Valid @RequestBody VotoDenunciaDTO dto) {
         denunciaService.votar(id, dto.getTipo());

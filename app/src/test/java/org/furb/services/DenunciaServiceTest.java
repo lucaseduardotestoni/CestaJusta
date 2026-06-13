@@ -364,4 +364,17 @@ class DenunciaServiceTest {
         assertThat(lista.get(0).getStatus()).isEqualTo(StatusDenuncia.PENDENTE);
         assertThat(lista.get(0).getPrecoId()).isEqualTo(10L);
     }
+
+    @Test
+    void precosDenunciadosPeloUsuarioNaJanela_consultaComLimiteAntiSpamERetornaIds() {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
+        java.time.LocalDateTime limiteEsperado = java.time.LocalDateTime.now(clock).minusDays(3);
+        when(denunciaRepository.findPrecoIdsDenunciadosPeloUsuario(1L, limiteEsperado))
+                .thenReturn(List.of(10L, 20L));
+
+        List<Long> ids = service.precosDenunciadosPeloUsuarioNaJanela();
+
+        assertThat(ids).containsExactly(10L, 20L);
+        verify(denunciaRepository).findPrecoIdsDenunciadosPeloUsuario(1L, limiteEsperado);
+    }
 }

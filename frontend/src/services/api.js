@@ -50,13 +50,6 @@ export async function getProdutos() {
   return handleResponse(res)
 }
 
-export async function getComparacaoProduto(produtoId) {
-  const res = await fetch(`${BASE_URL}/comparacoes/produto/${produtoId}`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
-}
-
 export async function cadastrar(nome, email, senha, tipoUsuario) {
   const res = await fetch(`${BASE_URL}/usuarios/cadastro`, {
     method: 'POST',
@@ -90,4 +83,41 @@ export async function getHistoricoProduto(produtoId, dias = 30) {
     headers: { ...authHeaders() },
   })
   return handleResponse(res)
+}
+
+export async function getPrecosPorProduto(produtoId) {
+  const res = await fetch(`${BASE_URL}/precos/produto/${produtoId}`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res)
+}
+
+export async function getMeusPrecosDenunciados() {
+  const res = await fetch(`${BASE_URL}/denuncias/meus-precos`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // retorna number[] (ids de preço já denunciados na janela)
+}
+
+export async function confirmarPreco(precoId) {
+  const res = await fetch(`${BASE_URL}/precos/${precoId}/confirmacoes`, {
+    method: 'POST',
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // 204 → corpo vazio
+}
+
+export async function denunciarPreco({ precoId, motivo, descricao, foto }) {
+  const form = new FormData()
+  form.append('precoId', precoId)
+  form.append('motivo', motivo)
+  if (descricao) form.append('descricao', descricao)
+  if (foto) form.append('foto', foto)
+  // NÃO definir Content-Type manualmente: o browser define o boundary do multipart.
+  const res = await fetch(`${BASE_URL}/denuncias`, {
+    method: 'POST',
+    headers: { ...authHeaders() },
+    body: form,
+  })
+  return handleResponse(res) // 201 → corpo vazio
 }
