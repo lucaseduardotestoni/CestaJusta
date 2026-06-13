@@ -9,6 +9,7 @@ const MOTIVOS = [
 ]
 const MAX_FOTO_BYTES = 5 * 1024 * 1024
 const TIPOS_OK = ['image/jpeg', 'image/png', 'image/webp']
+const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 export default function DenunciaInlineForm({ preco, onCancelar, onSucesso }) {
   const [motivo, setMotivo] = useState(MOTIVOS[0])
@@ -58,8 +59,6 @@ export default function DenunciaInlineForm({ preco, onCancelar, onSucesso }) {
       setEnviando(false)
     }
   }
-
-  const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
   return (
     <div className="pm-form-den">

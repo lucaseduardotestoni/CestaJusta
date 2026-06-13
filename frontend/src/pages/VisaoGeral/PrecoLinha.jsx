@@ -19,7 +19,7 @@ export default function PrecoLinha({ preco }) {
   const [denunciado, setDenunciado] = useState(false)
 
   const podeConfirmar = preco.status === 'PENDENTE' && !confirmado
-  const podeDenunciar = preco.status !== 'REJEITADO' && !denunciado
+  const podeDenunciar = preco.status !== 'REJEITADO' && !denunciado && !confirmado
   const rejeitado = preco.status === 'REJEITADO'
 
   async function confirmar() {
