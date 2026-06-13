@@ -1,0 +1,16 @@
+.ep-form label { display: block; font-size: var(--fs-xs); font-weight: 600;
+  margin: var(--space-3) 0 var(--space-1); }
+.ep-form select, .ep-form input { width: 100%; padding: 9px 10px;
+  border: 1px solid var(--cor-border); border-radius: var(--r-sm);
+  font: inherit; font-size: var(--fs-sm); background: #fff; color: var(--cor-text); }
+.ep-erro { margin-top: var(--space-3); font-size: var(--fs-xs);
+  color: var(--cor-danger); font-weight: 600; }
+.ep-acoes { display: flex; gap: var(--space-2); margin-top: var(--space-5); }
+.ep-btn-enviar { background: var(--cor-primary); color: #fff; border: none;
+  padding: 10px 18px; border-radius: var(--r-sm); font-weight: 700; cursor: pointer; }
+.ep-btn-enviar:disabled { opacity: .6; cursor: default; }
+.ep-btn-enviar:hover:not(:disabled) { background: var(--cor-primary-hover); }
+.ep-btn-cancelar { background: transparent; border: 1px solid var(--cor-border);
+  color: var(--cor-text); padding: 10px 18px; border-radius: var(--r-sm);
+  font-weight: 600; cursor: pointer; }
+.ep-btn-cancelar:disabled { opacity: .6; cursor: default; }

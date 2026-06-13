@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import './Modal.css'
 
 export default function Modal({ aberto, onFechar, children, titulo }) {
@@ -15,7 +16,7 @@ export default function Modal({ aberto, onFechar, children, titulo }) {
 
   if (!aberto) return null
 
-  return (
+  return createPortal(
     <div className="modal-backdrop" onClick={onFechar} role="presentation">
       <div className="modal-content" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="modal-header">
@@ -24,6 +25,7 @@ export default function Modal({ aberto, onFechar, children, titulo }) {
         </div>
         <div className="modal-body">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

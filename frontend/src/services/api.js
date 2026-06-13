@@ -121,3 +121,19 @@ export async function denunciarPreco({ precoId, motivo, descricao, foto }) {
   })
   return handleResponse(res) // 201 → corpo vazio
 }
+
+export async function getMercados() {
+  const res = await fetch(`${BASE_URL}/mercados`, {
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res)
+}
+
+export async function cadastrarPreco({ produtoId, mercadoId, valor, dataColeta }) {
+  const res = await fetch(`${BASE_URL}/precos/cadastro`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ produtoId, mercadoId, valor, dataColeta }),
+  })
+  return handleResponse(res) // PrecoResponseDTO (201)
+}

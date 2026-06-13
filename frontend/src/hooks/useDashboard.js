@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getDashboardKpis, getDashboardProdutos } from '../services/api'
+import { useDashboardRefresh } from '../context/DashboardRefreshContext'
 
 export default function useDashboard() {
   const [kpis, setKpis] = useState(null)
@@ -8,6 +9,7 @@ export default function useDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [ordem, setOrdem] = useState('todos')
+  const { versao } = useDashboardRefresh()
 
   useEffect(() => {
     let cancelado = false
@@ -28,7 +30,7 @@ export default function useDashboard() {
       .finally(() => { if (!cancelado) setLoading(false) })
 
     return () => { cancelado = true }
-  }, [ordem])
+  }, [ordem, versao])
 
   return { kpis, produtos, totalProdutos, loading, error, ordem, setOrdem }
 }
