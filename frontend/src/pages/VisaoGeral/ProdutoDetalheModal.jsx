@@ -19,21 +19,25 @@ export default function ProdutoDetalheModal({ produto, onFechar }) {
   return (
     <Modal aberto={!!produto} onFechar={onFechar}
            titulo={produto?.nome || 'Detalhes'}>
-      {loading && <p>Carregando...</p>}
+      <div className="vg-modal-detalhe">
+        {loading && <p>Carregando...</p>}
 
-      {historico && (
-        <section className="vg-modal-secao">
-          <h3>Tendência de preço (30 dias)</h3>
-          <Sparkline pontos={historico.pontos} largura={620} altura={180} comTooltip />
-        </section>
-      )}
+        {historico && (
+          <section className="vg-modal-secao vg-modal-secao-fixa">
+            <h3>Tendência de preço (30 dias)</h3>
+            <Sparkline pontos={historico.pontos} largura={620} altura={180} comTooltip />
+          </section>
+        )}
 
-      {produto && (
-        <section className="vg-modal-secao">
-          <h3>Preços por mercado</h3>
-          <PrecosPorMercado produtoId={produto.id} />
-        </section>
-      )}
+        {produto && (
+          <section className="vg-modal-secao vg-modal-secao-precos">
+            <h3>Preços por mercado</h3>
+            <div className="vg-modal-precos-scroll">
+              <PrecosPorMercado produtoId={produto.id} />
+            </div>
+          </section>
+        )}
+      </div>
     </Modal>
   )
 }

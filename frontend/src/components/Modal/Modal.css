@@ -9,14 +9,18 @@
   border-radius: var(--r-lg);
   width: min(720px, 90vw);
   max-height: 85vh;
-  overflow: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow: var(--shadow-md);
 }
 .modal-header {
+  flex: 0 0 auto;
   display: flex; justify-content: space-between; align-items: center;
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--cor-border);
 }
 .modal-titulo { margin: 0; font-size: var(--fs-lg); font-weight: 700; }
 .modal-fechar { background: none; border: none; font-size: 24px; line-height: 1; }
-.modal-body { padding: var(--space-5); }
+.modal-body { padding: var(--space-5); flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; overflow: hidden; }

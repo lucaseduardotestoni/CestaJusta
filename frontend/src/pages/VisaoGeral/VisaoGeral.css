@@ -50,6 +50,13 @@
 .vg-modal-secao { margin-bottom: var(--space-5); }
 .vg-modal-secao h3 { font-size: var(--fs-md); margin: 0 0 var(--space-3); }
 
+/* Detalhe do produto: gráfico fixo no topo, só a lista de preços rola */
+.vg-modal-detalhe { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.vg-modal-secao-fixa { flex: 0 0 auto; }
+.vg-modal-secao-precos { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; margin-bottom: 0; }
+.vg-modal-secao-precos h3 { flex: 0 0 auto; }
+.vg-modal-precos-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
 /* ---- Preços por mercado (US08/US09) ---- */
 .pm-dot { width: 9px; height: 9px; border-radius: 999px; display: inline-block; flex: none; }
 .dot-conf  { background: var(--cor-success, #15803D); }
