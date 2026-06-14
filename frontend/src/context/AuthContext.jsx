@@ -20,7 +20,7 @@ function montarUsuarioDoToken(token) {
   return {
     nome,           // ex: "admin" extraído de "admin@cestajusta.com"
     email,
-    tipo: null,     // backend ainda não envia esse claim; preencher quando /usuarios/me existir
+    tipo: payload.tipo || null,   // claim 'tipo' do JWT (ADMIN | CONSUMIDOR | COMERCIANTE)
   }
 }
 
