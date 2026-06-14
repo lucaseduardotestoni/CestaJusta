@@ -29,21 +29,23 @@ export default function ProdutosPage() {
   const [pagina, setPagina] = useState(0)
   const [cadastroAberto, setCadastroAberto] = useState(false)
   const [processandoId, setProcessandoId] = useState(null)
+  const [recarregar, setRecarregar] = useState(0)
 
-  function carregar() {
+  useEffect(() => {
+    let cancelado = false
     setCarregando(true)
     setErro(null)
     const fonte = isAdmin ? getProdutosAdmin() : getProdutos()
     Promise.all([fonte, getCategorias()])
       .then(([prods, cats]) => {
+        if (cancelado) return
         setProdutos(prods)
         setCategorias(cats)
       })
-      .catch(e => setErro(e.message))
-      .finally(() => setCarregando(false))
-  }
-
-  useEffect(() => { carregar() }, [isAdmin]) // eslint-disable-line react-hooks/exhaustive-deps
+      .catch(e => { if (!cancelado) setErro(e.message) })
+      .finally(() => { if (!cancelado) setCarregando(false) })
+    return () => { cancelado = true }
+  }, [isAdmin, recarregar])
 
   useEffect(() => {
     const t = setTimeout(() => setBuscaDebounced(busca.trim().toLowerCase()), 250)
@@ -61,7 +63,9 @@ export default function ProdutosPage() {
     })
   }, [produtos, filtroAtivo, buscaDebounced, categoriaFiltro])
 
-  const start = pagina * PAGE_SIZE
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE))
+  const paginaEfetiva = Math.min(pagina, totalPaginas - 1)
+  const start = paginaEfetiva * PAGE_SIZE
   const visiveis = filtrados.slice(start, start + PAGE_SIZE)
 
   const opcoesCategoria = [
@@ -72,8 +76,8 @@ export default function ProdutosPage() {
   async function onInativar(p) {
     setProcessandoId(p.id)
     try {
-      await inativarProduto(p.id)
-      setProdutos(ps => ps.map(x => x.id === p.id ? { ...x, ativo: false } : x))
+      const atualizado = await inativarProduto(p.id)
+      setProdutos(ps => ps.map(x => x.id === p.id ? atualizado : x))
       mostrarToast('Produto inativado.')
     } catch (e) { mostrarToast(e.message, { tipo: 'erro' }) }
     finally { setProcessandoId(null) }
@@ -82,8 +86,8 @@ export default function ProdutosPage() {
   async function onAtivar(p) {
     setProcessandoId(p.id)
     try {
-      await ativarProduto(p.id)
-      setProdutos(ps => ps.map(x => x.id === p.id ? { ...x, ativo: true } : x))
+      const atualizado = await ativarProduto(p.id)
+      setProdutos(ps => ps.map(x => x.id === p.id ? atualizado : x))
       mostrarToast('Produto reativado.')
     } catch (e) { mostrarToast(e.message, { tipo: 'erro' }) }
     finally { setProcessandoId(null) }
@@ -130,14 +134,14 @@ export default function ProdutosPage() {
                   ? 'Nenhum produto'
                   : `Mostrando ${start + 1} a ${Math.min(start + PAGE_SIZE, filtrados.length)} de ${filtrados.length} produtos`}
               </span>
-              <Pagination total={filtrados.length} pageSize={PAGE_SIZE} page={pagina} onChange={setPagina} />
+              <Pagination total={filtrados.length} pageSize={PAGE_SIZE} page={paginaEfetiva} onChange={setPagina} />
             </div>
           </>}
 
       {isAdmin && (
         <ProdutoCadastroModal aberto={cadastroAberto} categorias={categorias}
                               onFechar={() => setCadastroAberto(false)}
-                              onCadastrado={() => { setCadastroAberto(false); carregar() }} />
+                              onCadastrado={() => { setCadastroAberto(false); setRecarregar(n => n + 1) }} />
       )}
     </>
   )

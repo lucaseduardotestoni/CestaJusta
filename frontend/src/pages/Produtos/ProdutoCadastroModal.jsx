@@ -43,6 +43,7 @@ export default function ProdutoCadastroModal({ aberto, categorias, onFechar, onC
       onCadastrado()
     } catch (e) {
       setErro(e.message)
+    } finally {
       setEnviando(false)
     }
   }
