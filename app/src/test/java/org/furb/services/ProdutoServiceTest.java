@@ -54,4 +54,50 @@ class ProdutoServiceTest {
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getNome()).isEqualTo("Arroz 5kg");
     }
+
+    @Test
+    void listarTodos_retornaAtivosEInativos() {
+        Categoria categoria = new Categoria();
+        categoria.setNome("Grãos");
+
+        Produto ativo = new Produto();
+        ativo.setNome("Arroz 5kg");
+        ativo.setCategoria(categoria);
+        ativo.setAtivo(true);
+
+        Produto inativo = new Produto();
+        inativo.setNome("Feijão antigo");
+        inativo.setCategoria(categoria);
+        inativo.setAtivo(false);
+
+        when(produtoRepository.findAll()).thenReturn(java.util.List.of(ativo, inativo));
+
+        List<ProdutoResponseDTO> resultado = produtoService.listarTodos();
+
+        assertThat(resultado).hasSize(2);
+        assertThat(resultado).extracting(ProdutoResponseDTO::getAtivo).contains(true, false);
+    }
+
+    @Test
+    void listarAtivos_naoRetornaInativos() {
+        Categoria categoria = new Categoria();
+        categoria.setNome("Grãos");
+
+        Produto ativo = new Produto();
+        ativo.setNome("Arroz 5kg");
+        ativo.setCategoria(categoria);
+        ativo.setAtivo(true);
+
+        Produto inativo = new Produto();
+        inativo.setNome("Feijão antigo");
+        inativo.setCategoria(categoria);
+        inativo.setAtivo(false);
+
+        when(produtoRepository.findAll()).thenReturn(java.util.List.of(ativo, inativo));
+
+        List<ProdutoResponseDTO> resultado = produtoService.listarAtivos();
+
+        assertThat(resultado).hasSize(1);
+        assertThat(resultado.get(0).getNome()).isEqualTo("Arroz 5kg");
+    }
 }

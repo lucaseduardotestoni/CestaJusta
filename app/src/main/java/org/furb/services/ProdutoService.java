@@ -47,10 +47,17 @@ public class ProdutoService {
         return toResponseDTO(salvo);
     }
 
-    public List<ProdutoResponseDTO> listarTodos() {
+    public List<ProdutoResponseDTO> listarAtivos() {
         return produtoRepository.findAll()
                 .stream()
                 .filter(Produto::getAtivo)
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    public List<ProdutoResponseDTO> listarTodos() {
+        return produtoRepository.findAll()
+                .stream()
                 .map(this::toResponseDTO)
                 .toList();
     }

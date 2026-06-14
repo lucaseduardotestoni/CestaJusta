@@ -29,6 +29,12 @@ public class ProdutoController {
     }
 
     @GetMapping
+    public ResponseEntity<List<ProdutoResponseDTO>> listarAtivos() {
+        return ResponseEntity.ok(produtoService.listarAtivos());
+    }
+
+    @GetMapping("/todos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProdutoResponseDTO>> listarTodos() {
         return ResponseEntity.ok(produtoService.listarTodos());
     }
