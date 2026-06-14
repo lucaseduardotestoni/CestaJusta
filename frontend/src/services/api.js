@@ -137,3 +137,38 @@ export async function cadastrarPreco({ produtoId, mercadoId, valor, dataColeta }
   })
   return handleResponse(res) // PrecoResponseDTO (201)
 }
+
+export async function getCategorias() {
+  const res = await fetch(`${BASE_URL}/categorias`, { headers: { ...authHeaders() } })
+  return handleResponse(res) // [{ id, nome }]
+}
+
+export async function getProdutosAdmin() {
+  const res = await fetch(`${BASE_URL}/produtos/todos`, { headers: { ...authHeaders() } })
+  return handleResponse(res) // ProdutoResponseDTO[] incluindo inativos
+}
+
+export async function cadastrarProduto({ nome, codigoBarras, marca, unidadeMedida, categoriaId }) {
+  const res = await fetch(`${BASE_URL}/produtos/cadastro`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ nome, codigoBarras, marca, unidadeMedida, categoriaId }),
+  })
+  return handleResponse(res) // 201 ProdutoResponseDTO
+}
+
+export async function inativarProduto(id) {
+  const res = await fetch(`${BASE_URL}/produtos/${id}`, {
+    method: 'DELETE',
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // ProdutoResponseDTO
+}
+
+export async function ativarProduto(id) {
+  const res = await fetch(`${BASE_URL}/produtos/${id}/ativar`, {
+    method: 'PATCH',
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // ProdutoResponseDTO
+}
