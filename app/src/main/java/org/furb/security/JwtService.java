@@ -3,6 +3,7 @@ package org.furb.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.furb.enums.TipoUsuario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,12 +41,29 @@ public class JwtService {
     }
 
     public String gerarToken(String email) {
-        return Jwts.builder()
+        return gerarToken(email, null);
+    }
+
+    public String gerarToken(String email, TipoUsuario tipo) {
+        JwtBuilder builder = Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 dia
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(getKey(), SignatureAlgorithm.HS256);
+        if (tipo != null) {
+            builder.claim("tipo", tipo.name());
+        }
+        return builder.compact();
+    }
+
+    public String extrairTipo(String token) {
+        Object tipo = Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("tipo");
+        return tipo != null ? tipo.toString() : null;
     }
 
     public String extrairEmail(String token) {
