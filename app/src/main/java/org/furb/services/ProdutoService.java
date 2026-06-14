@@ -115,7 +115,8 @@ public class ProdutoService {
                 produto.getMarca(),
                 produto.getUnidadeMedida(),
                 produto.getCategoria() != null ? produto.getCategoria().getNome() : null,
-                produto.getAtivo()
+                produto.getAtivo(),
+                produto.getImagemPath()
         );
     }
 }
