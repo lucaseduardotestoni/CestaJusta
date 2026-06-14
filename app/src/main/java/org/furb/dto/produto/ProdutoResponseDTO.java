@@ -10,12 +10,14 @@ public class ProdutoResponseDTO {
     private String categoria;
     private Boolean ativo;
     private String imagemPath;
+    private String thumbPath;
 
     public ProdutoResponseDTO() {
     }
 
     public ProdutoResponseDTO(Long id, String nome, String codigoBarras, String marca,
-                              String unidadeMedida, String categoria, Boolean ativo, String imagemPath) {
+                              String unidadeMedida, String categoria, Boolean ativo,
+                              String imagemPath, String thumbPath) {
         this.id = id;
         this.nome = nome;
         this.codigoBarras = codigoBarras;
@@ -24,6 +26,7 @@ public class ProdutoResponseDTO {
         this.categoria = categoria;
         this.ativo = ativo;
         this.imagemPath = imagemPath;
+        this.thumbPath = thumbPath;
     }
 
     public Long getId() {
@@ -56,5 +59,9 @@ public class ProdutoResponseDTO {
 
     public String getImagemPath() {
         return imagemPath;
+    }
+
+    public String getThumbPath() {
+        return thumbPath;
     }
 }

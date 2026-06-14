@@ -123,7 +123,8 @@ public class ProdutoService {
                 produto.getUnidadeMedida(),
                 produto.getCategoria() != null ? produto.getCategoria().getNome() : null,
                 produto.getAtivo(),
-                produto.getImagemPath()
+                produto.getImagemPath(),
+                produto.getThumbPath()
         );
     }
 }

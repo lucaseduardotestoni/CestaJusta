@@ -1,6 +1,7 @@
 package org.furb.model;
 
 import jakarta.persistence.*;
+import org.furb.enums.FotoStatus;
 
 @Entity
 @Table(name = "produtos")
@@ -24,6 +25,12 @@ public class Produto {
 
     @Column(length = 500)
     private String imagemPath;
+
+    @Column(length = 500)
+    private String thumbPath;
+
+    @Column(nullable = false)
+    private FotoStatus fotoStatus = FotoStatus.SEM_FOTO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
@@ -77,6 +84,22 @@ public class Produto {
 
     public void setImagemPath(String imagemPath) {
         this.imagemPath = imagemPath;
+    }
+
+    public String getThumbPath() {
+        return thumbPath;
+    }
+
+    public void setThumbPath(String thumbPath) {
+        this.thumbPath = thumbPath;
+    }
+
+    public FotoStatus getFotoStatus() {
+        return fotoStatus;
+    }
+
+    public void setFotoStatus(FotoStatus fotoStatus) {
+        this.fotoStatus = fotoStatus;
     }
 
     public Categoria getCategoria() {
