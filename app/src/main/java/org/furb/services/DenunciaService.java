@@ -2,11 +2,12 @@ package org.furb.services;
 
 import org.furb.dto.denuncia.DenunciaCadastroDTO;
 import org.furb.dto.denuncia.DenunciaResponseDTO;
+import org.furb.enums.AlvoFoto;
+import org.furb.enums.FotoStatus;
 import org.furb.enums.OrigemResolucao;
 import org.furb.enums.StatusDenuncia;
 import org.furb.enums.StatusPreco;
 import org.furb.enums.TipoVoto;
-import org.furb.enums.FotoStatus;
 import org.furb.messaging.contract.FotoSolicitadaEvent;
 import org.furb.messaging.contract.RoutingKeys;
 import org.furb.outbox.OutboxService;
@@ -105,7 +106,7 @@ public class DenunciaService {
         if (temFoto) {
             String eventoId = outboxService.novoEventoId();
             outboxService.registrar(eventoId, RoutingKeys.FOTO_SOLICITADA,
-                    new FotoSolicitadaEvent(eventoId, salva.getId(), salva.getFotoPath()));
+                    new FotoSolicitadaEvent(eventoId, AlvoFoto.DENUNCIA, salva.getId(), salva.getFotoPath()));
         }
         return salva;
     }
