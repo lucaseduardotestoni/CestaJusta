@@ -1,0 +1,144 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useToast } from '../../components/Toast/ToastContext'
+import { getProdutos, getProdutosAdmin, getCategorias, inativarProduto, ativarProduto } from '../../services/api'
+import Select from '../../components/Select/Select'
+import Tabs from '../../components/Tabs/Tabs'
+import Pagination from '../../components/Pagination/Pagination'
+import ProdutosTabela from './ProdutosTabela'
+import ProdutoCadastroModal from './ProdutoCadastroModal'
+import './Produtos.css'
+
+const PAGE_SIZE = 10
+const TABS_ATIVO = [{ value: 'ativos', label: 'Ativos' }, { value: 'todos', label: 'Todos' }]
+
+export default function ProdutosPage() {
+  const { usuario } = useAuth()
+  const { mostrarToast } = useToast()
+  const isAdmin = usuario?.tipo === 'ADMIN'
+
+  const [produtos, setProdutos] = useState([])
+  const [categorias, setCategorias] = useState([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState(null)
+
+  const [busca, setBusca] = useState('')
+  const [buscaDebounced, setBuscaDebounced] = useState('')
+  const [categoriaFiltro, setCategoriaFiltro] = useState('')
+  const [filtroAtivo, setFiltroAtivo] = useState('ativos')
+  const [pagina, setPagina] = useState(0)
+  const [cadastroAberto, setCadastroAberto] = useState(false)
+  const [processandoId, setProcessandoId] = useState(null)
+
+  function carregar() {
+    setCarregando(true)
+    setErro(null)
+    const fonte = isAdmin ? getProdutosAdmin() : getProdutos()
+    Promise.all([fonte, getCategorias()])
+      .then(([prods, cats]) => {
+        setProdutos(prods)
+        setCategorias(cats)
+      })
+      .catch(e => setErro(e.message))
+      .finally(() => setCarregando(false))
+  }
+
+  useEffect(() => { carregar() }, [isAdmin]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const t = setTimeout(() => setBuscaDebounced(busca.trim().toLowerCase()), 250)
+    return () => clearTimeout(t)
+  }, [busca])
+
+  useEffect(() => { setPagina(0) }, [buscaDebounced, categoriaFiltro, filtroAtivo])
+
+  const filtrados = useMemo(() => {
+    return produtos.filter(p => {
+      if (filtroAtivo === 'ativos' && !p.ativo) return false
+      if (buscaDebounced && !p.nome.toLowerCase().includes(buscaDebounced)) return false
+      if (categoriaFiltro && p.categoria !== categoriaFiltro) return false
+      return true
+    })
+  }, [produtos, filtroAtivo, buscaDebounced, categoriaFiltro])
+
+  const start = pagina * PAGE_SIZE
+  const visiveis = filtrados.slice(start, start + PAGE_SIZE)
+
+  const opcoesCategoria = [
+    { value: '', label: 'Todas as categorias' },
+    ...categorias.map(c => ({ value: c.nome, label: c.nome })),
+  ]
+
+  async function onInativar(p) {
+    setProcessandoId(p.id)
+    try {
+      await inativarProduto(p.id)
+      setProdutos(ps => ps.map(x => x.id === p.id ? { ...x, ativo: false } : x))
+      mostrarToast('Produto inativado.')
+    } catch (e) { mostrarToast(e.message, { tipo: 'erro' }) }
+    finally { setProcessandoId(null) }
+  }
+
+  async function onAtivar(p) {
+    setProcessandoId(p.id)
+    try {
+      await ativarProduto(p.id)
+      setProdutos(ps => ps.map(x => x.id === p.id ? { ...x, ativo: true } : x))
+      mostrarToast('Produto reativado.')
+    } catch (e) { mostrarToast(e.message, { tipo: 'erro' }) }
+    finally { setProcessandoId(null) }
+  }
+
+  return (
+    <>
+      <div className="pr-cabecalho">
+        <div>
+          <h1>Produtos</h1>
+          <p style={{ color: 'var(--cor-text-muted)' }}>Gerencie os produtos da cesta básica.</p>
+        </div>
+        {isAdmin && (
+          <button type="button" className="pr-btn-cadastrar" onClick={() => setCadastroAberto(true)}>
+            Cadastrar produto
+          </button>
+        )}
+      </div>
+
+      <div className="pr-filtros">
+        <input type="text" className="pr-busca" placeholder="Digite o nome do produto"
+               value={busca} onChange={e => setBusca(e.target.value)} />
+        <div className="pr-filtro-categoria">
+          <Select id="pr-categoria" value={categoriaFiltro} onChange={setCategoriaFiltro}
+                  options={opcoesCategoria} placeholder="Todas as categorias" />
+        </div>
+        {isAdmin && (
+          <div className="pr-filtro-status">
+            <Tabs items={TABS_ATIVO} value={filtroAtivo} onChange={setFiltroAtivo} />
+          </div>
+        )}
+      </div>
+
+      {erro && <p style={{ color: 'var(--cor-danger)' }}>Erro: {erro}</p>}
+
+      {carregando
+        ? <div className="pr-loading">Carregando...</div>
+        : <>
+            <ProdutosTabela produtos={visiveis} isAdmin={isAdmin}
+                            onInativar={onInativar} onAtivar={onAtivar} processandoId={processandoId} />
+            <div className="pr-rodape">
+              <span className="pr-contagem">
+                {filtrados.length === 0
+                  ? 'Nenhum produto'
+                  : `Mostrando ${start + 1} a ${Math.min(start + PAGE_SIZE, filtrados.length)} de ${filtrados.length} produtos`}
+              </span>
+              <Pagination total={filtrados.length} pageSize={PAGE_SIZE} page={pagina} onChange={setPagina} />
+            </div>
+          </>}
+
+      {isAdmin && (
+        <ProdutoCadastroModal aberto={cadastroAberto} categorias={categorias}
+                              onFechar={() => setCadastroAberto(false)}
+                              onCadastrado={() => { setCadastroAberto(false); carregar() }} />
+      )}
+    </>
+  )
+}
