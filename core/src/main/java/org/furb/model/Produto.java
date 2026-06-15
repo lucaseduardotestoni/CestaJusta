@@ -29,7 +29,9 @@ public class Produto {
     @Column(length = 500)
     private String thumbPath;
 
-    @Column(nullable = false)
+    // nullable: ddl-auto=update não consegue adicionar coluna NOT NULL a uma tabela já populada (seed).
+    // Produtos do seed ficam com NULL (sem foto processada); novos produtos definem o status explicitamente.
+    @Column
     private FotoStatus fotoStatus = FotoStatus.SEM_FOTO;
 
     @ManyToOne(fetch = FetchType.LAZY)
