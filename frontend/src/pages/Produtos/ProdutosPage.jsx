@@ -28,6 +28,7 @@ export default function ProdutosPage() {
   const [filtroAtivo, setFiltroAtivo] = useState('ativos')
   const [pagina, setPagina] = useState(0)
   const [cadastroAberto, setCadastroAberto] = useState(false)
+  const [emEdicao, setEmEdicao] = useState(null)
   const [processandoId, setProcessandoId] = useState(null)
   const [recarregar, setRecarregar] = useState(0)
 
@@ -101,7 +102,8 @@ export default function ProdutosPage() {
           <p style={{ color: 'var(--cor-text-muted)' }}>Gerencie os produtos da cesta básica.</p>
         </div>
         {isAdmin && (
-          <button type="button" className="pr-btn-cadastrar" onClick={() => setCadastroAberto(true)}>
+          <button type="button" className="pr-btn-cadastrar"
+                  onClick={() => { setEmEdicao(null); setCadastroAberto(true) }}>
             Cadastrar produto
           </button>
         )}
@@ -127,6 +129,7 @@ export default function ProdutosPage() {
         ? <div className="pr-loading">Carregando...</div>
         : <>
             <ProdutosTabela produtos={visiveis} isAdmin={isAdmin}
+                            onEditar={(p) => { setEmEdicao(p); setCadastroAberto(true) }}
                             onInativar={onInativar} onAtivar={onAtivar} processandoId={processandoId} />
             <div className="pr-rodape">
               <span className="pr-contagem">
@@ -139,9 +142,9 @@ export default function ProdutosPage() {
           </>}
 
       {isAdmin && (
-        <ProdutoCadastroModal aberto={cadastroAberto} categorias={categorias}
-                              onFechar={() => setCadastroAberto(false)}
-                              onCadastrado={() => { setCadastroAberto(false); setRecarregar(n => n + 1) }} />
+        <ProdutoCadastroModal aberto={cadastroAberto} categorias={categorias} produto={emEdicao}
+                              onFechar={() => { setCadastroAberto(false); setEmEdicao(null) }}
+                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }} />
       )}
     </>
   )
