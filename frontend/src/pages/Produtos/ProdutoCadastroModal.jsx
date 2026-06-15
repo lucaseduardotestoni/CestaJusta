@@ -97,9 +97,26 @@ export default function ProdutoCadastroModal({ aberto, categorias, produto, onFe
         <input id="pc-codigo" type="text" value={codigoBarras} disabled={enviando}
                onChange={e => setCodigoBarras(e.target.value)} maxLength={50} />
 
-        <label htmlFor="pc-foto">Imagem (JPG/PNG, até 5MB)</label>
-        {preview && <img src={preview} alt="" className="pc-preview" />}
-        <input id="pc-foto" type="file" accept="image/png,image/jpeg" disabled={enviando} onChange={onArquivo} />
+        <label htmlFor="pc-foto">Imagem do produto</label>
+        <label htmlFor="pc-foto" className={`pc-foto-drop ${enviando ? 'desabilitado' : ''}`}>
+          {preview
+            ? <img src={preview} alt="" className="pc-foto-thumb" />
+            : (
+              <span className="pc-foto-icone" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="14" rx="2" />
+                  <circle cx="8.5" cy="9" r="1.5" />
+                  <path d="M21 15l-5-5L5 18" />
+                  <path d="M12 20v-3m0 0l-1.5 1.5M12 17l1.5 1.5" />
+                </svg>
+              </span>
+            )}
+          <span className="pc-foto-texto">{preview ? 'Trocar imagem' : 'Escolher imagem'}</span>
+          <span className="pc-foto-hint">JPG ou PNG, até 5MB</span>
+        </label>
+        <input id="pc-foto" type="file" accept="image/png,image/jpeg"
+               className="pc-foto-input" disabled={enviando} onChange={onArquivo} />
 
         {erro && <div className="ep-erro">{erro}</div>}
 
