@@ -148,13 +148,34 @@ export async function getProdutosAdmin() {
   return handleResponse(res) // ProdutoResponseDTO[] incluindo inativos
 }
 
-export async function cadastrarProduto({ nome, codigoBarras, marca, unidadeMedida, categoriaId }) {
+function formProduto({ nome, codigoBarras, marca, unidadeMedida, categoriaId, foto }) {
+  const form = new FormData()
+  form.append('nome', nome)
+  form.append('categoriaId', categoriaId)
+  if (marca) form.append('marca', marca)
+  if (unidadeMedida) form.append('unidadeMedida', unidadeMedida)
+  if (codigoBarras) form.append('codigoBarras', codigoBarras)
+  if (foto) form.append('foto', foto)
+  return form
+}
+
+export async function cadastrarProduto(dados) {
+  // NÃO definir Content-Type: o browser define o boundary do multipart.
   const res = await fetch(`${BASE_URL}/produtos/cadastro`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ nome, codigoBarras, marca, unidadeMedida, categoriaId }),
+    headers: { ...authHeaders() },
+    body: formProduto(dados),
   })
   return handleResponse(res) // 201 ProdutoResponseDTO
+}
+
+export async function editarProduto(id, dados) {
+  const res = await fetch(`${BASE_URL}/produtos/${id}`, {
+    method: 'PUT',
+    headers: { ...authHeaders() },
+    body: formProduto(dados),
+  })
+  return handleResponse(res) // ProdutoResponseDTO
 }
 
 export async function inativarProduto(id) {
