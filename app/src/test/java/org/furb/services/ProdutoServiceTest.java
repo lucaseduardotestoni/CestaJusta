@@ -169,6 +169,20 @@ class ProdutoServiceTest {
     }
 
     @Test
+    void cadastrar_fotoAcimaDoLimite_lancaBusinessException() {
+        when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoriaGraos()));
+
+        ProdutoCadastroDTO dto = new ProdutoCadastroDTO();
+        dto.setNome("X");
+        dto.setCategoriaId(1L);
+        MultipartFile foto = new MockMultipartFile("foto", "a.jpg", "image/jpeg", new byte[6 * 1024 * 1024]);
+
+        assertThatThrownBy(() -> produtoService.cadastrar(dto, foto))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("5MB");
+    }
+
+    @Test
     void editar_atualizaCamposEMantemImagemSemFotoNova() {
         Produto existente = new Produto();
         existente.setNome("Velho");
