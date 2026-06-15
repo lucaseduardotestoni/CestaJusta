@@ -3,7 +3,7 @@ import Modal from '../../components/Modal/Modal'
 import Select from '../../components/Select/Select'
 import { cadastrarProduto, editarProduto } from '../../services/api'
 import { useToast } from '../../components/Toast/ToastContext'
-import { urlImagem } from './urlImagem'
+import { urlImagem } from '../../utils/urlImagem'
 import '../EnviarPreco/EnviarPrecoModal.css'
 
 const MIME_OK = ['image/jpeg', 'image/png']

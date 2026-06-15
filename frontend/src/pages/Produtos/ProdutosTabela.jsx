@@ -1,4 +1,4 @@
-import { urlImagem } from './urlImagem'
+import { urlImagem } from '../../utils/urlImagem'
 
 export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar, onAtivar, processandoId }) {
   if (!produtos.length) {

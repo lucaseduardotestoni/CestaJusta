@@ -1,4 +1,5 @@
 import Sparkline from '../../components/Sparkline/Sparkline'
+import { urlImagem } from '../../utils/urlImagem'
 
 export default function ProdutoRow({ produto, onClick }) {
   const tendenciaClasse = produto.tendenciaPercentual > 0
@@ -10,7 +11,8 @@ export default function ProdutoRow({ produto, onClick }) {
       <td>
         <div className="vg-produto-info">
           {produto.imagemPath
-            ? <img src={produto.imagemPath} alt="" className="vg-produto-img" />
+            ? <img src={urlImagem(produto.imagemPath)} alt="" className="vg-produto-img"
+                   onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} />
             : <div className="vg-produto-img" />}
           <div>
             <div>{produto.nome}</div>
