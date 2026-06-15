@@ -2,6 +2,7 @@ package org.furb.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.furb.enums.AlvoFoto;
 import org.furb.messaging.contract.FotoSolicitadaEvent;
 import org.furb.model.OutboxEvent;
 import org.furb.repositories.OutboxEventRepository;
@@ -38,8 +39,8 @@ class OutboxServiceTest {
         when(repository.save(any(OutboxEvent.class))).thenAnswer(i -> i.getArgument(0));
         OutboxService service = new OutboxService(repository, objectMapper, eventPublisher, clock);
 
-        String id = service.registrar("evt-1", "denuncia.foto.solicitada",
-                new FotoSolicitadaEvent("evt-1", 7L, "denuncias/foto.jpg"));
+        String id = service.registrar("evt-1", "foto.solicitada",
+                new FotoSolicitadaEvent("evt-1", AlvoFoto.DENUNCIA, 7L, "denuncias/foto.jpg"));
 
         assertThat(id).isEqualTo("evt-1");
 
@@ -47,7 +48,7 @@ class OutboxServiceTest {
         verify(repository).save(captor.capture());
         OutboxEvent salvo = captor.getValue();
         assertThat(salvo.getEventoId()).isEqualTo("evt-1");
-        assertThat(salvo.getRoutingKey()).isEqualTo("denuncia.foto.solicitada");
+        assertThat(salvo.getRoutingKey()).isEqualTo("foto.solicitada");
         assertThat(salvo.getPayload()).contains("denuncias/foto.jpg");
         assertThat(salvo.getCriadoEm()).isEqualTo(java.time.LocalDateTime.now(clock));
 

@@ -137,3 +137,59 @@ export async function cadastrarPreco({ produtoId, mercadoId, valor, dataColeta }
   })
   return handleResponse(res) // PrecoResponseDTO (201)
 }
+
+export async function getCategorias() {
+  const res = await fetch(`${BASE_URL}/categorias`, { headers: { ...authHeaders() } })
+  return handleResponse(res) // [{ id, nome }]
+}
+
+export async function getProdutosAdmin() {
+  const res = await fetch(`${BASE_URL}/produtos/todos`, { headers: { ...authHeaders() } })
+  return handleResponse(res) // ProdutoResponseDTO[] incluindo inativos
+}
+
+function formProduto({ nome, codigoBarras, marca, unidadeMedida, categoriaId, foto }) {
+  const form = new FormData()
+  form.append('nome', nome)
+  form.append('categoriaId', categoriaId)
+  if (marca) form.append('marca', marca)
+  if (unidadeMedida) form.append('unidadeMedida', unidadeMedida)
+  if (codigoBarras) form.append('codigoBarras', codigoBarras)
+  if (foto) form.append('foto', foto)
+  return form
+}
+
+export async function cadastrarProduto(dados) {
+  // NÃO definir Content-Type: o browser define o boundary do multipart.
+  const res = await fetch(`${BASE_URL}/produtos/cadastro`, {
+    method: 'POST',
+    headers: { ...authHeaders() },
+    body: formProduto(dados),
+  })
+  return handleResponse(res) // 201 ProdutoResponseDTO
+}
+
+export async function editarProduto(id, dados) {
+  const res = await fetch(`${BASE_URL}/produtos/${id}`, {
+    method: 'PUT',
+    headers: { ...authHeaders() },
+    body: formProduto(dados),
+  })
+  return handleResponse(res) // ProdutoResponseDTO
+}
+
+export async function inativarProduto(id) {
+  const res = await fetch(`${BASE_URL}/produtos/${id}`, {
+    method: 'DELETE',
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // ProdutoResponseDTO
+}
+
+export async function ativarProduto(id) {
+  const res = await fetch(`${BASE_URL}/produtos/${id}/ativar`, {
+    method: 'PATCH',
+    headers: { ...authHeaders() },
+  })
+  return handleResponse(res) // ProdutoResponseDTO
+}

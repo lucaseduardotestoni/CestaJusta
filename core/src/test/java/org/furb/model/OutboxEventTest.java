@@ -12,10 +12,10 @@ class OutboxEventTest {
     void construtor_preencheCampos_eDefinePadroes() {
         LocalDateTime criadoEm = LocalDateTime.of(2026, 6, 9, 12, 0);
 
-        OutboxEvent evento = new OutboxEvent("evt-1", "denuncia.foto.solicitada", "{\"x\":1}", criadoEm);
+        OutboxEvent evento = new OutboxEvent("evt-1", "foto.solicitada", "{\"x\":1}", criadoEm);
 
         assertThat(evento.getEventoId()).isEqualTo("evt-1");
-        assertThat(evento.getRoutingKey()).isEqualTo("denuncia.foto.solicitada");
+        assertThat(evento.getRoutingKey()).isEqualTo("foto.solicitada");
         assertThat(evento.getPayload()).isEqualTo("{\"x\":1}");
         assertThat(evento.getCriadoEm()).isEqualTo(criadoEm);
         assertThat(evento.isEnviado()).isFalse();

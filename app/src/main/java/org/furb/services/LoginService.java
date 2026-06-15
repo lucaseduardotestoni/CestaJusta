@@ -32,6 +32,6 @@ public class LoginService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Senha inválida");
         }
 
-        return jwtService.gerarToken(usuario.getEmail());
+        return jwtService.gerarToken(usuario.getEmail(), usuario.getTipoUsuario());
     }
 }

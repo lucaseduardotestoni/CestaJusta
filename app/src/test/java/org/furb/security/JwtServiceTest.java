@@ -1,5 +1,6 @@
 package org.furb.security;
 
+import org.furb.enums.TipoUsuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,5 +61,20 @@ class JwtServiceTest {
         assertThatThrownBy(() -> instavel.gerarToken("x"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("32 bytes");
+    }
+
+    @Test
+    void gerarToken_comTipo_gravaClaimDeTipo() {
+        String token = jwtService.gerarToken("admin@teste.com", TipoUsuario.ADMIN);
+
+        assertThat(jwtService.extrairTipo(token)).isEqualTo("ADMIN");
+        assertThat(jwtService.extrairEmail(token)).isEqualTo("admin@teste.com");
+    }
+
+    @Test
+    void extrairTipo_tokenSemClaim_retornaNull() {
+        String token = jwtService.gerarToken("sem@tipo.com"); // sobrecarga antiga, sem tipo
+
+        assertThat(jwtService.extrairTipo(token)).isNull();
     }
 }

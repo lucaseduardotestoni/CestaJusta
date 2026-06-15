@@ -1,5 +1,6 @@
 package org.furb.repositories;
 
+import org.furb.enums.FotoStatus;
 import org.furb.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     Optional<Produto> findByCodigoBarras(String codigoBarras);
 
     boolean existsByCodigoBarras(String codigoBarras);
+
+    boolean existsByIdAndFotoStatusNot(Long id, FotoStatus fotoStatus);
 
     List<Produto> findByCategoriaIdAndAtivoTrue(Long categoriaId);
 }

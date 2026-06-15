@@ -40,6 +40,9 @@ Prioridades.md
 /Readme-visão_projeto.md
 
 .claude/
+
+### Uploads de imagens em dev (em prod é volume montado em /data/uploads) ###
+data/uploads/
 .idea
 logs/
 

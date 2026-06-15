@@ -39,7 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return "OPTIONS".equalsIgnoreCase(method)
                 || "/login".equals(uri)
                 || "/usuarios/cadastro".equals(uri)
-                || uri.startsWith("/login/");
+                || uri.startsWith("/login/")
+                // STOPGAP (remover ao migrar p/ cookie httpOnly): imagens de produto servidas sem token,
+                // pois a <img> do navegador não envia o Bearer. Ver memória auth-hardening.
+                || uri.startsWith("/uploads/produtos/");
     }
 
     @Override

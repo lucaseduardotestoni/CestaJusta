@@ -26,6 +26,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
+                        // STOPGAP (remover ao migrar p/ cookie httpOnly): imagem de produto é pública p/ GET
+                        // porque a <img> não envia o Bearer token. Foto de denúncia segue protegida.
+                        .requestMatchers(HttpMethod.GET, "/uploads/produtos/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )

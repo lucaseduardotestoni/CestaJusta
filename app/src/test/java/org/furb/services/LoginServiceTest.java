@@ -56,7 +56,7 @@ class LoginServiceTest {
     void login_credenciaisValidas_retornaToken() {
         when(usuarioRepository.findByEmail("lucas@teste.com")).thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("senha123", "$2a$hashSalvo")).thenReturn(true);
-        when(jwtService.gerarToken("lucas@teste.com")).thenReturn("token.jwt.fake");
+        when(jwtService.gerarToken("lucas@teste.com", TipoUsuario.CONSUMIDOR)).thenReturn("token.jwt.fake");
 
         String token = loginService.login(dto);
 
