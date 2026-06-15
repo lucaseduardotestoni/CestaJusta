@@ -46,20 +46,21 @@
 .pr-contagem { font-size: var(--fs-sm); color: var(--cor-text-muted); }
 .pr-empty, .pr-loading { padding: var(--space-6); text-align: center; color: var(--cor-text-muted); }
 
-/* Seletor de imagem do produto (input file estilizado como dropzone) */
+/* Seletor de imagem do produto (input file estilizado como dropzone).
+   Especificidade .ep-form label.pc-foto-drop para vencer a regra `.ep-form label`. */
 .pc-foto-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.pc-foto-drop {
+.ep-form label.pc-foto-drop {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: var(--space-1); text-align: center; cursor: pointer;
-  padding: var(--space-4); border: 2px dashed var(--cor-border); border-radius: var(--r-md);
+  gap: var(--space-2); text-align: center; cursor: pointer; margin: 0; font-weight: 400;
+  padding: var(--space-5) var(--space-4); border: 2px dashed var(--cor-border); border-radius: var(--r-md);
   background: var(--cor-bg); transition: border-color .15s ease, background .15s ease;
 }
-.pc-foto-drop:hover { border-color: var(--cor-primary); background: var(--cor-primary-soft); }
+.ep-form label.pc-foto-drop:hover { border-color: var(--cor-primary); background: var(--cor-primary-soft); }
+.ep-form label.pc-foto-drop.desabilitado { opacity: .6; cursor: default; pointer-events: none; }
 .pc-foto-icone { color: var(--cor-primary); display: inline-flex; }
-.pc-foto-texto { font-size: var(--fs-sm); font-weight: 600; color: var(--cor-primary); }
-.pc-foto-hint { font-size: var(--fs-xs); color: var(--cor-text-muted); }
+.pc-foto-texto { font-size: var(--fs-sm); font-weight: 700; color: var(--cor-primary); white-space: nowrap; }
+.pc-foto-hint { font-size: var(--fs-xs); color: var(--cor-text-muted); white-space: nowrap; }
 .pc-foto-thumb {
   width: 96px; height: 96px; object-fit: contain; border-radius: var(--r-sm);
   background: var(--cor-surface); border: 1px solid var(--cor-border);
 }
-.pc-foto-drop.desabilitado { opacity: .6; cursor: default; pointer-events: none; }
