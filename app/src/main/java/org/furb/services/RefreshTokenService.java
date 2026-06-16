@@ -38,7 +38,9 @@ public class RefreshTokenService {
         return emitirNaFamilia(usuario, UUID.randomUUID().toString());
     }
 
-    @Transactional
+    // noRollbackFor: no caminho de reuso revogamos a família e LANÇAMOS — sem isto, o
+    // rollback da BusinessException desfaria a revogação e o token roubado seguiria válido.
+    @Transactional(noRollbackFor = BusinessException.class)
     public Rotacao rotacionar(String tokenCru) {
         RefreshToken atual = repository.findByTokenHash(hash(tokenCru))
                 .orElseThrow(() -> new BusinessException("Refresh token inválido."));
