@@ -1,50 +1,60 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { getMe, logout as apiLogout, setOnUnauthorized } from '../services/api'
 
 const AuthContext = createContext(null)
 
-function decodeJwt(token) {
-  try {
-    const payload = token.split('.')[1]
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
-    return JSON.parse(json)
-  } catch {
-    return null
-  }
-}
-
-function montarUsuarioDoToken(token) {
-  const payload = decodeJwt(token)
-  if (!payload) return null
-  const email = payload.sub || ''
-  const nome = email.includes('@') ? email.split('@')[0] : email
+function mapMe(me) {
+  if (!me) return null
   return {
-    nome,           // ex: "admin" extraído de "admin@cestajusta.com"
-    email,
-    tipo: payload.tipo || null,   // claim 'tipo' do JWT (ADMIN | CONSUMIDOR | COMERCIANTE)
+    nome: me.nome,
+    email: me.email,
+    tipo: me.tipoUsuario || null, // ADMIN | CONSUMIDOR | COMERCIANTE
   }
 }
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('token'))
-  const [usuario, setUsuario] = useState(() => {
-    const t = localStorage.getItem('token')
-    return t ? montarUsuarioDoToken(t) : null
-  })
+  const [usuario, setUsuario] = useState(null)
+  const [status, setStatus] = useState('loading') // 'loading' | 'authenticated' | 'anonymous'
 
-  function saveToken(jwt) {
-    localStorage.setItem('token', jwt)
-    setToken(jwt)
-    setUsuario(montarUsuarioDoToken(jwt))
-  }
-
-  function logout() {
-    localStorage.removeItem('token')
-    setToken(null)
+  const clearSession = useCallback(() => {
     setUsuario(null)
-  }
+    setStatus('anonymous')
+  }, [])
+
+  // Rebusca /usuarios/me e atualiza o estado. Retorna true se autenticado.
+  const refresh = useCallback(async () => {
+    try {
+      const me = await getMe()
+      setUsuario(mapMe(me))
+      setStatus('authenticated')
+      return true
+    } catch {
+      clearSession()
+      return false
+    }
+  }, [clearSession])
+
+  // 401 sem recuperação (refresh falhou) → derruba a sessão no client.
+  useEffect(() => {
+    setOnUnauthorized(() => clearSession())
+    return () => setOnUnauthorized(null)
+  }, [clearSession])
+
+  // Bootstrap no carregamento da app.
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const logout = useCallback(async () => {
+    try {
+      await apiLogout()
+    } finally {
+      clearSession()
+    }
+  }, [clearSession])
 
   return (
-    <AuthContext.Provider value={{ token, usuario, saveToken, logout }}>
+    <AuthContext.Provider value={{ usuario, status, refresh, logout }}>
       {children}
     </AuthContext.Provider>
   )
