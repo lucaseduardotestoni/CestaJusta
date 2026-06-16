@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -82,7 +83,7 @@ public class RefreshTokenService {
         rt.setUsuario(usuario);
         rt.setTokenHash(hash(cru));
         rt.setFamilyId(familyId);
-        rt.setExpiresAt(LocalDateTime.now().plusNanos(refreshTtlMs * 1_000_000));
+        rt.setExpiresAt(LocalDateTime.now().plus(Duration.ofMillis(refreshTtlMs)));
         repository.save(rt);
         return cru;
     }
