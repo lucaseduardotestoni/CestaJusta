@@ -8,9 +8,37 @@ async function lazyMocks() {
   return mocksModule
 }
 
-function authHeaders() {
-  const token = localStorage.getItem('token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
+// Callback registrado pelo AuthContext: chamado quando a sessão morre de vez.
+let onUnauthorized = null
+export function setOnUnauthorized(fn) {
+  onUnauthorized = fn
+}
+
+// Single-flight: 401s concorrentes compartilham UMA tentativa de refresh.
+let refreshPromise = null
+function refreshOnce() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${BASE_URL}/refresh`, { method: 'POST' })
+      .then(res => res.ok)
+      .catch(() => false)
+      .then(ok => { refreshPromise = null; return ok })
+  }
+  return refreshPromise
+}
+
+// Wrapper central: em 401, tenta refresh 1x e repete a request original.
+async function apiFetch(path, opts = {}) {
+  const { _noRefresh, _retried, ...fetchOpts } = opts
+  const res = await fetch(`${BASE_URL}${path}`, fetchOpts)
+
+  if (res.status === 401 && !_noRefresh && !_retried && path !== '/refresh') {
+    const ok = await refreshOnce()
+    if (ok) {
+      return apiFetch(path, { ...opts, _retried: true })
+    }
+    if (onUnauthorized) onUnauthorized()
+  }
+  return handleResponse(res)
 }
 
 async function handleResponse(res) {
@@ -35,76 +63,63 @@ async function handleResponse(res) {
 }
 
 export async function login(email, senha) {
-  const res = await fetch(`${BASE_URL}/login`, {
+  // _noRefresh: 401 aqui = credencial errada, não sessão expirada.
+  await apiFetch('/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, senha }),
+    _noRefresh: true,
   })
-  return handleResponse(res) // retorna o JWT como string
 }
 
-export async function getProdutos() {
-  const res = await fetch(`${BASE_URL}/produtos`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
+export async function getMe() {
+  return apiFetch('/usuarios/me')
+}
+
+export async function logout() {
+  return apiFetch('/logout', { method: 'POST', _noRefresh: true })
 }
 
 export async function cadastrar(nome, email, senha, tipoUsuario) {
-  const res = await fetch(`${BASE_URL}/usuarios/cadastro`, {
+  return apiFetch('/usuarios/cadastro', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nome, email, senha, tipoUsuario }),
+    _noRefresh: true,
   })
-  return handleResponse(res) // retorna UsuarioResponseDTO
+}
+
+export async function getProdutos() {
+  return apiFetch('/produtos')
 }
 
 export async function getDashboardKpis() {
   if (USE_MOCKS) return (await lazyMocks()).getDashboardKpis()
-  const res = await fetch(`${BASE_URL}/dashboard/kpis`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
+  return apiFetch('/dashboard/kpis')
 }
 
 export async function getDashboardProdutos(opts) {
   if (USE_MOCKS) return (await lazyMocks()).getDashboardProdutos(opts)
   const { ordem = 'todos', page = 0, size = 20 } = opts || {}
   const params = new URLSearchParams({ ordem, page, size })
-  const res = await fetch(`${BASE_URL}/dashboard/produtos?${params}`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
+  return apiFetch(`/dashboard/produtos?${params}`)
 }
 
 export async function getHistoricoProduto(produtoId, dias = 30) {
   if (USE_MOCKS) return (await lazyMocks()).getHistoricoProduto(produtoId, dias)
-  const res = await fetch(`${BASE_URL}/comparacoes/produto/${produtoId}/historico?dias=${dias}`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
+  return apiFetch(`/comparacoes/produto/${produtoId}/historico?dias=${dias}`)
 }
 
 export async function getPrecosPorProduto(produtoId) {
-  const res = await fetch(`${BASE_URL}/precos/produto/${produtoId}`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
+  return apiFetch(`/precos/produto/${produtoId}`)
 }
 
 export async function getMeusPrecosDenunciados() {
-  const res = await fetch(`${BASE_URL}/denuncias/meus-precos`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res) // retorna number[] (ids de preço já denunciados na janela)
+  return apiFetch('/denuncias/meus-precos')
 }
 
 export async function confirmarPreco(precoId) {
-  const res = await fetch(`${BASE_URL}/precos/${precoId}/confirmacoes`, {
-    method: 'POST',
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res) // 204 → corpo vazio
+  return apiFetch(`/precos/${precoId}/confirmacoes`, { method: 'POST' })
 }
 
 export async function denunciarPreco({ precoId, motivo, descricao, foto }) {
@@ -113,39 +128,28 @@ export async function denunciarPreco({ precoId, motivo, descricao, foto }) {
   form.append('motivo', motivo)
   if (descricao) form.append('descricao', descricao)
   if (foto) form.append('foto', foto)
-  // NÃO definir Content-Type manualmente: o browser define o boundary do multipart.
-  const res = await fetch(`${BASE_URL}/denuncias`, {
-    method: 'POST',
-    headers: { ...authHeaders() },
-    body: form,
-  })
-  return handleResponse(res) // 201 → corpo vazio
+  // NÃO definir Content-Type: o browser define o boundary do multipart.
+  return apiFetch('/denuncias', { method: 'POST', body: form })
 }
 
 export async function getMercados() {
-  const res = await fetch(`${BASE_URL}/mercados`, {
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res)
+  return apiFetch('/mercados')
 }
 
 export async function cadastrarPreco({ produtoId, mercadoId, valor, dataColeta }) {
-  const res = await fetch(`${BASE_URL}/precos/cadastro`, {
+  return apiFetch('/precos/cadastro', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ produtoId, mercadoId, valor, dataColeta }),
   })
-  return handleResponse(res) // PrecoResponseDTO (201)
 }
 
 export async function getCategorias() {
-  const res = await fetch(`${BASE_URL}/categorias`, { headers: { ...authHeaders() } })
-  return handleResponse(res) // [{ id, nome }]
+  return apiFetch('/categorias')
 }
 
 export async function getProdutosAdmin() {
-  const res = await fetch(`${BASE_URL}/produtos/todos`, { headers: { ...authHeaders() } })
-  return handleResponse(res) // ProdutoResponseDTO[] incluindo inativos
+  return apiFetch('/produtos/todos')
 }
 
 function formProduto({ nome, codigoBarras, marca, unidadeMedida, categoriaId, foto }) {
@@ -160,36 +164,17 @@ function formProduto({ nome, codigoBarras, marca, unidadeMedida, categoriaId, fo
 }
 
 export async function cadastrarProduto(dados) {
-  // NÃO definir Content-Type: o browser define o boundary do multipart.
-  const res = await fetch(`${BASE_URL}/produtos/cadastro`, {
-    method: 'POST',
-    headers: { ...authHeaders() },
-    body: formProduto(dados),
-  })
-  return handleResponse(res) // 201 ProdutoResponseDTO
+  return apiFetch('/produtos/cadastro', { method: 'POST', body: formProduto(dados) })
 }
 
 export async function editarProduto(id, dados) {
-  const res = await fetch(`${BASE_URL}/produtos/${id}`, {
-    method: 'PUT',
-    headers: { ...authHeaders() },
-    body: formProduto(dados),
-  })
-  return handleResponse(res) // ProdutoResponseDTO
+  return apiFetch(`/produtos/${id}`, { method: 'PUT', body: formProduto(dados) })
 }
 
 export async function inativarProduto(id) {
-  const res = await fetch(`${BASE_URL}/produtos/${id}`, {
-    method: 'DELETE',
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res) // ProdutoResponseDTO
+  return apiFetch(`/produtos/${id}`, { method: 'DELETE' })
 }
 
 export async function ativarProduto(id) {
-  const res = await fetch(`${BASE_URL}/produtos/${id}/ativar`, {
-    method: 'PATCH',
-    headers: { ...authHeaders() },
-  })
-  return handleResponse(res) // ProdutoResponseDTO
+  return apiFetch(`/produtos/${id}/ativar`, { method: 'PATCH' })
 }
