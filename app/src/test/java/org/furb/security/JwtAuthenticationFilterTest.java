@@ -52,7 +52,7 @@ class JwtAuthenticationFilterTest {
 
         MockHttpServletRequest req = new MockHttpServletRequest();
         req.setServletPath("/produtos");
-        req.setCookies(new Cookie("cj_token", "jwt-cookie"));
+        req.setCookies(new Cookie(CookieFactory.ACCESS, "jwt-cookie"));
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         filter.doFilter(req, res, chain);
@@ -79,6 +79,40 @@ class JwtAuthenticationFilterTest {
         filter.doFilter(req, res, chain);
 
         verify(chain).doFilter(req, res);
+    }
+
+    @Test
+    void doFilter_cookieEmBranco_usaFallbackDoHeader() throws Exception {
+        Usuario u = new Usuario();
+        u.setEmail("a@b.com");
+        u.setTipoUsuario(TipoUsuario.CONSUMIDOR);
+        u.setAtivo(true);
+        when(jwtService.validarToken("jwt-header")).thenReturn(true);
+        when(jwtService.extrairEmail("jwt-header")).thenReturn("a@b.com");
+        when(usuarioRepository.findByEmail("a@b.com")).thenReturn(Optional.of(u));
+
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        req.setServletPath("/produtos");
+        req.setCookies(new Cookie(CookieFactory.ACCESS, ""));
+        req.addHeader("Authorization", "Bearer jwt-header");
+        MockHttpServletResponse res = new MockHttpServletResponse();
+
+        filter.doFilter(req, res, chain);
+
+        verify(chain).doFilter(req, res);
+    }
+
+    @Test
+    void doFilter_cookieEmBrancoSemHeader_responde401() throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        req.setServletPath("/produtos");
+        req.setCookies(new Cookie(CookieFactory.ACCESS, ""));
+        MockHttpServletResponse res = new MockHttpServletResponse();
+
+        filter.doFilter(req, res, chain);
+
+        verify(chain, never()).doFilter(any(), any());
+        assertThat(res.getStatus()).isEqualTo(401);
     }
 
     @Test
