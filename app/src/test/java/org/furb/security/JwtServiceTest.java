@@ -17,7 +17,7 @@ class JwtServiceTest {
     void setUp() {
         // Chave de 32 bytes (mínimo HS256), codificada em Base64
         String secret = Base64.getEncoder().encodeToString("0123456789abcdef0123456789abcdef".getBytes());
-        jwtService = new JwtService(secret);
+        jwtService = new JwtService(secret, 1_800_000L);
     }
 
     @Test
@@ -56,7 +56,7 @@ class JwtServiceTest {
     void gerarToken_secretMuitoCurto_lancaIllegalState() {
         // Base64 de "curto" = 5 bytes decodificados, abaixo dos 32 exigidos pelo HS256
         String secretCurto = Base64.getEncoder().encodeToString("curto".getBytes());
-        JwtService instavel = new JwtService(secretCurto);
+        JwtService instavel = new JwtService(secretCurto, 1_800_000L);
 
         assertThatThrownBy(() -> instavel.gerarToken("x"))
                 .isInstanceOf(IllegalStateException.class)
@@ -76,5 +76,21 @@ class JwtServiceTest {
         String token = jwtService.gerarToken("sem@tipo.com"); // sobrecarga antiga, sem tipo
 
         assertThat(jwtService.extrairTipo(token)).isNull();
+    }
+
+    @Test
+    void gerarToken_expiraConformeTtlConfigurado() {
+        JwtService service = new JwtService(
+                "7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=", 1_800_000L);
+        String token = service.gerarToken("user@x.com", org.furb.enums.TipoUsuario.CONSUMIDOR);
+
+        java.util.Date exp = io.jsonwebtoken.Jwts.parserBuilder()
+                .setSigningKey(io.jsonwebtoken.security.Keys.hmacShaKeyFor(
+                        io.jsonwebtoken.io.Decoders.BASE64.decode("7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=")))
+                .build().parseClaimsJws(token).getBody().getExpiration();
+
+        long deltaMs = exp.getTime() - System.currentTimeMillis();
+        org.assertj.core.api.Assertions.assertThat(deltaMs)
+                .isBetween(1_700_000L, 1_800_000L);
     }
 }
