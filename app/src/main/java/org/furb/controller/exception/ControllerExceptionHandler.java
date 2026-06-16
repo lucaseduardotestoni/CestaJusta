@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,6 +82,13 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<StandardError> handleMaxUpload(MaxUploadSizeExceededException ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, "A imagem excede o tamanho máximo permitido (5MB).", request);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<StandardError> handleNoResource(NoResourceFoundException ex,
+                                                          HttpServletRequest request) {
+        logger.warn("Imagem não encontrada: {}", request.getRequestURI());
+        return build(HttpStatus.NOT_FOUND, "Imagem não encontrada.", request);
     }
 
     @ExceptionHandler(Exception.class)
