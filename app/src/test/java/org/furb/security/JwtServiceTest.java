@@ -1,10 +1,14 @@
 package org.furb.security;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.furb.enums.TipoUsuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Base64;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -82,15 +86,15 @@ class JwtServiceTest {
     void gerarToken_expiraConformeTtlConfigurado() {
         JwtService service = new JwtService(
                 "7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=", 1_800_000L);
-        String token = service.gerarToken("user@x.com", org.furb.enums.TipoUsuario.CONSUMIDOR);
+        String token = service.gerarToken("user@x.com", TipoUsuario.CONSUMIDOR);
 
-        java.util.Date exp = io.jsonwebtoken.Jwts.parserBuilder()
-                .setSigningKey(io.jsonwebtoken.security.Keys.hmacShaKeyFor(
-                        io.jsonwebtoken.io.Decoders.BASE64.decode("7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=")))
+        Date exp = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(
+                        Decoders.BASE64.decode("7WR/z7mNy/4SMGg0fmc5i79b5EX8BsTJGaAASswJUio=")))
                 .build().parseClaimsJws(token).getBody().getExpiration();
 
         long deltaMs = exp.getTime() - System.currentTimeMillis();
-        org.assertj.core.api.Assertions.assertThat(deltaMs)
-                .isBetween(1_700_000L, 1_800_000L);
+        // lower bound allows up to ~100s of test/exec slack
+        assertThat(deltaMs).isBetween(1_700_000L, 1_800_000L);
     }
 }
