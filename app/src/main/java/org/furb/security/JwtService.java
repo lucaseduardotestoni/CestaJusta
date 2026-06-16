@@ -16,12 +16,15 @@ import java.util.Date;
 public class JwtService {
 
     private final String secretBase64;
+    private final long accessTtlMs;
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-    public JwtService(@Value("${jwt.secret-base64}") String secretBase64) {
+    public JwtService(@Value("${jwt.secret-base64}") String secretBase64,
+                      @Value("${jwt.access-ttl-ms:1800000}") long accessTtlMs) {
         this.secretBase64 = secretBase64;
-        logger.debug("JwtService inicializado. Secret Base64 configurado: {} bytes após decode",
-            Decoders.BASE64.decode(secretBase64).length);
+        this.accessTtlMs = accessTtlMs;
+        logger.debug("JwtService inicializado. Secret Base64 configurado: {} bytes após decode; TTL={}ms",
+            Decoders.BASE64.decode(secretBase64).length, accessTtlMs);
     }
 
     private Key getKey() {
@@ -48,7 +51,7 @@ public class JwtService {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 dia
+                .setExpiration(new Date(System.currentTimeMillis() + accessTtlMs))
                 .signWith(getKey(), SignatureAlgorithm.HS256);
         if (tipo != null) {
             builder.claim("tipo", tipo.name());

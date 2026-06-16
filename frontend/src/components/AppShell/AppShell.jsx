@@ -6,8 +6,12 @@ import Header from './Header'
 import './AppShell.css'
 
 export default function AppShell() {
-  const { token } = useAuth()
-  if (!token) return <Navigate to="/" replace />
+  const { status } = useAuth()
+
+  if (status === 'loading') {
+    return <div className="shell-loading" role="status" aria-live="polite">Carregando…</div>
+  }
+  if (status === 'anonymous') return <Navigate to="/" replace />
 
   return (
     <DashboardRefreshProvider>

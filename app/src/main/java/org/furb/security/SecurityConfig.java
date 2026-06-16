@@ -19,6 +19,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                // Desabilita o LogoutFilter padrão do Spring (que intercepta POST /logout e
+                // responde 302); nosso LogoutController trata /logout (revoga família + limpa cookies).
+                .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) ->
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Autenticacao obrigatoria")))
@@ -26,9 +29,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        // STOPGAP (remover ao migrar p/ cookie httpOnly): imagem de produto é pública p/ GET
-                        // porque a <img> não envia o Bearer token. Foto de denúncia segue protegida.
-                        .requestMatchers(HttpMethod.GET, "/uploads/produtos/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/logout").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )

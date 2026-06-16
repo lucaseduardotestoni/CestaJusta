@@ -2,6 +2,7 @@ package org.furb.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.furb.model.Usuario;
@@ -38,11 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String method = request.getMethod();
         return "OPTIONS".equalsIgnoreCase(method)
                 || "/login".equals(uri)
+                || "/logout".equals(uri)
+                || "/refresh".equals(uri)
                 || "/usuarios/cadastro".equals(uri)
-                || uri.startsWith("/login/")
-                // STOPGAP (remover ao migrar p/ cookie httpOnly): imagens de produto servidas sem token,
-                // pois a <img> do navegador não envia o Bearer. Ver memória auth-hardening.
-                || uri.startsWith("/uploads/produtos/");
+                || uri.startsWith("/login/");
     }
 
     @Override
@@ -53,17 +53,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         logger.debug("JwtAuthenticationFilter - Processando request para: {}", path);
         
         try {
-            String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-            logger.debug("Authorization header: {}", header == null ? "null" : "presente");
-
-            if (header == null || !header.startsWith("Bearer ")) {
-                logger.warn("Requisição sem Bearer token: {}", path);
+            String token = extrairToken(request);
+            if (token == null) {
+                logger.warn("Requisição sem token (cookie/header): {}", path);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token ausente ou invalido");
                 return;
             }
-
-            String token = header.substring(7);
-            logger.debug("Token extraído (primeiros 20 chars): {}", token.substring(0, Math.min(20, token.length())));
 
             if (!jwtService.validarToken(token)) {
                 logger.warn("Token inválido para: {}", path);
@@ -97,5 +92,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error("Erro no JWT Authentication Filter", e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token ausente ou invalido");
         }
+    }
+
+    private String extrairToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (CookieFactory.ACCESS.equals(cookie.getName())
+                        && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
     }
 }

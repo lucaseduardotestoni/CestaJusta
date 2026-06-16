@@ -4,7 +4,6 @@ import org.furb.dto.usuario.LoginDTO;
 import org.furb.enums.TipoUsuario;
 import org.furb.model.Usuario;
 import org.furb.repositories.UsuarioRepository;
-import org.furb.security.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +29,6 @@ class LoginServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private JwtService jwtService;
-
     @InjectMocks
     private LoginService loginService;
 
@@ -53,31 +49,30 @@ class LoginServiceTest {
     }
 
     @Test
-    void login_credenciaisValidas_retornaToken() {
+    void autenticar_credenciaisValidas_retornaUsuario() {
         when(usuarioRepository.findByEmail("lucas@teste.com")).thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("senha123", "$2a$hashSalvo")).thenReturn(true);
-        when(jwtService.gerarToken("lucas@teste.com", TipoUsuario.CONSUMIDOR)).thenReturn("token.jwt.fake");
 
-        String token = loginService.login(dto);
+        Usuario resultado = loginService.autenticar(dto);
 
-        assertThat(token).isEqualTo("token.jwt.fake");
+        assertThat(resultado).isSameAs(usuario);
     }
 
     @Test
-    void login_emailNaoEncontrado_lancaUnauthorized() {
+    void autenticar_emailNaoEncontrado_lancaUnauthorized() {
         when(usuarioRepository.findByEmail("lucas@teste.com")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> loginService.login(dto))
+        assertThatThrownBy(() -> loginService.autenticar(dto))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("statusCode", HttpStatus.UNAUTHORIZED);
     }
 
     @Test
-    void login_senhaInvalida_lancaUnauthorized() {
+    void autenticar_senhaInvalida_lancaUnauthorized() {
         when(usuarioRepository.findByEmail("lucas@teste.com")).thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("senha123", "$2a$hashSalvo")).thenReturn(false);
 
-        assertThatThrownBy(() -> loginService.login(dto))
+        assertThatThrownBy(() -> loginService.autenticar(dto))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("statusCode", HttpStatus.UNAUTHORIZED);
     }

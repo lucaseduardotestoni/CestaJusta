@@ -11,7 +11,7 @@ export default function HomePage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { saveToken } = useAuth()
+  const { refresh } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e) {
@@ -20,8 +20,8 @@ export default function HomePage() {
     setLoading(true)
 
     try {
-      const token = await login(email, password)
-      saveToken(token)
+      await login(email, password)
+      await refresh()
       navigate('/dashboard')
     } catch (err) {
       setError(err.message)
