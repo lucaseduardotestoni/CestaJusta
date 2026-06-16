@@ -26,10 +26,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        // TODO (auth-hardening, próxima task): remover este permitAll. O filtro JWT já
-                        // lê o token do cookie httpOnly cj_token, então a <img> passa a autenticar sozinha
-                        // e este STOPGAP de GET público para imagem de produto deixa de ser necessário.
-                        .requestMatchers(HttpMethod.GET, "/uploads/produtos/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/logout").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
