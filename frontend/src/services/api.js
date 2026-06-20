@@ -165,6 +165,34 @@ export async function getMercados() {
   return apiFetch('/mercados')
 }
 
+export async function getMercadosAdmin() {
+  return apiFetch('/mercados/todos')
+}
+
+export async function cadastrarMercado(dados) {
+  return apiFetch('/mercados/cadastro', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados),
+  })
+}
+
+export async function editarMercado(id, dados) {
+  return apiFetch(`/mercados/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados),
+  })
+}
+
+export async function inativarMercado(id) {
+  return apiFetch(`/mercados/${id}`, { method: 'DELETE' })
+}
+
+export async function ativarMercado(id) {
+  return apiFetch(`/mercados/${id}/ativar`, { method: 'PATCH' })
+}
+
 export async function cadastrarPreco({ produtoId, mercadoId, valor, dataColeta }) {
   return apiFetch('/precos/cadastro', {
     method: 'POST',
