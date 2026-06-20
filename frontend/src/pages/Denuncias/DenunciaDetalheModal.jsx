@@ -79,10 +79,9 @@ export default function DenunciaDetalheModal({ denuncia, onFechar, onMudou }) {
         {denuncia.fotoPath && (
           <div className="dn-sec">
             <div className="dn-label">Foto enviada</div>
-            {denuncia.fotoStatus === 'PROCESSANDO'
-              ? <div className="dn-foto-placeholder">Processando imagem…</div>
-              : <img className="dn-foto" alt="foto da denúncia"
-                     src={urlImagem(denuncia.thumbPath || denuncia.fotoPath)} />}
+            {/* Mostra a original já (servida pelo backend); troca pelo thumb quando o worker terminar. */}
+            <img className="dn-foto" alt="foto da denúncia"
+                 src={urlImagem(denuncia.thumbPath || denuncia.fotoPath)} />
           </div>
         )}
 
