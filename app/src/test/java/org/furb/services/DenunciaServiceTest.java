@@ -1,11 +1,16 @@
 package org.furb.services;
 
 import org.furb.dto.denuncia.DenunciaCadastroDTO;
+import org.furb.dto.denuncia.DenunciaListItemDTO;
+import org.furb.enums.MotivoBloqueioVoto;
 import org.furb.enums.StatusDenuncia;
+import org.furb.enums.TipoVoto;
 import org.furb.model.Denuncia;
 import org.furb.model.Mercado;
 import org.furb.model.Preco;
+import org.furb.model.Produto;
 import org.furb.model.Usuario;
+import org.furb.model.VotoDenuncia;
 import org.furb.repositories.DenunciaRepository;
 import org.furb.repositories.MercadoComercianteRepository;
 import org.furb.repositories.PrecoRepository;
@@ -15,11 +20,14 @@ import org.furb.services.exeptions.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import org.furb.dto.denuncia.DenunciaResponseDTO;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -85,6 +93,21 @@ class DenunciaServiceTest {
         dto.setPrecoId(10L);
         dto.setMotivo("Preço muito acima do mercado");
         return dto;
+    }
+
+    private Denuncia denunciaPendente(Long id, Usuario autor) {
+        Produto produto = new Produto();
+        produto.setNome("Arroz Tio João 5kg");
+        preco.setProduto(produto);
+        preco.setValor(new BigDecimal("18.90"));
+        mercado.setNomeFantasia("Super Koch");
+        Denuncia d = new Denuncia();
+        setId(d, id);
+        d.setPreco(preco);
+        d.setUsuario(autor);
+        d.setMotivo("Preço acima do normal");
+        d.setStatus(StatusDenuncia.PENDENTE);
+        return d;
     }
 
     @Test
@@ -376,5 +399,98 @@ class DenunciaServiceTest {
 
         assertThat(ids).containsExactly(10L, 20L);
         verify(denunciaRepository).findPrecoIdsDenunciadosPeloUsuario(1L, limiteEsperado);
+    }
+
+    @Test
+    void listarMinhas_retornaSomenteDoUsuarioAutenticado() {
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
+        Denuncia minha = denunciaPendente(50L, denunciante);
+        when(denunciaRepository.findByUsuarioIdOrderByDataCriacaoDesc(1L)).thenReturn(List.of(minha));
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(0L);
+        when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 1L)).thenReturn(Optional.empty());
+
+        List<DenunciaListItemDTO> resultado = service.listarMinhas();
+
+        assertThat(resultado).hasSize(1);
+        DenunciaListItemDTO item = resultado.get(0);
+        assertThat(item.getId()).isEqualTo(50L);
+        assertThat(item.getProdutoNome()).isEqualTo("Arroz Tio João 5kg");
+        assertThat(item.getMercadoNome()).isEqualTo("Super Koch");
+        assertThat(item.getPrecoValor()).isEqualByComparingTo("18.90");
+        assertThat(item.isPodeVotar()).isFalse();
+        assertThat(item.getMotivoBloqueio()).isEqualTo(MotivoBloqueioVoto.DENUNCIANTE);
+    }
+
+    @Test
+    void listarTodas_semFiltro_usaFindAll_eMarcaPodeVotarParaTerceiro() {
+        Usuario terceiro = new Usuario();
+        terceiro.setNome("Votante");
+        setId(terceiro, 2L);
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(terceiro);
+        Denuncia d = denunciaPendente(50L, denunciante);
+        when(denunciaRepository.findAll(any(Sort.class))).thenReturn(List.of(d));
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(0L);
+        when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 2L)).thenReturn(Optional.empty());
+        when(mercadoComercianteRepository.existsByMercadoIdAndComercianteId(5L, 2L)).thenReturn(false);
+
+        List<DenunciaListItemDTO> resultado = service.listarTodas(null);
+
+        assertThat(resultado).hasSize(1);
+        assertThat(resultado.get(0).isPodeVotar()).isTrue();
+        assertThat(resultado.get(0).getMotivoBloqueio()).isNull();
+        assertThat(resultado.get(0).getMeuVoto()).isNull();
+
+        ArgumentCaptor<Sort> sortCaptor = ArgumentCaptor.forClass(Sort.class);
+        verify(denunciaRepository).findAll(sortCaptor.capture());
+        Sort.Order ordem = sortCaptor.getValue().getOrderFor("dataCriacao");
+        assertThat(ordem).isNotNull();
+        assertThat(ordem.getDirection()).isEqualTo(Sort.Direction.DESC);
+    }
+
+    @Test
+    void listarTodas_comFiltro_usaFindByStatus() {
+        Usuario terceiro = new Usuario();
+        setId(terceiro, 2L);
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(terceiro);
+        when(denunciaRepository.findByStatusOrderByDataCriacaoDesc(StatusDenuncia.PENDENTE)).thenReturn(List.of());
+
+        List<DenunciaListItemDTO> resultado = service.listarTodas(StatusDenuncia.PENDENTE);
+
+        assertThat(resultado).isEmpty();
+        verify(denunciaRepository).findByStatusOrderByDataCriacaoDesc(StatusDenuncia.PENDENTE);
+    }
+
+    @Test
+    void listarTodas_donoDoMercado_naoPodeVotar() {
+        Usuario dono = new Usuario();
+        setId(dono, 9L);
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(dono);
+        Denuncia d = denunciaPendente(50L, denunciante);
+        when(denunciaRepository.findAll(any(Sort.class))).thenReturn(List.of(d));
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(0L);
+        when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 9L)).thenReturn(Optional.empty());
+        when(mercadoComercianteRepository.existsByMercadoIdAndComercianteId(5L, 9L)).thenReturn(true);
+
+        List<DenunciaListItemDTO> resultado = service.listarTodas(null);
+
+        assertThat(resultado.get(0).isPodeVotar()).isFalse();
+        assertThat(resultado.get(0).getMotivoBloqueio()).isEqualTo(MotivoBloqueioVoto.DONO_MERCADO);
+    }
+
+    @Test
+    void listarTodas_denunciaResolvida_bloqueiaJaResolvida() {
+        Usuario terceiro = new Usuario();
+        setId(terceiro, 2L);
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(terceiro);
+        Denuncia d = denunciaPendente(50L, denunciante);
+        d.setStatus(StatusDenuncia.APROVADA);
+        when(denunciaRepository.findAll(any(Sort.class))).thenReturn(List.of(d));
+        when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(3L);
+        when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 2L)).thenReturn(Optional.empty());
+
+        List<DenunciaListItemDTO> resultado = service.listarTodas(null);
+
+        assertThat(resultado.get(0).isPodeVotar()).isFalse();
+        assertThat(resultado.get(0).getMotivoBloqueio()).isEqualTo(MotivoBloqueioVoto.JA_RESOLVIDA);
     }
 }

@@ -1,10 +1,12 @@
 package org.furb.controller;
 
+import org.furb.dto.denuncia.DenunciaListItemDTO;
 import org.furb.dto.denuncia.DenunciaResponseDTO;
 import org.furb.enums.StatusDenuncia;
 import org.furb.enums.TipoVoto;
 import org.furb.model.Denuncia;
 import org.furb.services.DenunciaService;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -103,5 +105,41 @@ class DenunciaControllerTest {
                         .param("status", "APROVADA"))
                 .andExpect(status().isNoContent());
         verify(service).resolverComoAdmin(100L, StatusDenuncia.APROVADA);
+    }
+
+    private DenunciaListItemDTO listItem(Long id) {
+        return new DenunciaListItemDTO(id, 10L, 1L, "Arroz Tio João 5kg", "Super Koch",
+                new BigDecimal("18.90"), "abusivo", null, StatusDenuncia.PENDENTE,
+                2L, 1L, null, null, null, null, null, null, null, true, null);
+    }
+
+    @Test
+    void listarMinhas_retorna200ComArray() throws Exception {
+        when(service.listarMinhas()).thenReturn(List.of(listItem(50L)));
+
+        mockMvc.perform(get("/denuncias/minhas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].produtoNome").value("Arroz Tio João 5kg"))
+                .andExpect(jsonPath("$[0].podeVotar").value(true));
+    }
+
+    @Test
+    void listarTodas_semStatus_chamaServiceComNull() throws Exception {
+        when(service.listarTodas(null)).thenReturn(List.of(listItem(50L)));
+
+        mockMvc.perform(get("/denuncias"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+        verify(service).listarTodas(null);
+    }
+
+    @Test
+    void listarTodas_comStatus_repassaFiltro() throws Exception {
+        when(service.listarTodas(StatusDenuncia.APROVADA)).thenReturn(List.of());
+
+        mockMvc.perform(get("/denuncias").param("status", "APROVADA"))
+                .andExpect(status().isOk());
+        verify(service).listarTodas(StatusDenuncia.APROVADA);
     }
 }

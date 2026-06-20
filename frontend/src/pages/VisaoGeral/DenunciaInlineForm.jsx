@@ -80,14 +80,30 @@ export default function DenunciaInlineForm({ preco, onCancelar, onSucesso }) {
       <div className="pm-contador">{descricao.length} / 1000</div>
 
       <label htmlFor={`foto-${preco.id}`}>Foto (opcional)</label>
-      <input id={`foto-${preco.id}`} ref={inputFileRef} type="file"
+      <label htmlFor={`foto-${preco.id}`} className={`pm-foto-drop ${enviando ? 'desabilitado' : ''}`}>
+        {previewUrl
+          ? <img src={previewUrl} alt="" className="pm-foto-thumb" />
+          : (
+            <span className="pm-foto-icone" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="14" rx="2" />
+                <circle cx="8.5" cy="9" r="1.5" />
+                <path d="M21 15l-5-5L5 18" />
+                <path d="M12 20v-3m0 0l-1.5 1.5M12 17l1.5 1.5" />
+              </svg>
+            </span>
+          )}
+        <span className="pm-foto-texto">{previewUrl ? 'Trocar imagem' : 'Escolher imagem'}</span>
+        <span className="pm-foto-hint">JPG, PNG ou WEBP · até 5 MB</span>
+      </label>
+      <input id={`foto-${preco.id}`} ref={inputFileRef} type="file" className="pm-foto-input"
              accept="image/jpeg,image/png,image/webp"
              onChange={aoEscolherFoto} disabled={enviando} />
       {previewUrl && (
         <div className="pm-foto-preview">
-          <img src={previewUrl} alt="Prévia da foto" />
           <button type="button" className="pm-foto-remover" onClick={removerFoto}
-                  disabled={enviando}>Remover</button>
+                  disabled={enviando}>Remover foto</button>
         </div>
       )}
 

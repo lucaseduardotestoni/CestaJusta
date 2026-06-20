@@ -85,6 +85,23 @@
 .pm-foto-preview img { max-height: 80px; border-radius: 6px; border: 1px solid var(--cor-border, #E5E7EB); }
 .pm-foto-remover { background: none; border: none; color: var(--cor-danger, #DC2626);
   font-size: 12px; font-weight: 600; cursor: pointer; }
+
+/* Input file estilizado como dropzone (input nativo escondido).
+   Especificidade .pm-form-den label.pm-foto-drop vence a regra `.pm-form-den label`. */
+.pm-foto-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.pm-form-den label.pm-foto-drop {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; text-align: center; cursor: pointer; margin: 4px 0 0; font-weight: 400;
+  padding: 16px; border: 1.5px dashed var(--cor-border, #E5E7EB); border-radius: 8px;
+  background: #fff; transition: border-color .15s ease, background .15s ease;
+}
+.pm-form-den label.pm-foto-drop:hover { border-color: var(--cor-accent, #EF6E35); background: #FFF1E8; }
+.pm-form-den label.pm-foto-drop.desabilitado { opacity: .6; cursor: default; pointer-events: none; }
+.pm-foto-icone { color: var(--cor-accent, #EF6E35); display: inline-flex; }
+.pm-foto-texto { font-size: 13px; font-weight: 700; color: var(--cor-accent, #EF6E35); }
+.pm-foto-hint { font-size: 11px; color: var(--cor-text-muted, #6B7280); }
+.pm-foto-thumb { width: 88px; height: 88px; object-fit: contain; border-radius: 6px;
+  background: #fff; border: 1px solid var(--cor-border, #E5E7EB); }
 .pm-erro { margin-top: 12px; font-size: 12px; color: var(--cor-danger, #DC2626); font-weight: 600; }
 .pm-form-acoes { display: flex; gap: 8px; margin-top: 16px; }
 .pm-btn-enviar { background: var(--cor-accent, #EF6E35); color: #fff; border: none;

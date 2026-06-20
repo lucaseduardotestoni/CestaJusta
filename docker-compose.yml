@@ -60,7 +60,9 @@ services:
       RABBITMQ_VHOST: cestajusta
       APP_UPLOADS_DIR: /data/uploads
     volumes:
-      - uploads_data:/data/uploads
+      # Dev: compartilha os uploads com o backend (inclusive rodando no IntelliJ,
+      # que grava em ./app/data/uploads). Em prod isso vira object storage (bucket).
+      - ./app/data/uploads:/data/uploads
     networks:
       - cestajusta-net
 
@@ -87,14 +89,15 @@ services:
       RABBITMQ_VHOST: cestajusta
       APP_UPLOADS_DIR: /data/uploads
     volumes:
-      - uploads_data:/data/uploads
+      # Dev: compartilha os uploads com o backend (inclusive rodando no IntelliJ,
+      # que grava em ./app/data/uploads). Em prod isso vira object storage (bucket).
+      - ./app/data/uploads:/data/uploads
     networks:
       - cestajusta-net
 
 volumes:
   postgres_data:
   rabbitmq_data:
-  uploads_data:
 
 networks:
   cestajusta-net:

@@ -2,6 +2,7 @@ package org.furb.controller;
 
 import jakarta.validation.Valid;
 import org.furb.dto.denuncia.DenunciaCadastroDTO;
+import org.furb.dto.denuncia.DenunciaListItemDTO;
 import org.furb.dto.denuncia.DenunciaResponseDTO;
 import org.furb.dto.denuncia.VotoDenunciaDTO;
 import org.furb.enums.StatusDenuncia;
@@ -30,6 +31,17 @@ public class DenunciaController {
                                       @RequestPart(name = "foto", required = false) MultipartFile foto) {
         denunciaService.criar(dto, foto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/minhas")
+    public ResponseEntity<List<DenunciaListItemDTO>> listarMinhas() {
+        return ResponseEntity.ok(denunciaService.listarMinhas());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DenunciaListItemDTO>> listarTodas(
+            @RequestParam(required = false) StatusDenuncia status) {
+        return ResponseEntity.ok(denunciaService.listarTodas(status));
     }
 
     @GetMapping("/{id}")
