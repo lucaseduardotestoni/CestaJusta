@@ -14,7 +14,9 @@ import java.util.List;
 @Repository
 public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
     List<Denuncia> findByStatus(StatusDenuncia status);
+    List<Denuncia> findByStatusOrderByDataCriacaoDesc(StatusDenuncia status);
     List<Denuncia> findByUsuarioId(Long usuarioId);
+    List<Denuncia> findByUsuarioIdOrderByDataCriacaoDesc(Long usuarioId);
     List<Denuncia> findByPrecoId(Long precoId);
     boolean existsByUsuarioIdAndPrecoIdAndDataCriacaoAfter(Long usuarioId, Long precoId, LocalDateTime limite);
     boolean existsByIdAndFotoStatusNot(Long id, FotoStatus fotoStatus);

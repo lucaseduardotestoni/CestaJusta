@@ -29,6 +29,7 @@ import org.furb.services.exeptions.BusinessException;
 import org.furb.services.exeptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -241,7 +242,7 @@ public class DenunciaService {
     @Transactional(readOnly = true)
     public List<DenunciaListItemDTO> listarMinhas() {
         Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
-        return denunciaRepository.findByUsuarioId(usuario.getId()).stream()
+        return denunciaRepository.findByUsuarioIdOrderByDataCriacaoDesc(usuario.getId()).stream()
                 .map(d -> toListItemDTO(d, usuario)).toList();
     }
 
@@ -249,8 +250,8 @@ public class DenunciaService {
     public List<DenunciaListItemDTO> listarTodas(StatusDenuncia status) {
         Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
         List<Denuncia> denuncias = (status == null)
-                ? denunciaRepository.findAll()
-                : denunciaRepository.findByStatus(status);
+                ? denunciaRepository.findAll(Sort.by(Sort.Direction.DESC, "dataCriacao"))
+                : denunciaRepository.findByStatusOrderByDataCriacaoDesc(status);
         return denuncias.stream().map(d -> toListItemDTO(d, usuario)).toList();
     }
 

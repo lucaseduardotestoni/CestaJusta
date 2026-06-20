@@ -20,8 +20,10 @@ import org.furb.services.exeptions.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import org.furb.dto.denuncia.DenunciaResponseDTO;
 
@@ -403,7 +405,7 @@ class DenunciaServiceTest {
     void listarMinhas_retornaSomenteDoUsuarioAutenticado() {
         when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(denunciante);
         Denuncia minha = denunciaPendente(50L, denunciante);
-        when(denunciaRepository.findByUsuarioId(1L)).thenReturn(List.of(minha));
+        when(denunciaRepository.findByUsuarioIdOrderByDataCriacaoDesc(1L)).thenReturn(List.of(minha));
         when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(0L);
         when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 1L)).thenReturn(Optional.empty());
 
@@ -426,7 +428,7 @@ class DenunciaServiceTest {
         setId(terceiro, 2L);
         when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(terceiro);
         Denuncia d = denunciaPendente(50L, denunciante);
-        when(denunciaRepository.findAll()).thenReturn(List.of(d));
+        when(denunciaRepository.findAll(any(Sort.class))).thenReturn(List.of(d));
         when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(0L);
         when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 2L)).thenReturn(Optional.empty());
         when(mercadoComercianteRepository.existsByMercadoIdAndComercianteId(5L, 2L)).thenReturn(false);
@@ -437,6 +439,12 @@ class DenunciaServiceTest {
         assertThat(resultado.get(0).isPodeVotar()).isTrue();
         assertThat(resultado.get(0).getMotivoBloqueio()).isNull();
         assertThat(resultado.get(0).getMeuVoto()).isNull();
+
+        ArgumentCaptor<Sort> sortCaptor = ArgumentCaptor.forClass(Sort.class);
+        verify(denunciaRepository).findAll(sortCaptor.capture());
+        Sort.Order ordem = sortCaptor.getValue().getOrderFor("dataCriacao");
+        assertThat(ordem).isNotNull();
+        assertThat(ordem.getDirection()).isEqualTo(Sort.Direction.DESC);
     }
 
     @Test
@@ -444,12 +452,12 @@ class DenunciaServiceTest {
         Usuario terceiro = new Usuario();
         setId(terceiro, 2L);
         when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(terceiro);
-        when(denunciaRepository.findByStatus(StatusDenuncia.PENDENTE)).thenReturn(List.of());
+        when(denunciaRepository.findByStatusOrderByDataCriacaoDesc(StatusDenuncia.PENDENTE)).thenReturn(List.of());
 
         List<DenunciaListItemDTO> resultado = service.listarTodas(StatusDenuncia.PENDENTE);
 
         assertThat(resultado).isEmpty();
-        verify(denunciaRepository).findByStatus(StatusDenuncia.PENDENTE);
+        verify(denunciaRepository).findByStatusOrderByDataCriacaoDesc(StatusDenuncia.PENDENTE);
     }
 
     @Test
@@ -458,7 +466,7 @@ class DenunciaServiceTest {
         setId(dono, 9L);
         when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(dono);
         Denuncia d = denunciaPendente(50L, denunciante);
-        when(denunciaRepository.findAll()).thenReturn(List.of(d));
+        when(denunciaRepository.findAll(any(Sort.class))).thenReturn(List.of(d));
         when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(0L);
         when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 9L)).thenReturn(Optional.empty());
         when(mercadoComercianteRepository.existsByMercadoIdAndComercianteId(5L, 9L)).thenReturn(true);
@@ -476,7 +484,7 @@ class DenunciaServiceTest {
         when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(terceiro);
         Denuncia d = denunciaPendente(50L, denunciante);
         d.setStatus(StatusDenuncia.APROVADA);
-        when(denunciaRepository.findAll()).thenReturn(List.of(d));
+        when(denunciaRepository.findAll(any(Sort.class))).thenReturn(List.of(d));
         when(votoDenunciaRepository.countByDenunciaIdAndTipo(eq(50L), any())).thenReturn(3L);
         when(votoDenunciaRepository.findByDenunciaIdAndUsuarioId(50L, 2L)).thenReturn(Optional.empty());
 
