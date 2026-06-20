@@ -80,16 +80,17 @@ export default function DenunciaDetalheModal({ denuncia, onFechar, onMudou }) {
 
         {pendente && (
           <div className="dn-sec">
-            <div className="dn-label">Sua avaliação — a comunidade decide (3 votos)</div>
+            <div className="dn-pergunta">Este preço foi denunciado com razão?</div>
+            <div className="dn-ajuda">Confirmada ou rejeitada com 3 votos da comunidade.</div>
             <div className="dn-votes">
               <button type="button" disabled={!denuncia.podeVotar || processando}
                       title={tooltip}
                       className={`dn-vote ${denuncia.meuVoto === 'CONFIRMA' ? 'active' : ''}`}
-                      onClick={() => votar('CONFIRMA')}>👍 Confirmar</button>
+                      onClick={() => votar('CONFIRMA')}>Confirmar</button>
               <button type="button" disabled={!denuncia.podeVotar || processando}
                       title={tooltip}
                       className={`dn-vote no ${denuncia.meuVoto === 'REJEITA' ? 'active' : ''}`}
-                      onClick={() => votar('REJEITA')}>👎 Rejeitar</button>
+                      onClick={() => votar('REJEITA')}>Rejeitar</button>
             </div>
             <div className="dn-tally">
               <span>Confirmar: <b>{denuncia.votosConfirma}</b></span>
