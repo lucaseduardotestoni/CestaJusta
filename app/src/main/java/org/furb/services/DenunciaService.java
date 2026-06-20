@@ -1,9 +1,11 @@
 package org.furb.services;
 
 import org.furb.dto.denuncia.DenunciaCadastroDTO;
+import org.furb.dto.denuncia.DenunciaListItemDTO;
 import org.furb.dto.denuncia.DenunciaResponseDTO;
 import org.furb.enums.AlvoFoto;
 import org.furb.enums.FotoStatus;
+import org.furb.enums.MotivoBloqueioVoto;
 import org.furb.enums.OrigemResolucao;
 import org.furb.enums.StatusDenuncia;
 import org.furb.enums.StatusPreco;
@@ -15,6 +17,7 @@ import org.furb.storage.FotoStorage;
 import org.springframework.web.multipart.MultipartFile;
 import org.furb.model.Denuncia;
 import org.furb.model.Preco;
+import org.furb.model.Produto;
 import org.furb.model.Usuario;
 import org.furb.model.VotoDenuncia;
 import org.furb.repositories.DenunciaRepository;
@@ -136,15 +139,13 @@ public class DenunciaService {
         Denuncia denuncia = denunciaRepository.findById(denunciaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Denúncia não encontrada."));
 
-        if (denuncia.getStatus() != StatusDenuncia.PENDENTE) {
-            throw new BusinessException("Denúncia já resolvida não aceita votos.");
-        }
-        if (denuncia.getUsuario().getId().equals(usuario.getId())) {
-            throw new BusinessException("O denunciante não pode votar na própria denúncia.");
-        }
-        Long mercadoId = denuncia.getPreco().getMercado().getId();
-        if (mercadoComercianteRepository.existsByMercadoIdAndComercianteId(mercadoId, usuario.getId())) {
-            throw new BusinessException("Donos do mercado não podem votar na denúncia do próprio preço.");
+        MotivoBloqueioVoto bloqueio = calcularBloqueio(denuncia, usuario);
+        if (bloqueio != null) {
+            throw new BusinessException(switch (bloqueio) {
+                case JA_RESOLVIDA -> "Denúncia já resolvida não aceita votos.";
+                case DENUNCIANTE -> "O denunciante não pode votar na própria denúncia.";
+                case DONO_MERCADO -> "Donos do mercado não podem votar na denúncia do próprio preço.";
+            });
         }
         if (votoDenunciaRepository.existsByDenunciaIdAndUsuarioId(denunciaId, usuario.getId())) {
             throw new BusinessException("Você já votou nesta denúncia.");
@@ -237,6 +238,22 @@ public class DenunciaService {
         return denunciaRepository.findByPrecoId(precoId).stream().map(this::toResponseDTO).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<DenunciaListItemDTO> listarMinhas() {
+        Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
+        return denunciaRepository.findByUsuarioId(usuario.getId()).stream()
+                .map(d -> toListItemDTO(d, usuario)).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<DenunciaListItemDTO> listarTodas(StatusDenuncia status) {
+        Usuario usuario = usuarioAutenticadoProvider.getUsuarioAutenticado();
+        List<Denuncia> denuncias = (status == null)
+                ? denunciaRepository.findAll()
+                : denunciaRepository.findByStatus(status);
+        return denuncias.stream().map(d -> toListItemDTO(d, usuario)).toList();
+    }
+
     /** Ids dos preços que o usuário autenticado já denunciou dentro da janela anti-spam. */
     @Transactional(readOnly = true)
     public List<Long> precosDenunciadosPeloUsuarioNaJanela() {
@@ -253,6 +270,35 @@ public class DenunciaService {
                 d.getMotivo(), d.getDescricao(), d.getStatus(),
                 confirma, rejeita, d.getDataCriacao(), d.getDataResolucao(), d.getResolvidoPor(),
                 d.getFotoPath(), d.getThumbPath(), d.getFotoStatus());
+    }
+
+    private MotivoBloqueioVoto calcularBloqueio(Denuncia d, Usuario atual) {
+        if (d.getStatus() != StatusDenuncia.PENDENTE) return MotivoBloqueioVoto.JA_RESOLVIDA;
+        if (d.getUsuario().getId().equals(atual.getId())) return MotivoBloqueioVoto.DENUNCIANTE;
+        Long mercadoId = d.getPreco().getMercado().getId();
+        if (mercadoComercianteRepository.existsByMercadoIdAndComercianteId(mercadoId, atual.getId())) {
+            return MotivoBloqueioVoto.DONO_MERCADO;
+        }
+        return null;
+    }
+
+    private DenunciaListItemDTO toListItemDTO(Denuncia d, Usuario atual) {
+        long confirma = votoDenunciaRepository.countByDenunciaIdAndTipo(d.getId(), TipoVoto.CONFIRMA);
+        long rejeita = votoDenunciaRepository.countByDenunciaIdAndTipo(d.getId(), TipoVoto.REJEITA);
+        Preco preco = d.getPreco();
+        Produto produto = preco.getProduto();
+        MotivoBloqueioVoto bloqueio = calcularBloqueio(d, atual);
+        TipoVoto meuVoto = votoDenunciaRepository.findByDenunciaIdAndUsuarioId(d.getId(), atual.getId())
+                .map(VotoDenuncia::getTipo).orElse(null);
+        return new DenunciaListItemDTO(
+                d.getId(), preco.getId(), d.getUsuario().getId(),
+                produto != null ? produto.getNome() : null,
+                preco.getMercado() != null ? preco.getMercado().getNomeFantasia() : null,
+                preco.getValor(),
+                d.getMotivo(), d.getDescricao(), d.getStatus(),
+                confirma, rejeita, d.getDataCriacao(), d.getDataResolucao(), d.getResolvidoPor(),
+                d.getFotoPath(), d.getThumbPath(), d.getFotoStatus(),
+                meuVoto, bloqueio == null, bloqueio);
     }
 
     private void aprovar(Denuncia denuncia, OrigemResolucao origem) {

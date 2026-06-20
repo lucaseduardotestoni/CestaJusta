@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface VotoDenunciaRepository extends JpaRepository<VotoDenuncia, Long> {
     long countByDenunciaIdAndTipo(Long denunciaId, TipoVoto tipo);
     boolean existsByDenunciaIdAndUsuarioId(Long denunciaId, Long usuarioId);
+
+    Optional<VotoDenuncia> findByDenunciaIdAndUsuarioId(Long denunciaId, Long usuarioId);
 
     @Transactional
     void deleteByDenunciaIdAndUsuarioId(Long denunciaId, Long usuarioId);
