@@ -18,6 +18,14 @@ function brl(v) {
   return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
+function descricaoResolucao(d) {
+  if (d.status === 'CANCELADA') return 'Cancelada pelo próprio autor'
+  const verbo = d.status === 'APROVADA' ? 'Aprovada' : 'Rejeitada'
+  if (d.resolvidoPor === 'ADMIN') return `${verbo} por um administrador`
+  if (d.resolvidoPor === 'SISTEMA') return `${verbo} pela comunidade`
+  return verbo
+}
+
 export default function DenunciaDetalheModal({ denuncia, onFechar, onMudou }) {
   const { usuario } = useAuth()
   const { mostrarToast } = useToast()
@@ -103,7 +111,7 @@ export default function DenunciaDetalheModal({ denuncia, onFechar, onMudou }) {
 
         {!pendente && (
           <div className="dn-sec dn-resolvida">
-            Resolvida — {denuncia.status}{denuncia.resolvidoPor ? ` (${denuncia.resolvidoPor})` : ''}
+            {descricaoResolucao(denuncia)}
           </div>
         )}
 
