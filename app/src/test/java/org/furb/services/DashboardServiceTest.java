@@ -13,17 +13,20 @@ import org.furb.repositories.PrecoRepository;
 import org.furb.repositories.ProdutoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +42,7 @@ DashboardServiceTest {
 
     @Test
     void calcularValorCesta_quandoNenhumProdutoTemPreco_retornaZero() {
-        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of());
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any())).thenReturn(List.of());
 
         BigDecimal valor = dashboardService.calcularValorCesta();
 
@@ -57,7 +60,7 @@ DashboardServiceTest {
         Preco leiteM2 = precoMock(leite, m2, "4.50", LocalDate.now().minusDays(1));
         Preco arrozM1 = precoMock(arroz, m1, "20.00", LocalDate.now().minusDays(3));
 
-        when(precoRepository.findByDataColetaBetween(any(), any()))
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any()))
                 .thenReturn(List.of(leiteM1, leiteM2, arrozM1));
 
         BigDecimal valor = dashboardService.calcularValorCesta();
@@ -68,7 +71,7 @@ DashboardServiceTest {
 
     @Test
     void calcularVariacaoSemanal_quandoSemanaAnteriorEhZero_retornaZero() {
-        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of());
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any())).thenReturn(List.of());
 
         BigDecimal variacao = dashboardService.calcularVariacaoSemanal();
 
@@ -85,11 +88,11 @@ DashboardServiceTest {
         // semana atual (0-7 dias atrás): R$ 8
         Preco atual = precoMock(leite, m, "8.00", LocalDate.now().minusDays(2));
 
-        when(precoRepository.findByDataColetaBetween(
-                LocalDate.now().minusDays(7), LocalDate.now()))
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(
+                eq(LocalDate.now().minusDays(7)), eq(LocalDate.now()), any()))
                 .thenReturn(List.of(atual));
-        when(precoRepository.findByDataColetaBetween(
-                LocalDate.now().minusDays(14), LocalDate.now().minusDays(8)))
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(
+                eq(LocalDate.now().minusDays(14)), eq(LocalDate.now().minusDays(8)), any()))
                 .thenReturn(List.of(anterior));
 
         BigDecimal variacao = dashboardService.calcularVariacaoSemanal();
@@ -108,7 +111,7 @@ DashboardServiceTest {
         // Leite: maior 10, menor 8 → economia 20%
         // Arroz: maior 25, menor 20 → economia 20%
         // Média: 20%
-        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of(
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any())).thenReturn(List.of(
                 precoMock(leite, m1, "10.00", LocalDate.now().minusDays(5)),
                 precoMock(leite, m2, "8.00",  LocalDate.now().minusDays(5)),
                 precoMock(arroz, m1, "25.00", LocalDate.now().minusDays(5)),
@@ -125,7 +128,7 @@ DashboardServiceTest {
         Produto leite = produtoMock(1L, "Leite");
         Mercado m1 = mercadoMock(1L, "M1");
 
-        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of(
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any())).thenReturn(List.of(
                 precoMock(leite, m1, "10.00", LocalDate.now().minusDays(5))
         ));
 
@@ -139,7 +142,7 @@ DashboardServiceTest {
         when(produtoRepository.count()).thenReturn(42L);
         when(mercadoRepository.count()).thenReturn(7L);
         // sem preços nos repositórios → cesta=0, variacao=0, economia=0
-        when(precoRepository.findByDataColetaBetween(any(), any())).thenReturn(List.of());
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any())).thenReturn(List.of());
 
         KpiDashboardDTO kpis = dashboardService.montarKpis();
 
@@ -152,7 +155,7 @@ DashboardServiceTest {
 
     @Test
     void montarSparkline_quandoSemPrecos_retornaListaVazia() {
-        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+        when(precoRepository.findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(1L), any(), any(), any()))
                 .thenReturn(List.of());
 
         List<PontoSparklineDTO> pontos = dashboardService.montarSparkline(1L, 30);
@@ -167,7 +170,7 @@ DashboardServiceTest {
         LocalDate hoje = LocalDate.now();
 
         // só temos preço em hoje-2 e hoje (R$ 5 e R$ 6); dia intermediário hoje-1 repete 5
-        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+        when(precoRepository.findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(1L), any(), any(), any()))
                 .thenReturn(List.of(
                         precoMock(p, m, "5.00", hoje.minusDays(2)),
                         precoMock(p, m, "6.00", hoje)
@@ -195,7 +198,7 @@ DashboardServiceTest {
         Produto leite = produtoMock(1L, "Leite Italac 1L");
         Mercado m = mercadoMock(1L, "M");
         when(produtoRepository.findById(1L)).thenReturn(java.util.Optional.of(leite));
-        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+        when(precoRepository.findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(1L), any(), any(), any()))
                 .thenReturn(List.of(precoMock(leite, m, "5.00", LocalDate.now())));
 
         HistoricoPrecoDTO dto = dashboardService.montarHistorico(1L, 30);
@@ -227,13 +230,13 @@ DashboardServiceTest {
 
         when(produtoRepository.findAll()).thenReturn(List.of(leite, arroz));
         // leite: caiu de 10 → 5 (queda forte)
-        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(1L), any(), any()))
+        when(precoRepository.findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(1L), any(), any(), any()))
                 .thenReturn(List.of(
                         precoMock(leite, m1, "10.00", hoje.minusDays(20)),
                         precoMock(leite, m1, "5.00",  hoje.minusDays(1))
                 ));
         // arroz: caiu de 25 → 24 (queda leve)
-        when(precoRepository.findByProdutoIdAndDataColetaBetween(eq(2L), any(), any()))
+        when(precoRepository.findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(2L), any(), any(), any()))
                 .thenReturn(List.of(
                         precoMock(arroz, m1, "25.00", hoje.minusDays(20)),
                         precoMock(arroz, m1, "24.00", hoje.minusDays(1))
@@ -246,6 +249,39 @@ DashboardServiceTest {
         assertThat(page.getContent()).hasSize(2);
         // primeiro = maior queda = leite
         assertThat(page.getContent().get(0).getNome()).isEqualTo("Leite");
+    }
+
+    @Test
+    void calcularValorCesta_consultaApenasStatusValidos() {
+        when(precoRepository.findByDataColetaBetweenAndStatusIn(any(), any(), any()))
+                .thenReturn(List.of());
+
+        dashboardService.calcularValorCesta();
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Collection<StatusPreco>> captor =
+                ArgumentCaptor.forClass(Collection.class);
+        verify(precoRepository).findByDataColetaBetweenAndStatusIn(any(), any(), captor.capture());
+
+        assertThat(captor.getValue())
+                .containsExactlyInAnyOrder(StatusPreco.CONFIRMADO, StatusPreco.DESATUALIZADO);
+    }
+
+    @Test
+    void montarSparkline_consultaApenasStatusValidos() {
+        when(precoRepository.findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(1L), any(), any(), any()))
+                .thenReturn(List.of());
+
+        dashboardService.montarSparkline(1L, 30);
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Collection<StatusPreco>> captor =
+                ArgumentCaptor.forClass(Collection.class);
+        verify(precoRepository)
+                .findByProdutoIdAndDataColetaBetweenAndStatusIn(eq(1L), any(), any(), captor.capture());
+
+        assertThat(captor.getValue())
+                .containsExactlyInAnyOrder(StatusPreco.CONFIRMADO, StatusPreco.DESATUALIZADO);
     }
 
     private Produto produtoMock(Long id, String nome) {

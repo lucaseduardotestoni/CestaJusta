@@ -4,6 +4,7 @@ import org.furb.dto.dashboard.HistoricoPrecoDTO;
 import org.furb.dto.dashboard.KpiDashboardDTO;
 import org.furb.dto.dashboard.PontoSparklineDTO;
 import org.furb.dto.dashboard.ProdutoDashboardDTO;
+import org.furb.enums.StatusPreco;
 import org.furb.model.Mercado;
 import org.furb.model.Preco;
 import org.furb.model.Produto;
@@ -30,6 +31,13 @@ import java.util.stream.Collectors;
 @Service
 public class DashboardService {
 
+    /**
+     * Status considerados nas métricas/gráfico do dashboard. PENDENTE (não validado) e
+     * REJEITADO ficam de fora para não distorcer cesta, variação, economia e sparkline.
+     */
+    private static final List<StatusPreco> STATUS_VALIDOS =
+            List.of(StatusPreco.CONFIRMADO, StatusPreco.DESATUALIZADO);
+
     private final PrecoRepository precoRepository;
     private final ProdutoRepository produtoRepository;
     private final MercadoRepository mercadoRepository;
@@ -47,7 +55,7 @@ public class DashboardService {
     }
 
     private BigDecimal calcularValorCestaNoIntervalo(LocalDate inicio, LocalDate fim) {
-        List<Preco> precos = precoRepository.findByDataColetaBetween(inicio, fim);
+        List<Preco> precos = precoRepository.findByDataColetaBetweenAndStatusIn(inicio, fim, STATUS_VALIDOS);
         if (precos.isEmpty()) return BigDecimal.ZERO;
 
         return precos.stream()
@@ -78,7 +86,7 @@ public class DashboardService {
     public BigDecimal calcularEconomiaMedia() {
         LocalDate fim = LocalDate.now();
         LocalDate inicio = fim.minusDays(30);
-        List<Preco> precos = precoRepository.findByDataColetaBetween(inicio, fim);
+        List<Preco> precos = precoRepository.findByDataColetaBetweenAndStatusIn(inicio, fim, STATUS_VALIDOS);
 
         Map<Long, List<BigDecimal>> precosPorProduto = precos.stream()
                 .collect(Collectors.groupingBy(
@@ -117,7 +125,7 @@ public class DashboardService {
         LocalDate inicio = fim.minusDays(dias - 1L);
 
         List<Preco> precos = precoRepository
-                .findByProdutoIdAndDataColetaBetween(produtoId, inicio, fim);
+                .findByProdutoIdAndDataColetaBetweenAndStatusIn(produtoId, inicio, fim, STATUS_VALIDOS);
 
         if (precos.isEmpty()) return List.of();
 
@@ -190,7 +198,7 @@ public class DashboardService {
         LocalDate fim = LocalDate.now();
         LocalDate inicio = fim.minusDays(30);
         List<Preco> precos = precoRepository
-                .findByProdutoIdAndDataColetaBetween(p.getId(), inicio, fim);
+                .findByProdutoIdAndDataColetaBetweenAndStatusIn(p.getId(), inicio, fim, STATUS_VALIDOS);
 
         Preco menor = precos.stream()
                 .min(Comparator.comparing(Preco::getValor))
