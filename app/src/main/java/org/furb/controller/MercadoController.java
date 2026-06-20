@@ -28,7 +28,20 @@ public class MercadoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MercadoResponseDTO> editar(@PathVariable Long id,
+                                                     @Valid @RequestBody MercadoCadastroDTO dto) {
+        return ResponseEntity.ok(mercadoService.editar(id, dto));
+    }
+
     @GetMapping
+    public ResponseEntity<List<MercadoResponseDTO>> listarAtivos() {
+        return ResponseEntity.ok(mercadoService.listarAtivos());
+    }
+
+    @GetMapping("/todos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<MercadoResponseDTO>> listarTodos() {
         return ResponseEntity.ok(mercadoService.listarTodos());
     }
