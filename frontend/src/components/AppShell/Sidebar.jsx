@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import EnviarPrecoModal from '../../pages/EnviarPreco/EnviarPrecoModal'
 
 const ITEMS = [
@@ -15,6 +15,11 @@ const ITEMS = [
 
 export default function Sidebar() {
   const [enviarAberto, setEnviarAberto] = useState(false)
+  const { pathname } = useLocation()
+  // Submenu começa fechado; abre se a rota atual já for de um filho.
+  const [expandido, setExpandido] = useState(
+    () => ITEMS.find(i => i.subitens && pathname.startsWith(i.rota))?.rota ?? null,
+  )
 
   return (
     <aside className="sidebar">
@@ -23,11 +28,44 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {ITEMS.map(item => (
-          <div key={item.rota}>
+        {ITEMS.map(item => {
+          if (item.subitens) {
+            const aberto = expandido === item.rota
+            const algumFilhoAtivo = item.subitens.some(s =>
+              s.rota === item.rota ? pathname === s.rota : pathname.startsWith(s.rota))
+            return (
+              <div key={item.rota}>
+                <button
+                  type="button"
+                  className={`sidebar-item sidebar-item-toggle ${algumFilhoAtivo ? 'ativo' : ''}`}
+                  aria-expanded={aberto}
+                  onClick={() => setExpandido(aberto ? null : item.rota)}
+                >
+                  <span className={`sidebar-icone sidebar-icone-${item.icone}`} aria-hidden="true" />
+                  <span>{item.rotulo}</span>
+                  <span className={`sidebar-chevron ${aberto ? 'aberto' : ''}`} aria-hidden="true">›</span>
+                </button>
+                {aberto && (
+                  <div className="sidebar-subnav">
+                    {item.subitens.map(sub => (
+                      <NavLink
+                        key={sub.rota}
+                        to={sub.rota}
+                        end
+                        className={({ isActive }) => `sidebar-subitem ${isActive ? 'ativo' : ''}`}
+                      >
+                        {sub.rotulo}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          }
+          return (
             <NavLink
+              key={item.rota}
               to={item.rota}
-              end={item.rota === '/denuncias'}
               className={({ isActive }) =>
                 `sidebar-item ${isActive ? 'ativo' : ''} ${item.desabilitado ? 'desabilitado' : ''}`
               }
@@ -36,22 +74,8 @@ export default function Sidebar() {
               <span className={`sidebar-icone sidebar-icone-${item.icone}`} aria-hidden="true" />
               <span>{item.rotulo}</span>
             </NavLink>
-            {item.subitens && (
-              <div className="sidebar-subnav">
-                {item.subitens.map(sub => (
-                  <NavLink
-                    key={sub.rota}
-                    to={sub.rota}
-                    end
-                    className={({ isActive }) => `sidebar-subitem ${isActive ? 'ativo' : ''}`}
-                  >
-                    {sub.rotulo}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+          )
+        })}
       </nav>
 
       <button className="sidebar-cta" type="button" onClick={() => setEnviarAberto(true)}>
