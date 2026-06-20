@@ -118,6 +118,35 @@ export async function getMeusPrecosDenunciados() {
   return apiFetch('/denuncias/meus-precos')
 }
 
+export async function getMinhasDenuncias() {
+  return apiFetch('/denuncias/minhas')
+}
+
+export async function getDenuncias(status) {
+  const qs = status ? `?status=${status}` : ''
+  return apiFetch(`/denuncias${qs}`)
+}
+
+export async function votarDenuncia(id, tipo) {
+  return apiFetch(`/denuncias/${id}/votos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tipo }),
+  })
+}
+
+export async function retirarVotoDenuncia(id) {
+  return apiFetch(`/denuncias/${id}/votos`, { method: 'DELETE' })
+}
+
+export async function cancelarDenuncia(id) {
+  return apiFetch(`/denuncias/${id}/cancelar`, { method: 'PATCH' })
+}
+
+export async function resolverDenuncia(id, status) {
+  return apiFetch(`/denuncias/${id}/resolver?status=${status}`, { method: 'PUT' })
+}
+
 export async function confirmarPreco(precoId) {
   return apiFetch(`/precos/${precoId}/confirmacoes`, { method: 'POST' })
 }
