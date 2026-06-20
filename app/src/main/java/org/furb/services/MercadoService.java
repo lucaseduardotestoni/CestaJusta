@@ -36,12 +36,38 @@ public class MercadoService {
         return toResponseDTO(salvo);
     }
 
-    public List<MercadoResponseDTO> listarTodos() {
+    public List<MercadoResponseDTO> listarAtivos() {
         return mercadoRepository.findAll()
                 .stream()
                 .filter(Mercado::getAtivo)
                 .map(this::toResponseDTO)
                 .toList();
+    }
+
+    public List<MercadoResponseDTO> listarTodos() {
+        return mercadoRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    public MercadoResponseDTO editar(Long id, MercadoCadastroDTO dto) {
+        Mercado mercado = mercadoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Mercado não encontrado."));
+
+        mercadoRepository.findByCnpj(dto.getCnpj())
+                .filter(outro -> !outro.getId().equals(id))
+                .ifPresent(outro -> {
+                    throw new BusinessException("Já existe um mercado cadastrado com este CNPJ.");
+                });
+
+        mercado.setNomeFantasia(dto.getNomeFantasia());
+        mercado.setCnpj(dto.getCnpj());
+        mercado.setCidade(dto.getCidade());
+        mercado.setEstado(dto.getEstado());
+
+        Mercado atualizado = mercadoRepository.save(mercado);
+        return toResponseDTO(atualizado);
     }
 
     public MercadoResponseDTO buscarPorId(Long id) {

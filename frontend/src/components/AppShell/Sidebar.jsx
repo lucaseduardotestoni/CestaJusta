@@ -5,7 +5,7 @@ import EnviarPrecoModal from '../../pages/EnviarPreco/EnviarPrecoModal'
 const ITEMS = [
   { rota: '/dashboard',  rotulo: 'Visão geral', icone: 'home' },
   { rota: '/produtos',   rotulo: 'Produtos',    icone: 'comparar' },
-  { rota: '/mercados',   rotulo: 'Mercados',    icone: 'mercado',  desabilitado: true },
+  { rota: '/mercados',   rotulo: 'Mercados',    icone: 'mercado' },
   { rota: '/denuncias',  rotulo: 'Denúncias',   icone: 'denuncia',
     subitens: [
       { rota: '/denuncias',        rotulo: 'Todas' },

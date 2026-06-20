@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage'
 import RegisterPage from './pages/RegisterPage'
 import VisaoGeralPage from './pages/VisaoGeral/VisaoGeralPage'
 import ProdutosPage from './pages/Produtos/ProdutosPage'
+import MercadosPage from './pages/Mercados/MercadosPage'
 import DenunciasPage from './pages/Denuncias/DenunciasPage'
 import AppShell from './components/AppShell/AppShell'
 
@@ -15,6 +16,7 @@ function App() {
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<VisaoGeralPage />} />
           <Route path="/produtos" element={<ProdutosPage />} />
+          <Route path="/mercados" element={<MercadosPage />} />
           <Route path="/denuncias" element={<DenunciasPage escopo="todas" />} />
           <Route path="/denuncias/minhas" element={<DenunciasPage escopo="minhas" />} />
         </Route>
