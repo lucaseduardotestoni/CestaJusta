@@ -39,7 +39,7 @@ export default function Header({ onAbrirMenu, drawerAberto }) {
       <button
         type="button"
         className="header-hamburguer"
-        aria-label="Abrir menu"
+        aria-label={drawerAberto ? 'Fechar menu' : 'Abrir menu'}
         aria-expanded={drawerAberto}
         onClick={onAbrirMenu}
       >

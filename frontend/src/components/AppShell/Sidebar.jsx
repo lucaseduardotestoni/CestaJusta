@@ -86,7 +86,7 @@ export default function Sidebar({ aberta = false, onNavegar }) {
         })}
       </nav>
 
-      <button className="sidebar-cta" type="button" onClick={() => setEnviarAberto(true)}>
+      <button className="sidebar-cta" type="button" onClick={() => { setEnviarAberto(true); onNavegar?.() }}>
         Enviar preço
       </button>
 
