@@ -287,3 +287,8 @@
     z-index: 40;
   }
 }
+
+/* No mobile, o botão de usuário mostra só avatar + seta (esconde o nome). */
+@media (max-width: 768px) {
+  .header-nome { display: none; }
+}
