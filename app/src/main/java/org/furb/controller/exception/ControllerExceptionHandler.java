@@ -87,8 +87,8 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<StandardError> handleNoResource(NoResourceFoundException ex,
                                                           HttpServletRequest request) {
-        logger.warn("Imagem não encontrada: {}", request.getRequestURI());
-        return build(HttpStatus.NOT_FOUND, "Imagem não encontrada.", request);
+        logger.warn("Página não encontrada: {}", request.getRequestURI());
+        return build(HttpStatus.NOT_FOUND, "Página não encontrada.", request);
     }
 
     @ExceptionHandler(Exception.class)

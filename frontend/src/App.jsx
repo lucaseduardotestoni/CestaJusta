@@ -5,6 +5,8 @@ import VisaoGeralPage from './pages/VisaoGeral/VisaoGeralPage'
 import ProdutosPage from './pages/Produtos/ProdutosPage'
 import MercadosPage from './pages/Mercados/MercadosPage'
 import DenunciasPage from './pages/Denuncias/DenunciasPage'
+import UsuariosPage from './pages/Usuarios/UsuariosPage'
+import NotFoundPage from './pages/NotFound/NotFoundPage'
 import AppShell from './components/AppShell/AppShell'
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
           <Route path="/mercados" element={<MercadosPage />} />
           <Route path="/denuncias" element={<DenunciasPage escopo="todas" />} />
           <Route path="/denuncias/minhas" element={<DenunciasPage escopo="minhas" />} />
+          <Route path="/usuarios" element={<UsuariosPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
