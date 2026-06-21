@@ -1,4 +1,8 @@
 .pr-cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
+@media (max-width: 768px) {
+  .pr-cabecalho { flex-direction: column; align-items: stretch; }
+  .pr-btn-cadastrar { width: 100%; }
+}
 .pr-btn-cadastrar {
   background: var(--cor-primary); color: #fff; border: none; border-radius: var(--r-md);
   padding: var(--space-3) var(--space-4); font-size: var(--fs-sm); font-weight: 600; cursor: pointer;

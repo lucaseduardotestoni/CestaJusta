@@ -25,7 +25,7 @@ export default function ProdutoDetalheModal({ produto, onFechar }) {
         {historico && (
           <section className="vg-modal-secao vg-modal-secao-fixa">
             <h3>Tendência de preço (30 dias)</h3>
-            <Sparkline pontos={historico.pontos} largura={620} altura={180} comTooltip />
+            <Sparkline pontos={historico.pontos} largura="100%" altura={180} comTooltip />
           </section>
         )}
 
