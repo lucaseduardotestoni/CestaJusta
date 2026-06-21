@@ -5,7 +5,9 @@ import org.furb.dto.usuario.UsuarioResponseDTO;
 import org.furb.enums.TipoUsuario;
 import org.furb.model.Usuario;
 import org.furb.repositories.UsuarioRepository;
+import org.furb.security.UsuarioAutenticadoProvider;
 import org.furb.services.exeptions.BusinessException;
+import org.furb.services.exeptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +37,9 @@ class UsuarioServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UsuarioAutenticadoProvider usuarioAutenticadoProvider;
+
     @InjectMocks
     private UsuarioService usuarioService;
 
@@ -45,6 +52,29 @@ class UsuarioServiceTest {
         dto.setEmail("lucas@teste.com");
         dto.setSenha("senha123");
         dto.setTipoUsuario(TipoUsuario.CONSUMIDOR);
+    }
+
+    private Usuario usuario(Long id, TipoUsuario tipo, boolean ativo) {
+        Usuario u = new Usuario();
+        u.setNome("Fulano");
+        u.setEmail("fulano@teste.com");
+        u.setSenha("$2a$hash");
+        u.setTipoUsuario(tipo);
+        u.setAtivo(ativo);
+        u.setDataCriacao(LocalDateTime.now());
+        setId(u, id);
+        return u;
+    }
+
+    // Usuario.id não tem setter; reflexão só nos testes para simular entidade persistida.
+    private void setId(Usuario u, Long id) {
+        try {
+            var f = Usuario.class.getDeclaredField("id");
+            f.setAccessible(true);
+            f.set(u, id);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Test
@@ -87,6 +117,109 @@ class UsuarioServiceTest {
                 .hasMessageContaining("administrador");
 
         verify(passwordEncoder, never()).encode(eq("senha123"));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void listarTodos_retornaTodosOsUsuarios() {
+        when(usuarioRepository.findAll()).thenReturn(List.of(
+                usuario(1L, TipoUsuario.ADMIN, true),
+                usuario(2L, TipoUsuario.CONSUMIDOR, false)
+        ));
+
+        List<UsuarioResponseDTO> lista = usuarioService.listarTodos();
+
+        assertThat(lista).hasSize(2);
+        assertThat(lista).extracting(UsuarioResponseDTO::getTipoUsuario)
+                .containsExactly(TipoUsuario.ADMIN, TipoUsuario.CONSUMIDOR);
+    }
+
+    @Test
+    void alterarPapel_usuarioDiferente_atualizaTipo() {
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario(2L, TipoUsuario.CONSUMIDOR, true)));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
+
+        UsuarioResponseDTO response = usuarioService.alterarPapel(2L, TipoUsuario.COMERCIANTE);
+
+        assertThat(response.getTipoUsuario()).isEqualTo(TipoUsuario.COMERCIANTE);
+    }
+
+    @Test
+    void alterarPapel_usuarioInexistente_lancaResourceNotFound() {
+        when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> usuarioService.alterarPapel(99L, TipoUsuario.COMERCIANTE))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void alterarPapel_rebaixaProprioAdmin_lancaBusinessException() {
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(1L, TipoUsuario.ADMIN, true)));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
+
+        assertThatThrownBy(() -> usuarioService.alterarPapel(1L, TipoUsuario.CONSUMIDOR))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("próprio");
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void inativar_outroUsuarioAtivo_desativa() {
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario(2L, TipoUsuario.CONSUMIDOR, true)));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
+
+        UsuarioResponseDTO response = usuarioService.inativar(2L);
+
+        assertThat(response.getAtivo()).isFalse();
+    }
+
+    @Test
+    void inativar_propriaConta_lancaBusinessException() {
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(1L, TipoUsuario.ADMIN, true)));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
+
+        assertThatThrownBy(() -> usuarioService.inativar(1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("própria");
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void inativar_jaInativo_lancaBusinessException() {
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario(2L, TipoUsuario.CONSUMIDOR, false)));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
+
+        assertThatThrownBy(() -> usuarioService.inativar(2L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("inativo");
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void ativar_usuarioInativo_reativa() {
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario(2L, TipoUsuario.CONSUMIDOR, false)));
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
+
+        UsuarioResponseDTO response = usuarioService.ativar(2L);
+
+        assertThat(response.getAtivo()).isTrue();
+    }
+
+    @Test
+    void ativar_jaAtivo_lancaBusinessException() {
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario(2L, TipoUsuario.CONSUMIDOR, true)));
+
+        assertThatThrownBy(() -> usuarioService.ativar(2L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("ativo");
+
         verify(usuarioRepository, never()).save(any());
     }
 }
