@@ -128,7 +128,9 @@ export default function MercadosPage() {
       {isAdmin && (
         <MercadoCadastroModal aberto={cadastroAberto} mercado={emEdicao}
                               onFechar={() => { setCadastroAberto(false); setEmEdicao(null) }}
-                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }} />
+                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }}
+                              onInativar={async (m) => { await onInativar(m); setCadastroAberto(false); setEmEdicao(null) }}
+                              onAtivar={async (m) => { await onAtivar(m); setCadastroAberto(false); setEmEdicao(null) }} />
       )}
 
       {isAdmin && <Fab label="Cadastrar mercado" onClick={() => { setEmEdicao(null); setCadastroAberto(true) }} />}

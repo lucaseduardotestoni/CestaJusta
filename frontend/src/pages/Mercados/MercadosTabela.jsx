@@ -1,10 +1,12 @@
+import { isMobileViewport } from '../../utils/viewport'
+
 export default function MercadosTabela({ mercados, isAdmin, onEditar, onInativar, onAtivar, processandoId }) {
   if (!mercados.length) {
     return <div className="mc-empty">Nenhum mercado encontrado.</div>
   }
   return (
     <div className="mc-tabela rt-wrap">
-      <table className="responsive-table">
+      <table className={`responsive-table ${isAdmin ? 'responsive-table-tappable' : ''}`}>
         <thead>
           <tr>
             <th>Nome fantasia</th>
@@ -15,7 +17,8 @@ export default function MercadosTabela({ mercados, isAdmin, onEditar, onInativar
         </thead>
         <tbody>
           {mercados.map(m => (
-            <tr key={m.id} className={m.ativo ? '' : 'mc-inativo'}>
+            <tr key={m.id} className={m.ativo ? '' : 'mc-inativo'}
+                onClick={isAdmin ? () => { if (isMobileViewport()) onEditar(m) } : undefined}>
               <td>
                 <span className="mc-nome">{m.nomeFantasia}</span>
                 {!m.ativo && <span className="mc-selo-inativo">Inativo</span>}

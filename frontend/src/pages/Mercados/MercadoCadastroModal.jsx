@@ -17,7 +17,7 @@ function mascararCnpj(valor) {
   return r
 }
 
-export default function MercadoCadastroModal({ aberto, mercado, onFechar, onSalvo }) {
+export default function MercadoCadastroModal({ aberto, mercado, onFechar, onSalvo, onInativar, onAtivar }) {
   const { mostrarToast } = useToast()
   const edicao = !!mercado
   const [nomeFantasia, setNomeFantasia] = useState('')
@@ -88,6 +88,11 @@ export default function MercadoCadastroModal({ aberto, mercado, onFechar, onSalv
           <button type="button" className="ep-btn-enviar" onClick={salvar} disabled={enviando}>
             {enviando ? 'Salvando…' : 'Salvar'}
           </button>
+          {edicao && (mercado.ativo
+            ? <button type="button" className="ep-btn-perigo" disabled={enviando}
+                      onClick={() => onInativar?.(mercado)}>Inativar</button>
+            : <button type="button" className="ep-btn-secundario" disabled={enviando}
+                      onClick={() => onAtivar?.(mercado)}>Reativar</button>)}
           <button type="button" className="ep-btn-cancelar" onClick={onFechar} disabled={enviando}>
             Cancelar
           </button>
