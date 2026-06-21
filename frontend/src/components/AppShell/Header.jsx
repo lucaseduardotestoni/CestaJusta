@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-export default function Header() {
+export default function Header({ onAbrirMenu, drawerAberto }) {
   const { usuario, logout } = useAuth()
   const navigate = useNavigate()
   const [aberto, setAberto] = useState(false)
@@ -36,6 +36,15 @@ export default function Header() {
 
   return (
     <header className="header">
+      <button
+        type="button"
+        className="header-hamburguer"
+        aria-label="Abrir menu"
+        aria-expanded={drawerAberto}
+        onClick={onAbrirMenu}
+      >
+        ☰
+      </button>
       <div className="header-actions">
         <button className="header-bell" type="button" aria-label="Notificações">🔔</button>
 
