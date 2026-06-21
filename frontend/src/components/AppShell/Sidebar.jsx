@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import EnviarPrecoModal from '../../pages/EnviarPreco/EnviarPrecoModal'
 
 const ITEMS = [
@@ -11,10 +12,13 @@ const ITEMS = [
       { rota: '/denuncias',        rotulo: 'Todas' },
       { rota: '/denuncias/minhas', rotulo: 'Minhas' },
     ] },
+  { rota: '/usuarios',   rotulo: 'Usuários',    icone: 'usuarios', somenteAdmin: true },
 ]
 
 export default function Sidebar() {
   const [enviarAberto, setEnviarAberto] = useState(false)
+  const { usuario } = useAuth()
+  const isAdmin = usuario?.tipo === 'ADMIN'
   const { pathname } = useLocation()
   // Submenu começa fechado; abre se a rota atual já for de um filho.
   const [expandido, setExpandido] = useState(
@@ -28,7 +32,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {ITEMS.map(item => {
+        {ITEMS.filter(item => !item.somenteAdmin || isAdmin).map(item => {
           if (item.subitens) {
             const aberto = expandido === item.rota
             const algumFilhoAtivo = item.subitens.some(s =>

@@ -193,6 +193,34 @@ export async function ativarMercado(id) {
   return apiFetch(`/mercados/${id}/ativar`, { method: 'PATCH' })
 }
 
+export async function getUsuarios() {
+  return apiFetch('/usuarios')
+}
+
+export async function criarUsuario({ nome, email, senha, tipoUsuario }) {
+  return apiFetch('/usuarios/cadastro', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome, email, senha, tipoUsuario }),
+  })
+}
+
+export async function alterarPapelUsuario(id, tipoUsuario) {
+  return apiFetch(`/usuarios/${id}/papel`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tipoUsuario }),
+  })
+}
+
+export async function inativarUsuario(id) {
+  return apiFetch(`/usuarios/${id}`, { method: 'DELETE' })
+}
+
+export async function ativarUsuario(id) {
+  return apiFetch(`/usuarios/${id}/ativar`, { method: 'PATCH' })
+}
+
 export async function cadastrarPreco({ produtoId, mercadoId, valor, dataColeta }) {
   return apiFetch('/precos/cadastro', {
     method: 'POST',
