@@ -7,6 +7,7 @@ import { AcoesPrecoSessaoProvider } from './context/AcoesPrecoSessaoContext.jsx'
 import './styles/tokens.css'
 import './styles/reset.css'
 import './index.css'
+import './styles/responsive-table.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
