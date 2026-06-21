@@ -254,7 +254,7 @@ class UsuarioServiceTest {
         Usuario existente = usuario(2L, TipoUsuario.CONSUMIDOR, true);
         existente.setEmail("fulano@teste.com");
         when(usuarioRepository.findById(2L)).thenReturn(Optional.of(existente));
-        when(usuarioRepository.findByEmail("fulano@teste.com")).thenReturn(Optional.of(existente));
+        // E-mail inalterado: o serviço pula a checagem de unicidade, então não há stub de findByEmail.
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
 
         UsuarioUpdateDTO dto = updateDto("Novo Nome", "fulano@teste.com", TipoUsuario.CONSUMIDOR);
