@@ -5,8 +5,8 @@ export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, o
     return <div className="us-empty">Nenhum usuário encontrado.</div>
   }
   return (
-    <div className="us-tabela">
-      <table>
+    <div className="us-tabela rt-wrap">
+      <table className="responsive-table">
         <thead>
           <tr>
             <th>Nome</th>
@@ -22,8 +22,8 @@ export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, o
                 <span className="us-nome">{u.nome}</span>
                 {!u.ativo && <span className="us-selo-inativo">Inativo</span>}
               </td>
-              <td>{u.email}</td>
-              <td>
+              <td data-label="E-mail">{u.email}</td>
+              <td data-label="Papel">
                 <select
                   className="us-papel-select"
                   value={u.tipoUsuario}
@@ -33,7 +33,7 @@ export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, o
                   {PAPEIS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
                 </select>
               </td>
-              <td>
+              <td data-label="Ações" className="rt-acoes">
                 {u.ativo
                   ? <button type="button" className="us-acao us-acao-inativar"
                             disabled={processandoId === u.id} onClick={() => onInativar(u)}>
