@@ -22,16 +22,16 @@ export default function ProdutoRow({ produto, onClick }) {
           </div>
         </div>
       </td>
-      <td><Sparkline pontos={produto.sparkline} /></td>
-      <td>
+      <td data-label="Tendência (30d)"><Sparkline pontos={produto.sparkline} /></td>
+      <td data-label="Menor preço">
         {formatBRL(produto.menorPreco)}
         <div className="vg-produto-meta">{produto.mercadoMenorNome}</div>
       </td>
-      <td className={tendenciaClasse}>
+      <td data-label="Variação" className={tendenciaClasse}>
         {produto.tendenciaPercentual > 0 ? '↑' : produto.tendenciaPercentual < 0 ? '↓' : '—'}
         {' '}{Math.abs(produto.tendenciaPercentual).toFixed(1)}%
       </td>
-      <td><button type="button" className="vg-btn-detalhes">Ver detalhes</button></td>
+      <td className="rt-acoes"><button type="button" className="vg-btn-detalhes">Ver detalhes</button></td>
     </tr>
   )
 }
