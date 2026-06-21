@@ -98,8 +98,12 @@
 }
 .sidebar-icone-home     { -webkit-mask-image: url('/icones/home.svg');     mask-image: url('/icones/home.svg'); }
 .sidebar-icone-comparar { -webkit-mask-image: url('/icones/comparar.svg'); mask-image: url('/icones/comparar.svg'); }
-.sidebar-icone-mercado  { -webkit-mask-image: url('/icones/mercado.svg');  mask-image: url('/icones/mercado.svg'); }
-.sidebar-icone-denuncia { -webkit-mask-image: url('/icones/denuncia.svg'); mask-image: url('/icones/denuncia.svg'); }
+/* mercado: muita margem interna no SVG -> aumenta p/ alinhar com os demais */
+.sidebar-icone-mercado  { -webkit-mask-image: url('/icones/mercado.svg');  mask-image: url('/icones/mercado.svg');
+                          -webkit-mask-size: 122%; mask-size: 122%; }
+/* denuncia: traçado preenche demais a caixa -> reduz p/ alinhar com os demais */
+.sidebar-icone-denuncia { -webkit-mask-image: url('/icones/denuncia.svg'); mask-image: url('/icones/denuncia.svg');
+                          -webkit-mask-size: 88%; mask-size: 88%; }
 .sidebar-icone-usuarios { -webkit-mask-image: url('/icones/usuarios.svg'); mask-image: url('/icones/usuarios.svg'); }
 .sidebar-cta {
   margin: var(--space-5) var(--space-4) var(--space-3);
