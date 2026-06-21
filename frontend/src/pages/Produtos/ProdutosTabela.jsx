@@ -1,4 +1,5 @@
 import { urlImagem } from '../../utils/urlImagem'
+import { isMobileViewport } from '../../utils/viewport'
 
 export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar, onAtivar, processandoId }) {
   if (!produtos.length) {
@@ -6,7 +7,7 @@ export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar
   }
   return (
     <div className="pr-tabela rt-wrap">
-      <table className="responsive-table">
+      <table className={`responsive-table ${isAdmin ? 'responsive-table-tappable' : ''}`}>
         <thead>
           <tr>
             <th>Produto</th>
@@ -17,7 +18,8 @@ export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar
         </thead>
         <tbody>
           {produtos.map(p => (
-            <tr key={p.id} className={p.ativo ? '' : 'pr-inativo'}>
+            <tr key={p.id} className={p.ativo ? '' : 'pr-inativo'}
+                onClick={isAdmin ? () => { if (isMobileViewport()) onEditar(p) } : undefined}>
               <td>
                 <div className="pr-produto-info">
                   {(p.thumbPath || p.imagemPath)

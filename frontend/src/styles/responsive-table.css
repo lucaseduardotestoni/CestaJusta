@@ -69,4 +69,18 @@
     gap: var(--space-2);
   }
   table.responsive-table td.rt-acoes[data-label]::before { width: 100%; }
+
+  /* Cards tocáveis: o card inteiro abre o modal de edição (mobile).
+     Esconde a faixa de ações inline e mostra um chevron indicando que é tocável. */
+  table.responsive-table-tappable tr { position: relative; cursor: pointer; }
+  table.responsive-table-tappable td.rt-acoes { display: none; }
+  table.responsive-table-tappable tr::after {
+    content: '›';
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-3);
+    color: var(--cor-text-muted);
+    font-size: 22px;
+    line-height: 1;
+  }
 }

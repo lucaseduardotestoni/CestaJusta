@@ -14,3 +14,15 @@
   color: var(--cor-text); padding: 10px 18px; border-radius: var(--r-sm);
   font-weight: 600; cursor: pointer; }
 .ep-btn-cancelar:disabled { opacity: .6; cursor: default; }
+
+/* Ações no rodapé do modal de edição: inativar (perigo) / reativar (secundário) */
+.ep-btn-perigo { background: transparent; border: 1px solid var(--cor-accent);
+  color: var(--cor-accent); padding: 10px 18px; border-radius: var(--r-sm);
+  font-weight: 600; cursor: pointer; }
+.ep-btn-perigo:hover:not(:disabled) { background: var(--cor-accent); color: #fff; }
+.ep-btn-perigo:disabled { opacity: .6; cursor: default; }
+.ep-btn-secundario { background: transparent; border: 1px solid var(--cor-primary);
+  color: var(--cor-primary); padding: 10px 18px; border-radius: var(--r-sm);
+  font-weight: 600; cursor: pointer; }
+.ep-btn-secundario:hover:not(:disabled) { background: var(--cor-primary); color: #fff; }
+.ep-btn-secundario:disabled { opacity: .6; cursor: default; }

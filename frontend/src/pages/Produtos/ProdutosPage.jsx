@@ -144,7 +144,9 @@ export default function ProdutosPage() {
       {isAdmin && (
         <ProdutoCadastroModal aberto={cadastroAberto} categorias={categorias} produto={emEdicao}
                               onFechar={() => { setCadastroAberto(false); setEmEdicao(null) }}
-                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }} />
+                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }}
+                              onInativar={async (p) => { await onInativar(p); setCadastroAberto(false); setEmEdicao(null) }}
+                              onAtivar={async (p) => { await onAtivar(p); setCadastroAberto(false); setEmEdicao(null) }} />
       )}
     </>
   )
