@@ -1,0 +1,25 @@
+/* FAB de adicionar — escondido no desktop, flutua no canto inferior-direito no mobile.
+   z-index abaixo do drawer (50) e backdrops, acima do conteúdo. */
+.fab-add { display: none; }
+
+@media (max-width: 768px) {
+  .fab-add {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 30;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--r-full);
+    background: var(--cor-primary);
+    color: #fff;
+    border: none;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(14, 124, 66, 0.40);
+  }
+  .fab-add:hover { background: var(--cor-primary-hover); }
+}

@@ -6,6 +6,7 @@ import Tabs from '../../components/Tabs/Tabs'
 import Pagination from '../../components/Pagination/Pagination'
 import UsuariosTabela from './UsuariosTabela'
 import UsuarioCadastroModal from './UsuarioCadastroModal'
+import Fab from '../../components/Fab/Fab'
 import { ROTULO_PAPEL } from './papeis'
 import './Usuarios.css'
 
@@ -144,6 +145,8 @@ export default function UsuariosPage() {
       <UsuarioCadastroModal aberto={cadastroAberto}
                             onFechar={() => setCadastroAberto(false)}
                             onSalvo={() => { setCadastroAberto(false); setRecarregar(n => n + 1) }} />
+
+      <Fab label="Cadastrar usuário" onClick={() => setCadastroAberto(true)} />
     </>
   )
 }

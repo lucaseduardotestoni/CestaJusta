@@ -1,7 +1,7 @@
 .pr-cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
 @media (max-width: 768px) {
-  .pr-cabecalho { flex-direction: column; align-items: stretch; }
-  .pr-btn-cadastrar { width: 100%; }
+  /* No mobile o cadastro vira FAB flutuante; esconde o botão de texto do cabeçalho. */
+  .pr-btn-cadastrar { display: none; }
 }
 .pr-btn-cadastrar {
   background: var(--cor-primary); color: #fff; border: none; border-radius: var(--r-md);

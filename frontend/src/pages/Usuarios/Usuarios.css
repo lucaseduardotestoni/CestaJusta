@@ -1,8 +1,8 @@
 .us-cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
 .us-cabecalho h1 { margin: 0 0 var(--space-1); }
 @media (max-width: 768px) {
-  .us-cabecalho { flex-direction: column; align-items: stretch; }
-  .us-btn-cadastrar { width: 100%; }
+  /* No mobile o cadastro vira FAB flutuante; esconde o botão de texto do cabeçalho. */
+  .us-btn-cadastrar { display: none; }
 }
 .us-btn-cadastrar {
   background: var(--cor-primary); color: #fff; border: none; border-radius: var(--r-md);

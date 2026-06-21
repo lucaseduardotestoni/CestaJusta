@@ -7,6 +7,7 @@ import Tabs from '../../components/Tabs/Tabs'
 import Pagination from '../../components/Pagination/Pagination'
 import ProdutosTabela from './ProdutosTabela'
 import ProdutoCadastroModal from './ProdutoCadastroModal'
+import Fab from '../../components/Fab/Fab'
 import './Produtos.css'
 
 const PAGE_SIZE = 10
@@ -148,6 +149,8 @@ export default function ProdutosPage() {
                               onInativar={async (p) => { await onInativar(p); setCadastroAberto(false); setEmEdicao(null) }}
                               onAtivar={async (p) => { await onAtivar(p); setCadastroAberto(false); setEmEdicao(null) }} />
       )}
+
+      {isAdmin && <Fab label="Cadastrar produto" onClick={() => { setEmEdicao(null); setCadastroAberto(true) }} />}
     </>
   )
 }

@@ -6,6 +6,7 @@ import Tabs from '../../components/Tabs/Tabs'
 import Pagination from '../../components/Pagination/Pagination'
 import MercadosTabela from './MercadosTabela'
 import MercadoCadastroModal from './MercadoCadastroModal'
+import Fab from '../../components/Fab/Fab'
 import './Mercados.css'
 
 const PAGE_SIZE = 10
@@ -129,6 +130,8 @@ export default function MercadosPage() {
                               onFechar={() => { setCadastroAberto(false); setEmEdicao(null) }}
                               onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }} />
       )}
+
+      {isAdmin && <Fab label="Cadastrar mercado" onClick={() => { setEmEdicao(null); setCadastroAberto(true) }} />}
     </>
   )
 }
