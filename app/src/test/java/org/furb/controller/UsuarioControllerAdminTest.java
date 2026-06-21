@@ -13,6 +13,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.furb.dto.usuario.UsuarioUpdateDTO;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -20,6 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,4 +85,18 @@ class UsuarioControllerAdminTest {
                 .andExpect(jsonPath("$.ativo").value(true));
         verify(service).ativar(2L);
     }
+
+    @Test
+    void atualizar_retorna200ComDto() throws Exception {
+        when(service.atualizar(eq(2L), any(UsuarioUpdateDTO.class)))
+                .thenReturn(dto(2L, TipoUsuario.COMERCIANTE, true));
+
+        mockMvc.perform(put("/usuarios/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nome\":\"Novo Nome\",\"email\":\"novo@teste.com\",\"tipoUsuario\":\"COMERCIANTE\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tipoUsuario").value("COMERCIANTE"));
+        verify(service).atualizar(eq(2L), any(UsuarioUpdateDTO.class));
+    }
+
 }

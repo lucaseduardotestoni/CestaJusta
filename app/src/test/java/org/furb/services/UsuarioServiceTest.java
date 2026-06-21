@@ -2,6 +2,7 @@ package org.furb.services;
 
 import org.furb.dto.usuario.UsuarioCadastroDTO;
 import org.furb.dto.usuario.UsuarioResponseDTO;
+import org.furb.dto.usuario.UsuarioUpdateDTO;
 import org.furb.enums.TipoUsuario;
 import org.furb.model.Usuario;
 import org.furb.repositories.UsuarioRepository;
@@ -219,6 +220,70 @@ class UsuarioServiceTest {
         assertThatThrownBy(() -> usuarioService.ativar(2L))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("ativo");
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    // --- atualizar ---
+
+    private UsuarioUpdateDTO updateDto(String nome, String email, TipoUsuario tipo) {
+        UsuarioUpdateDTO d = new UsuarioUpdateDTO();
+        d.setNome(nome);
+        d.setEmail(email);
+        d.setTipoUsuario(tipo);
+        return d;
+    }
+
+    @Test
+    void atualizar_dadosValidos_retornaResponseDTO() {
+        Usuario existente = usuario(2L, TipoUsuario.CONSUMIDOR, true);
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(existente));
+        when(usuarioRepository.findByEmail("novo@teste.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
+
+        UsuarioUpdateDTO dto = updateDto("Novo Nome", "novo@teste.com", TipoUsuario.COMERCIANTE);
+        UsuarioResponseDTO response = usuarioService.atualizar(2L, dto);
+
+        assertThat(response.getNome()).isEqualTo("Novo Nome");
+        assertThat(response.getEmail()).isEqualTo("novo@teste.com");
+        assertThat(response.getTipoUsuario()).isEqualTo(TipoUsuario.COMERCIANTE);
+    }
+
+    @Test
+    void atualizar_mesmoEmail_naoLancaConflito() {
+        Usuario existente = usuario(2L, TipoUsuario.CONSUMIDOR, true);
+        existente.setEmail("fulano@teste.com");
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(existente));
+        when(usuarioRepository.findByEmail("fulano@teste.com")).thenReturn(Optional.of(existente));
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
+
+        UsuarioUpdateDTO dto = updateDto("Novo Nome", "fulano@teste.com", TipoUsuario.CONSUMIDOR);
+        UsuarioResponseDTO response = usuarioService.atualizar(2L, dto);
+
+        assertThat(response.getNome()).isEqualTo("Novo Nome");
+    }
+
+    @Test
+    void atualizar_usuarioInexistente_lancaResourceNotFound() {
+        when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> usuarioService.atualizar(99L, updateDto("Nome", "x@x.com", TipoUsuario.CONSUMIDOR)))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void atualizar_emailEmUsoOutroUsuario_lancaBusinessException() {
+        Usuario existente = usuario(2L, TipoUsuario.CONSUMIDOR, true);
+        Usuario outro = usuario(3L, TipoUsuario.CONSUMIDOR, true);
+        outro.setEmail("ocupado@teste.com");
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(existente));
+        when(usuarioRepository.findByEmail("ocupado@teste.com")).thenReturn(Optional.of(outro));
+
+        assertThatThrownBy(() -> usuarioService.atualizar(2L, updateDto("Nome", "ocupado@teste.com", TipoUsuario.CONSUMIDOR)))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("e-mail");
 
         verify(usuarioRepository, never()).save(any());
     }
