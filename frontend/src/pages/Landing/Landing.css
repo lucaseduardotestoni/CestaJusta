@@ -855,3 +855,58 @@
     gap: 36px;
   }
 }
+
+/* ============================================================
+   COMUNIDADE — community stats section
+   ============================================================ */
+.landing .comm-narr {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing .comm-narr p {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.landing .comm-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.landing .cstat {
+  text-align: center;
+  padding: 0 10px;
+}
+
+.landing .cstat .n {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(34px, 4vw, 48px);
+  letter-spacing: -0.03em;
+  color: var(--primary);
+}
+
+.landing .cstat .n.o {
+  color: var(--accent);
+}
+
+.landing .cstat .l {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* ---- Tablet: 2 columns at ≤768px ---- */
+@media (max-width: 768px) {
+  .landing .comm-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 36px;
+  }
+}

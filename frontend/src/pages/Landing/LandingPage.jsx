@@ -5,6 +5,7 @@ import ComoFunciona from './components/ComoFunciona'
 import Sobre from './components/Sobre'
 import Produtos from './components/Produtos'
 import Denuncias from './components/Denuncias'
+import Comunidade from './components/Comunidade'
 
 export default function LandingPage() {
   return (
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <Sobre />
       <Produtos />
       <Denuncias />
+      <Comunidade />
     </div>
   )
 }
