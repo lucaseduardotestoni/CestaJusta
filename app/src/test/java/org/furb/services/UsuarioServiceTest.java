@@ -239,6 +239,7 @@ class UsuarioServiceTest {
         Usuario existente = usuario(2L, TipoUsuario.CONSUMIDOR, true);
         when(usuarioRepository.findById(2L)).thenReturn(Optional.of(existente));
         when(usuarioRepository.findByEmail("novo@teste.com")).thenReturn(Optional.empty());
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
 
         UsuarioUpdateDTO dto = updateDto("Novo Nome", "novo@teste.com", TipoUsuario.COMERCIANTE);
@@ -255,6 +256,7 @@ class UsuarioServiceTest {
         existente.setEmail("fulano@teste.com");
         when(usuarioRepository.findById(2L)).thenReturn(Optional.of(existente));
         // E-mail inalterado: o serviço pula a checagem de unicidade, então não há stub de findByEmail.
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArgument(0));
 
         UsuarioUpdateDTO dto = updateDto("Novo Nome", "fulano@teste.com", TipoUsuario.CONSUMIDOR);
@@ -284,6 +286,21 @@ class UsuarioServiceTest {
         assertThatThrownBy(() -> usuarioService.atualizar(2L, updateDto("Nome", "ocupado@teste.com", TipoUsuario.CONSUMIDOR)))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("e-mail");
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void atualizar_rebaixaProprioAdmin_lancaBusinessException() {
+        Usuario eu = usuario(1L, TipoUsuario.ADMIN, true);
+        eu.setEmail("admin@teste.com");
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(eu));
+        when(usuarioAutenticadoProvider.getUsuarioAutenticado()).thenReturn(usuario(1L, TipoUsuario.ADMIN, true));
+
+        // E-mail inalterado: pula a checagem de unicidade e chega na trava anti-lockout.
+        assertThatThrownBy(() -> usuarioService.atualizar(1L, updateDto("Admin", "admin@teste.com", TipoUsuario.CONSUMIDOR)))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("rebaixar");
 
         verify(usuarioRepository, never()).save(any());
     }

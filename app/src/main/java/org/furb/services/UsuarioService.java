@@ -105,6 +105,11 @@ public class UsuarioService {
             });
         }
 
+        Usuario autenticado = usuarioAutenticadoProvider.getUsuarioAutenticado();
+        if (autenticado.getId().equals(id) && dto.getTipoUsuario() != TipoUsuario.ADMIN) {
+            throw new BusinessException("Você não pode rebaixar o seu próprio papel de administrador.");
+        }
+
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
         usuario.setTipoUsuario(dto.getTipoUsuario());
