@@ -1,26 +1,179 @@
+/* Wrapper: contém o hero + o card da semana.
+   Desktop: a semana é absoluta sobre o hero. Mobile: cai p/ fora, abaixo. */
+.hero-wrap { position: relative; margin-bottom: var(--space-5); }
+
 .hero-cesta {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
-  background: var(--cor-primary-soft);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  /* Base com leve profundidade no lugar do verde chapado */
+  background: linear-gradient(135deg, #f4fbf7 0%, #edf7f1 100%);
   border: 1px solid var(--cor-border);
   border-radius: var(--r-lg);
-  padding: var(--space-5);
-  overflow: hidden;
+  padding: var(--space-5) var(--space-6);
+  /* visible p/ o blob orgânico vazar a borda do card (~10%) */
+  overflow: visible;
+  box-shadow: 0 10px 28px rgba(14, 124, 66, 0.06);
 }
-.hero-cesta-info { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
-.hero-cesta-titulo { color: var(--cor-text-muted); font-size: var(--fs-sm); }
-.hero-cesta-valor { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -0.01em; }
-.hero-cesta-var { font-size: var(--fs-sm); font-weight: 600; }
-.hero-cesta-economia { font-size: var(--fs-sm); color: var(--cor-text); }
-.hero-cesta-cta {
-  margin-top: var(--space-2); align-self: flex-start;
-  background: var(--cor-primary); color: #fff; border: none;
-  border-radius: var(--r-md); padding: var(--space-3) var(--space-4);
-  font-weight: 600; font-size: var(--fs-sm); cursor: pointer;
+
+/* Linha de cima: valor (esq) + semana (meio) + cesta (dir, absoluta) */
+.hc-top {
+  position: relative;
+  display: flex;
+  align-items: flex-start; /* info e semana ancoram no topo (mais pra cima) */
+  gap: var(--space-5);
+  padding-right: 450px; /* reserva o canto direito para a cesta */
+  min-height: 206px;
+  z-index: 1;
 }
-.hero-cesta-cta:disabled { opacity: 0.55; cursor: not-allowed; }
-.hero-cesta-img { width: 160px; max-width: 40%; height: auto; object-fit: contain; flex: none; }
+.hc-info { flex: 0 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); margin-top: 10px; }
+.hc-titulo { color: var(--cor-text-muted); font-size: var(--fs-sm); }
+.hc-valor { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -0.01em; }
+.hc-var { font-size: var(--fs-sm); font-weight: 600; }
+
+/* Bloco da semana — translúcido p/ integrar ao hero.
+   No 1280 (apertado) margin-left:auto encosta à direita da área compacta.
+   Em telas largas (24") posiciona à esquerda-centro com offset fixo (não vai
+   longe demais pra direita como o auto faria). */
+/* Desktop: a semana fica no topo (ao lado do valor), posicionada de forma absoluta.
+   No mobile ela volta ao fluxo (abaixo da faixa) — ver media query. */
+.hc-week { position: absolute; top: 34px; left: 325px; z-index: 3; }
+/* traço separando o valor (hc-info) do bloco da semana */
+.hc-week::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: -10px;
+  bottom: -10px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--cor-border);
+}
+@media (min-width: 1536px) {
+  .hc-week { left: 510px; }
+}
+
+/* Glow orgânico suave (mint) atrás da cesta */
+.hc-shape {
+  position: absolute;
+  right: 62px;
+  top: -44px;
+  width: 400px;
+  height: 304px;
+  border-radius: 68% 32% 44% 56% / 62% 56% 44% 38%;
+  background: radial-gradient(circle, #A2CFB5 0%, #CBE6D7 100%);
+  filter: blur(2px);
+  opacity: 0.95;
+  z-index: 0;
+}
+
+/* Cesta como hero image: maior, deslocada p/ a esquerda e descendo
+   p/ ~30% ficar atrás da faixa */
+.hc-art {
+  position: absolute;
+  right: 24px;
+  bottom: -50px;
+  width: 450px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.hc-img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 26px rgba(14, 124, 66, 0.18));
+}
+
+/* Faixa interna clara: Economia média (esq) + CTA (dir).
+   z-index acima da cesta p/ cobrir (frosted) os ~30% inferiores dela. */
+.hc-faixa {
+  position: relative;
+  z-index: 2;
+  /* puxa a faixa p/ cima p/ cobrir a base da cesta (que subiu) */
+  margin-top: -50px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--r-md);
+  box-shadow: 0 2px 12px rgba(14, 124, 66, 0.05);
+}
+.hc-economia {
+  font-size: var(--fs-sm);
+  color: var(--cor-text);
+  white-space: nowrap;
+}
+.hc-cta {
+  margin-left: auto;
+  background: var(--cor-surface);
+  color: var(--cor-primary);
+  border: 1px solid rgba(14, 124, 66, 0.35);
+  border-radius: var(--r-full);
+  padding: var(--space-3) var(--space-5);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s ease, border-color .15s ease;
+}
+.hc-cta:hover:not(:disabled) { background: var(--cor-primary-soft); border-color: var(--cor-primary); }
+.hc-cta:disabled { opacity: 0.7; cursor: not-allowed; }
+.hc-cta-short { display: none; } /* texto curto do CTA só no mobile */
 
 @media (max-width: 768px) {
-  .hero-cesta { padding: var(--space-4); }
-  .hero-cesta-img { width: 110px; }
+  .hero-cesta { gap: var(--space-3); padding: var(--space-4); }
+  /* valor (esq) + cesta (dir, absoluta descendo atrás da faixa) */
+  .hc-top {
+    display: block;
+    position: relative;
+    padding-right: 150px; /* reserva p/ a cesta */
+    min-height: 84px;
+  }
+  .hc-info { margin-top: 0; }
+  /* texto menor no mobile */
+  .hc-titulo { font-size: var(--fs-xs); }
+  .hc-valor { font-size: var(--fs-lg); }
+  .hc-var { font-size: var(--fs-xs); }
+  .hc-art {
+    position: absolute;
+    right: -6px;
+    bottom: -42px;     /* desce p/ metade ficar atrás da faixa */
+    width: 165px;
+    z-index: 1;
+    transform: none;
+    margin: 0;
+  }
+  .hc-img { max-width: 165px; }
+  /* semana sai do hero: card próprio, abaixo do card verde */
+  .hc-week { position: static; top: auto; left: auto; width: 100%; margin: var(--space-3) 0 0; }
+  .hc-week::before { display: none; } /* traço só faz sentido lado a lado (desktop) */
+  /* economia + CTA lado a lado (sem o margin negativo do desktop) */
+  .hc-faixa {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    margin-top: 0;
+  }
+  .hc-economia { white-space: nowrap; flex: none; font-size: var(--fs-xs); }
+  .hc-cta {
+    margin-left: auto;
+    width: auto;
+    flex: none;
+    white-space: nowrap;
+    font-size: var(--fs-xs);
+    padding: var(--space-2) var(--space-3);
+  }
+  .hc-cta-full { display: none; }   /* mobile usa o texto curto */
+  .hc-cta-short { display: inline; }
+  /* Blob junto, atrás da cesta (tuca atrás da faixa também) */
+  .hc-shape { width: 130px; height: 110px; right: 25px; bottom: 40px; top: auto; }
 }
