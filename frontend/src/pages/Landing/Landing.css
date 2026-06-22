@@ -564,3 +564,117 @@
     transform: translateY(-5px);
   }
 }
+
+/* ============================================================
+   PRODUTOS — monitored product cards grid
+   ============================================================ */
+.landing .prod-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.landing .prod {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 18px 38px -28px rgba(16, 35, 28, 0.28);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.landing .prod:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 46px -26px rgba(16, 35, 28, 0.34);
+}
+
+.landing .prod-ic {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--primary-soft);
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+
+.landing .prod-ic svg {
+  width: 30px;
+  height: 30px;
+}
+
+.landing .prod-name {
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.landing .prod-meta {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.landing .prod-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.landing .prod-price {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.landing .prod-trend {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.landing .prod-trend--down {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.landing .prod-trend--up {
+  color: var(--accent-deep);
+  background: #FBEAE2;
+}
+
+/* ---- Tablet: 2 columns at ≤900px ---- */
+@media (max-width: 900px) {
+  .landing .prod-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Mobile: 2 columns at ≤768px ---- */
+@media (max-width: 768px) {
+  .landing .prod-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .landing .prod {
+    padding: 18px;
+  }
+
+  .landing .prod-price {
+    font-size: 20px;
+  }
+}
+
+/* ---- Small mobile: 1 column at ≤420px ---- */
+@media (max-width: 420px) {
+  .landing .prod-grid {
+    grid-template-columns: 1fr;
+  }
+}

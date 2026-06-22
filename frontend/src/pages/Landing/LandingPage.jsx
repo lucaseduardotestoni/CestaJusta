@@ -3,6 +3,7 @@ import LandingNav from './components/LandingNav'
 import Hero from './components/Hero'
 import ComoFunciona from './components/ComoFunciona'
 import Sobre from './components/Sobre'
+import Produtos from './components/Produtos'
 
 export default function LandingPage() {
   return (
@@ -11,6 +12,7 @@ export default function LandingPage() {
       <Hero />
       <ComoFunciona />
       <Sobre />
+      <Produtos />
     </div>
   )
 }
