@@ -1,12 +1,13 @@
-import { PAPEIS } from './papeis'
+import { PAPEIS, ROTULO_PAPEL } from './papeis'
+import { isMobileViewport } from '../../utils/viewport'
 
-export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, onAtivar, processandoId }) {
+export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, onAtivar, onEditar, processandoId }) {
   if (!usuarios.length) {
     return <div className="us-empty">Nenhum usuário encontrado.</div>
   }
   return (
     <div className="us-tabela rt-wrap">
-      <table className="responsive-table">
+      <table className="responsive-table responsive-table-tappable">
         <thead>
           <tr>
             <th>Nome</th>
@@ -17,7 +18,8 @@ export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, o
         </thead>
         <tbody>
           {usuarios.map(u => (
-            <tr key={u.id} className={u.ativo ? '' : 'us-inativo'}>
+            <tr key={u.id} className={u.ativo ? '' : 'us-inativo'}
+                onClick={() => { if (isMobileViewport()) onEditar(u) }}>
               <td>
                 <span className="us-nome">{u.nome}</span>
                 {!u.ativo && <span className="us-selo-inativo">Inativo</span>}
@@ -32,6 +34,7 @@ export default function UsuariosTabela({ usuarios, onAlterarPapel, onInativar, o
                 >
                   {PAPEIS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
                 </select>
+                <span className="us-papel-mobile">{ROTULO_PAPEL[u.tipoUsuario] || u.tipoUsuario}</span>
               </td>
               <td data-label="Ações" className="rt-acoes">
                 {u.ativo

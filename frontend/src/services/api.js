@@ -213,6 +213,14 @@ export async function alterarPapelUsuario(id, tipoUsuario) {
   })
 }
 
+export async function atualizarUsuario(id, dados) {
+  return apiFetch(`/usuarios/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados),
+  })
+}
+
 export async function inativarUsuario(id) {
   return apiFetch(`/usuarios/${id}`, { method: 'DELETE' })
 }
