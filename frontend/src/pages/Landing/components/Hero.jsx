@@ -7,7 +7,7 @@ export default function Hero() {
         <div className="hero-text reveal">
           <span className="eyebrow">
             <span className="dot"></span>
-            Preços reais, da sua vizinhança
+            Preços da sua região
           </span>
           <h1>
             Preço justo começa com <span className="accent">informação</span>.
@@ -38,8 +38,8 @@ export default function Hero() {
           <div className="glow"></div>
           <img
             className="basket-img"
-            src="/cesta-hero.webp"
-            alt="Cesta básica"
+            src="/cesta-landing.png"
+            alt="Cesta básica com produtos e preços"
           />
         </div>
       </div>
