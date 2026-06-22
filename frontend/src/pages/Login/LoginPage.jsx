@@ -1,60 +1,37 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { cadastrar } from '../services/api'
-import './Login/Login.css'
+import { useAuth } from '../../context/AuthContext'
+import { login } from '../../services/api'
+import './Login.css'
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [tipoUsuario, setTipoUsuario] = useState('CONSUMIDOR')
-  const [acceptTerms, setAcceptTerms] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
+  const { refresh } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setError('')
-
-    if (!acceptTerms) {
-      setError('Você deve aceitar os Termos e Condições.')
-      return
-    }
-
-    setLoading(true)
+    setError(''); setLoading(true)
     try {
-      await cadastrar(name, email, password, tipoUsuario)
-      navigate('/')
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+      await login(email, password)
+      await refresh()
+      navigate('/dashboard')
+    } catch (err) { setError(err.message) }
+    finally { setLoading(false) }
   }
 
   return (
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
-        <h2 className="card-title">Registre-se</h2>
+        <h2 className="card-title">Entre</h2>
         <p className="card-subtitle">
-          Já possui uma conta?{' '}
-          <Link to="/login" className="link-orange">Entre aqui</Link>
+          Novo por aqui?{' '}
+          <Link to="/register" className="link-orange">Registre-se aqui</Link>
         </p>
-
-        <div className="form-group">
-          <label className="form-label">Nome:</label>
-          <input
-            type="text"
-            className="form-input"
-            placeholder="Digite seu nome"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            required
-          />
-        </div>
 
         <div className="form-group">
           <label className="form-label">Endereço de E-mail:</label>
@@ -74,9 +51,8 @@ export default function RegisterPage() {
             <input
               type={showPassword ? 'text' : 'password'}
               className="form-input"
-              placeholder="Crie uma senha"
+              placeholder="Digite sua senha"
               value={password}
-              minLength={6}
               onChange={e => setPassword(e.target.value)}
               required
             />
@@ -100,40 +76,13 @@ export default function RegisterPage() {
               )}
             </button>
           </div>
-          <p className="form-hint">Escolha uma senha com, no mínimo, 6 caracteres.</p>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Tipo de conta:</label>
-          <select
-            className="form-input"
-            value={tipoUsuario}
-            onChange={e => setTipoUsuario(e.target.value)}
-          >
-            <option value="CONSUMIDOR">Consumidor</option>
-            <option value="COMERCIANTE">Comerciante</option>
-          </select>
-        </div>
-
-        <div className="form-group form-check">
-          <input
-            type="checkbox"
-            id="terms"
-            checked={acceptTerms}
-            onChange={e => setAcceptTerms(e.target.checked)}
-          />
-          <label htmlFor="terms" className="form-check-label">
-            Eu aceito os{' '}
-            <a href="#" className="link-orange">Termos e Condições</a>
-            {' '}e li e entendi a{' '}
-            <a href="#" className="link-orange">Política de Privacidade</a>
-          </label>
+          <Link to="/forgot-password" className="link-orange link-forgot">Esqueci minha senha</Link>
         </div>
 
         {error && <p className="form-error">{error}</p>}
 
         <button type="submit" className="btn-proximo" disabled={loading}>
-          {loading ? 'Cadastrando...' : 'Criar conta'}
+          {loading ? 'Entrando...' : 'Entrar'}
         </button>
       </form>
     </div>
