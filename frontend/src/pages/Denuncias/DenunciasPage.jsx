@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getMinhasDenuncias, getDenuncias } from '../../services/api'
+import { getMinhasDenuncias, getDenuncias, votarDenuncia } from '../../services/api'
+import { useToast } from '../../components/Toast/ToastContext'
 import FiltroStatusChips from './FiltroStatusChips'
 import DenunciasTabela from './DenunciasTabela'
 import DenunciaDetalheModal from './DenunciaDetalheModal'
@@ -13,6 +14,7 @@ export default function DenunciasPage({ escopo }) {
   const [statusFiltro, setStatusFiltro] = useState('')
   const [abertaId, setAbertaId] = useState(null)
   const [recarregar, setRecarregar] = useState(0)
+  const { mostrarToast } = useToast()
 
   // "Todas": filtro server-side (status). "Minhas": busca tudo e filtra no cliente.
   useEffect(() => {
@@ -39,6 +41,14 @@ export default function DenunciasPage({ escopo }) {
 
   const onMudou = useCallback(() => setRecarregar(n => n + 1), [])
 
+  async function onVotar(d, tipo) {
+    try {
+      await votarDenuncia(d.id, tipo)
+      mostrarToast('Voto registrado.')
+      setRecarregar(n => n + 1)
+    } catch (e) { mostrarToast(e.message, { tipo: 'erro' }) }
+  }
+
   return (
     <>
       <div className="dn-cabecalho">
@@ -56,7 +66,7 @@ export default function DenunciasPage({ escopo }) {
 
       {carregando
         ? <div className="dn-loading">Carregando...</div>
-        : <DenunciasTabela denuncias={visiveis} onAbrir={(d) => setAbertaId(d.id)} />}
+        : <DenunciasTabela denuncias={visiveis} onAbrir={(d) => setAbertaId(d.id)} onVotar={onVotar} />}
 
       <DenunciaDetalheModal
         denuncia={aberta}
