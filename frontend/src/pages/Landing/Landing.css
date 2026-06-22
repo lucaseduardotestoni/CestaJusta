@@ -233,3 +233,136 @@
     padding: 10px 16px;
   }
 }
+
+/* ============================================================
+   HERO — full-bleed opening section
+   ============================================================ */
+.landing .hero {
+  padding: 150px 0 90px;
+  position: relative;
+}
+
+.landing .hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.landing .hero h1 {
+  font-size: clamp(40px, 5.4vw, 68px);
+  font-weight: 700;
+  margin: 22px 0 0;
+}
+
+.landing .hero .sub {
+  font-size: clamp(17px, 1.5vw, 20px);
+  color: var(--muted);
+  margin: 24px 0 0;
+  max-width: 520px;
+}
+
+.landing .hero-cta {
+  display: flex;
+  gap: 14px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+.landing .hero-trust {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 34px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.landing .avatars {
+  display: flex;
+}
+
+.landing .avatars span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2.5px solid var(--bg);
+  margin-left: -10px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  font-family: var(--display);
+}
+
+.landing .avatars span:first-child {
+  margin-left: 0;
+}
+
+/* ---- Hero visual / image side ---- */
+.landing .hero-visual {
+  position: relative;
+  height: 480px;
+  display: grid;
+  place-items: center;
+}
+
+.landing .glow {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 124, 66, 0.12) 0%, transparent 70%);
+}
+
+.landing .basket-img {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  filter: drop-shadow(0 28px 42px rgba(14, 124, 66, 0.22));
+  animation: hero-bob 6s ease-in-out infinite;
+}
+
+@keyframes hero-bob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+/* ---- Mobile: hero becomes single column ---- */
+@media (max-width: 768px) {
+  .landing .hero {
+    padding: 130px 0 60px;
+  }
+
+  .landing .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .landing .hero .sub {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .landing .hero-cta,
+  .landing .hero-trust {
+    justify-content: center;
+  }
+
+  .landing .hero-visual {
+    height: 420px;
+    margin-top: 20px;
+  }
+
+  .landing .basket-img {
+    max-width: 380px;
+  }
+
+  .landing .glow {
+    width: 360px;
+    height: 360px;
+  }
+}
