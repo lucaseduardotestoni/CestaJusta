@@ -42,7 +42,7 @@ Prioridades.md
 .claude/
 
 ### Uploads de imagens em dev (em prod é volume montado em /data/uploads) ###
-data/uploads/
+**/data/uploads/
 .idea
 logs/
 
@@ -53,3 +53,6 @@ frontend/.env.local
 frontend/.env.*.local
 frontend/public/produtos/
 /docs/
+
+# Visual brainstorm companion
+.superpowers/
