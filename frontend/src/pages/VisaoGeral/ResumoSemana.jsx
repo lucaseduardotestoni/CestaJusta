@@ -15,9 +15,17 @@ export default function ResumoSemana() {
   return (
     <section className="resumo-semana">
       <span className="resumo-semana-data">
-        <span aria-hidden="true">📅</span> {info.rotulo}
+        <img className="resumo-semana-icone" src="/cal-semana.webp" alt="" />
+        {info.rotulo}
       </span>
-      <span className="resumo-semana-atualizado">Atualizado em {info.atualizadoEm}</span>
+      <span className="resumo-semana-atualizado">
+        <svg className="resumo-semana-relogio" width="13" height="13" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" />
+        </svg>
+        <span className="resumo-semana-prefixo">Atualizado em </span>{info.atualizadoEm}
+      </span>
     </section>
   )
 }
