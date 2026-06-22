@@ -11,7 +11,6 @@ export default function HeroCesta({ valorCesta, variacaoSemanal, economiaMedia }
     : variacaoSemanal < 0 ? 'var(--cor-success)'
     : variacaoSemanal > 0 ? 'var(--cor-danger)'
     : 'var(--cor-text-muted)'
-  const seta = variacaoSemanal > 0 ? '↑' : variacaoSemanal < 0 ? '↓' : ''
 
   return (
     <section className="hero-cesta">
@@ -20,7 +19,7 @@ export default function HeroCesta({ valorCesta, variacaoSemanal, economiaMedia }
         <span className="hero-cesta-valor">{brl(valorCesta)}</span>
         {variacaoSemanal != null && (
           <span className="hero-cesta-var" style={{ color: varCor }}>
-            {seta} {Math.abs(variacaoSemanal).toFixed(1)}% em relação à semana passada
+            {variacaoSemanal > 0 ? '↑' : variacaoSemanal < 0 ? '↓' : ''} {Math.abs(variacaoSemanal).toFixed(1)}% em relação à semana passada
           </span>
         )}
         {economiaMedia != null && (
@@ -31,7 +30,7 @@ export default function HeroCesta({ valorCesta, variacaoSemanal, economiaMedia }
           Ver mercados mais baratos
         </button>
       </div>
-      <img className="hero-cesta-img" src="/cesta-hero.webp" alt="" aria-hidden="true" />
+      <img className="hero-cesta-img" src="/cesta-hero.webp" alt="" />
     </section>
   )
 }
