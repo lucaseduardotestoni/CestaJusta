@@ -2,7 +2,6 @@ import { useState } from 'react'
 import useDashboard from '../../hooks/useDashboard'
 import { useAuth } from '../../context/AuthContext'
 import HeroCesta from './HeroCesta'
-import ResumoSemana from './ResumoSemana'
 import ProdutosTable from './ProdutosTable'
 import ProdutoDetalheModal from './ProdutoDetalheModal'
 import Tabs from '../../components/Tabs/Tabs'
@@ -33,16 +32,13 @@ export default function VisaoGeralPage() {
 
   return (
     <>
-      <h1>Olá{nome ? `, ${nome}` : ''}! <span aria-hidden="true">👋</span></h1>
+      <h1>Olá{nome ? `, ${nome}` : ''}!</h1>
       <p style={{ color: 'var(--cor-text-muted)' }}>
         Veja os preços e economize na sua região.
       </p>
 
-      <div className="vg-resumo">
-        <HeroCesta valorCesta={kpis?.valorCesta} variacaoSemanal={kpis?.variacaoSemanal}
-                   economiaMedia={kpis?.economiaMedia} />
-        <ResumoSemana />
-      </div>
+      <HeroCesta valorCesta={kpis?.valorCesta} variacaoSemanal={kpis?.variacaoSemanal}
+                 economiaMedia={kpis?.economiaMedia} />
 
       <div className="vg-toolbar">
         <Tabs items={TABS} value={ordem} onChange={trocarOrdem} />
