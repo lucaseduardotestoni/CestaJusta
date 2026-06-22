@@ -6,6 +6,8 @@ import Sobre from './components/Sobre'
 import Produtos from './components/Produtos'
 import Denuncias from './components/Denuncias'
 import Comunidade from './components/Comunidade'
+import CtaFinal from './components/CtaFinal'
+import LandingFooter from './components/LandingFooter'
 
 export default function LandingPage() {
   return (
@@ -17,6 +19,8 @@ export default function LandingPage() {
       <Produtos />
       <Denuncias />
       <Comunidade />
+      <CtaFinal />
+      <LandingFooter />
     </div>
   )
 }
