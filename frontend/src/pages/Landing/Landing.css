@@ -469,3 +469,98 @@
     display: none;
   }
 }
+
+/* ============================================================
+   SOBRE — purpose + stats section
+   ============================================================ */
+.landing .sobre-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.landing .sobre h2 {
+  font-size: clamp(30px, 3.4vw, 46px);
+  margin: 18px 0 22px;
+}
+
+.landing .sobre p {
+  color: var(--muted);
+  font-size: 18px;
+  margin-bottom: 18px;
+  max-width: 520px;
+}
+
+.landing .sobre .lead {
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 500;
+  font-family: var(--display);
+  line-height: 1.35;
+}
+
+.landing .stat-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.landing .stat-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  box-shadow: 0 20px 40px -28px rgba(16, 35, 28, 0.3);
+  transition: transform 0.3s;
+}
+
+.landing .stat-card:nth-child(2) {
+  transform: translateX(34px);
+}
+
+.landing .stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.landing .stat-card:nth-child(2):hover {
+  transform: translateX(34px) translateY(-5px);
+}
+
+.landing .stat-card .num {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 46px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  display: block;
+}
+
+.landing .stat-card .num.green {
+  color: var(--primary);
+}
+
+.landing .stat-card .num.orange {
+  color: var(--accent);
+}
+
+.landing .stat-card .desc {
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+/* ---- Mobile: stack to 1 column ---- */
+@media (max-width: 768px) {
+  .landing .sobre-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .landing .stat-card:nth-child(2) {
+    transform: none;
+  }
+
+  .landing .stat-card:nth-child(2):hover {
+    transform: translateY(-5px);
+  }
+}

@@ -2,6 +2,7 @@ import './Landing.css'
 import LandingNav from './components/LandingNav'
 import Hero from './components/Hero'
 import ComoFunciona from './components/ComoFunciona'
+import Sobre from './components/Sobre'
 
 export default function LandingPage() {
   return (
@@ -9,6 +10,7 @@ export default function LandingPage() {
       <LandingNav />
       <Hero />
       <ComoFunciona />
+      <Sobre />
     </div>
   )
 }
