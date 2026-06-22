@@ -1,5 +1,6 @@
 import './Landing.css'
 import useCountUp from './useCountUp'
+import useReveal from './useReveal'
 import LandingNav from './components/LandingNav'
 import Hero from './components/Hero'
 import ComoFunciona from './components/ComoFunciona'
@@ -12,6 +13,7 @@ import LandingFooter from './components/LandingFooter'
 
 export default function LandingPage() {
   useCountUp()
+  useReveal()
   return (
     <div className="landing" id="top">
       <LandingNav />

@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="wrap hero-grid">
-        <div className="hero-text reveal">
+        <div className="hero-text">
           <span className="eyebrow">
             <span className="dot"></span>
             Preços da sua região
@@ -34,7 +34,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="hero-visual reveal">
+        <div className="hero-visual">
           <div className="glow"></div>
           <img
             className="basket-img"
