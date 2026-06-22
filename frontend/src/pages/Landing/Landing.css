@@ -678,3 +678,180 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   DENUNCIAS — consumer-protection complaints section
+   ============================================================ */
+.landing .denuncias {
+  background: linear-gradient(180deg, #FFF6F1 0%, #FEFAF7 100%);
+}
+
+.landing .den-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+/* Eyebrow override — accent palette */
+.landing .den-eyebrow {
+  color: var(--accent-deep);
+  background: #FBEAE2;
+}
+
+.landing .den-eyebrow .dot {
+  background: var(--accent);
+}
+
+.landing .denuncias h2 {
+  font-size: clamp(30px, 3.4vw, 44px);
+  margin: 16px 0 18px;
+}
+
+.landing .denuncias .sub {
+  color: var(--muted);
+  font-size: 18px;
+  margin-bottom: 28px;
+  max-width: 480px;
+}
+
+/* Mini-stats row */
+.landing .den-stats {
+  display: flex;
+  gap: 34px;
+  flex-wrap: wrap;
+}
+
+.landing .den-stats .n {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 34px;
+  color: var(--accent-deep);
+}
+
+.landing .den-stats .l {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Trust seal */
+.landing .seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 12px 18px;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px -18px rgba(16, 35, 28, 0.3);
+}
+
+.landing .seal .s-ic {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.landing .seal .s-ic svg {
+  width: 20px;
+  height: 20px;
+}
+
+.landing .seal b {
+  font-size: 14px;
+}
+
+.landing .seal small {
+  color: var(--muted);
+  font-size: 12px;
+  display: block;
+}
+
+/* Cards column */
+.landing .den-cards {
+  display: grid;
+  gap: 16px;
+}
+
+/* Individual complaint card */
+.landing .den {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(239, 110, 53, 0.16);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 16px 36px -24px rgba(216, 90, 48, 0.4);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.landing .den .badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #FBEAE2;
+  color: var(--accent-deep);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.landing .den .badge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.landing .den .t {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.landing .den .d {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* Status pill — base */
+.landing .den .status {
+  margin-left: auto;
+  align-self: center;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Status variants */
+.landing .den .status--resolvido {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.landing .den .status--sinalizado {
+  color: var(--accent-deep);
+  background: #FBEAE2;
+}
+
+.landing .den .status--em-analise {
+  color: #1B5FAA;
+  background: #E6F0FB;
+}
+
+/* ---- Mobile: stack to 1 column at ≤768px ---- */
+@media (max-width: 768px) {
+  .landing .den-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
