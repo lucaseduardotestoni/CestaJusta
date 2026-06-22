@@ -1,0 +1,9 @@
+.resumo-semana {
+  display: flex; flex-direction: column; gap: var(--space-1); justify-content: center;
+  background: var(--cor-surface);
+  border: 1px solid var(--cor-border);
+  border-radius: var(--r-lg);
+  padding: var(--space-5);
+}
+.resumo-semana-data { font-weight: 600; font-size: var(--fs-sm); }
+.resumo-semana-atualizado { color: var(--cor-text-muted); font-size: var(--fs-xs); }
