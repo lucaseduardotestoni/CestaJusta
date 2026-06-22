@@ -10,7 +10,7 @@ export default function Denuncias() {
           </span>
           <h2>Quando o preço passa do limite, a comunidade reage.</h2>
           <p className="sub">
-            Cada denúncia vira um alerta para todo mundo — e pressão real contra quem cobra
+            Cada denúncia vira um alerta para todo mundo e pressão real contra quem cobra
             abusivo em momentos de necessidade.
           </p>
 

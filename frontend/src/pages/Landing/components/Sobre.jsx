@@ -6,10 +6,10 @@ export default function Sobre() {
           <span className="eyebrow"><span className="dot"></span>Nosso propósito</span>
           <h2>Informação de preço não pode ser privilégio.</h2>
           <p className="lead">
-            A CestaJusta nasceu de uma ideia simples: centralizar os preços da cesta básica num único app, com informação clara e fácil de comparar — para que ninguém pague a mais sozinho.
+            A CestaJusta nasceu de uma ideia simples: centralizar os preços da cesta básica num único app, com informação clara e fácil de comparar, para que ninguém pague a mais sozinho.
           </p>
           <p>
-            Reunimos os preços que as pessoas registram no dia a dia e devolvemos isso de forma clara, transparente e gratuita — para que economizar seja um direito de qualquer comunidade, não só de quem tem tempo de pesquisar.
+            Reunimos os preços que as pessoas registram no dia a dia e devolvemos isso de forma clara, transparente e gratuita, para que economizar seja um direito de qualquer comunidade, não só de quem tem tempo de pesquisar.
           </p>
         </div>
         <div className="stat-stack">
