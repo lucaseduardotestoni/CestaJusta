@@ -5,7 +5,7 @@ export default function ComoFunciona() {
         <div className="sec-head">
           <span className="eyebrow"><span className="dot"></span>Como funciona</span>
           <h2>Três passos para pagar o preço certo</h2>
-          <p>Sem planilhas, sem complicação. A comunidade faz o trabalho pesado por você.</p>
+          <p>Rápido e sem complicação: a comunidade faz o trabalho pesado por você.</p>
         </div>
         <div className="timeline">
           <div className="step">
