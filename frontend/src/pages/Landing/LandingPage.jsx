@@ -1,9 +1,10 @@
 import './Landing.css'
+import LandingNav from './components/LandingNav'
 
 export default function LandingPage() {
   return (
-    <div className="landing">
-      <p style={{ padding: 40 }}>Landing em construção</p>
+    <div className="landing" id="top">
+      <LandingNav />
     </div>
   )
 }

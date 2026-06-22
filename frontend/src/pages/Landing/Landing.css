@@ -1,0 +1,235 @@
+/* ============================================================
+   Landing — scoped CSS foundation
+   All rules live under .landing to avoid polluting global styles
+   ============================================================ */
+
+/* ---- Local design tokens ---- */
+.landing {
+  --primary:      #0E7C42;
+  --primary-deep: #0A5C31;
+  --primary-soft: #E8F4EE;
+  --mint:         #DDEEE4;
+  --accent:       #EF6E35;
+  --accent-deep:  #D85A30;
+  --bg:           #F7F8FA;
+  --ink:          #16231C;
+  --muted:        #5C6B62;
+  --line:         rgba(16, 35, 28, 0.08);
+  --radius:       22px;
+  --display:      "Bricolage Grotesque", system-ui, sans-serif;
+  --body:         "Inter", system-ui, sans-serif;
+
+  font-family: var(--body);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* ---- Display font for headings ---- */
+.landing h1,
+.landing h2,
+.landing h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Wrapper / container ---- */
+.landing .wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ---- Accent text colour ---- */
+.landing .accent {
+  color: var(--accent);
+}
+
+/* ---- Eyebrow label ---- */
+.landing .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-soft);
+  padding: 7px 15px;
+  border-radius: 100px;
+}
+
+.landing .eyebrow .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+/* ---- Button base ---- */
+.landing .btn {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* Primary CTA button */
+.landing .btn-primary {
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 14px;
+  box-shadow: 0 8px 22px -8px rgba(239, 110, 53, 0.55);
+}
+
+.landing .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -10px rgba(239, 110, 53, 0.65);
+}
+
+/* Ghost / secondary button */
+.landing .btn-ghost {
+  background: #fff;
+  color: var(--ink);
+  padding: 12px 22px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 14px -8px rgba(16, 35, 28, 0.2);
+}
+
+.landing .btn-ghost:hover {
+  transform: translateY(-2px);
+  background: #fff;
+}
+
+/* Large button modifier */
+.landing .btn-lg {
+  padding: 16px 28px;
+  font-size: 16px;
+  border-radius: 16px;
+}
+
+/* ---- Section base spacing ---- */
+.landing .sec {
+  padding: 96px 0;
+}
+
+/* ============================================================
+   NAVIGATION — fixed top bar
+   ============================================================ */
+.landing-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.landing-nav .nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+/* Brand wordmark */
+.landing-nav .brand {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.landing-nav .brand b {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Anchor links list */
+.landing-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  list-style: none;
+}
+
+.landing-nav .nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.landing-nav .nav-links a:hover {
+  color: var(--ink);
+}
+
+.landing-nav .nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.25s;
+}
+
+.landing-nav .nav-links a:hover::after {
+  width: 100%;
+}
+
+/* CTA group */
+.landing-nav .nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.landing-nav .nav-entrar {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s;
+}
+
+.landing-nav .nav-entrar:hover {
+  color: var(--primary);
+}
+
+/* ---- Mobile: ≤768px ---- */
+@media (max-width: 768px) {
+  .landing-nav .nav-links {
+    display: none;
+  }
+
+  .landing-nav .nav-cta .btn-primary {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}
