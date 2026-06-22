@@ -171,17 +171,23 @@
 
 /* Brand wordmark */
 .landing-nav .brand {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 21px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
+}
+.landing-nav .brand-logo {
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 .landing-nav .brand b {
   color: var(--accent);
   font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .landing-nav .brand-logo { height: 28px; }
 }
 
 /* Anchor links list */

@@ -4,8 +4,8 @@ export default function LandingNav() {
   return (
     <nav className="landing-nav">
       <div className="wrap nav-inner">
-        <a href="#top" className="brand">
-          Cesta<b>Justa</b>
+        <a href="#top" className="brand" aria-label="CestaJusta - início">
+          <img src="/logo.png" alt="CestaJusta" className="brand-logo" />
         </a>
 
         <div className="nav-links">
