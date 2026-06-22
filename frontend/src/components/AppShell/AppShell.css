@@ -267,9 +267,13 @@
 
   .sidebar {
     position: fixed;
-    top: 0; left: 0; bottom: 0;
+    top: 0; left: 0;
     width: 260px;
-    height: 100vh;
+    /* 100dvh = altura visível (desconta a barra dinâmica do Safari iOS);
+       padding-bottom respeita a safe area (indicador de home) para o CTA
+       "Enviar preço" não ficar escondido sob a barra inferior do iPhone. */
+    height: 100dvh;
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
     z-index: 50;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
