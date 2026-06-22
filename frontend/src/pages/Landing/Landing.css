@@ -1020,30 +1020,9 @@
 
 .landing-footer .foot-grid {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
   margin-bottom: 44px;
-}
-
-.landing-footer .foot-about .brand {
-  font-family: var(--display, "Bricolage Grotesque", system-ui, sans-serif);
-  font-weight: 700;
-  font-size: 21px;
-  letter-spacing: -0.02em;
-  color: var(--ink, #16231C);
-  text-decoration: none;
-}
-
-.landing-footer .foot-about .brand b {
-  color: var(--accent, #EF6E35);
-  font-weight: 700;
-}
-
-.landing-footer .foot-about p {
-  color: var(--muted, #5C6B62);
-  font-size: 15px;
-  margin-top: 16px;
-  max-width: 300px;
 }
 
 .landing-footer .foot-col h4 {

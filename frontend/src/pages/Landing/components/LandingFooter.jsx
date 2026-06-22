@@ -5,13 +5,6 @@ export default function LandingFooter() {
     <footer className="landing-footer">
       <div className="wrap">
         <div className="foot-grid">
-          <div className="foot-about">
-            <a href="#top" className="brand">
-              Cesta<b>Justa</b>
-            </a>
-            <p>Dados de preço abertos, feitos pela comunidade, para que economizar deixe de ser privilégio.</p>
-          </div>
-
           <div className="foot-col">
             <h4>Plataforma</h4>
             <a href="#como">Como funciona</a>
@@ -35,7 +28,7 @@ export default function LandingFooter() {
         </div>
 
         <div className="foot-bottom">
-          <span>© 2026 CestaJusta · Feito pela comunidade.</span>
+          <span>© 2026 CestaJusta · Feito por Lucas Testoni.</span>
           <span>Preço justo começa com informação.</span>
         </div>
       </div>
