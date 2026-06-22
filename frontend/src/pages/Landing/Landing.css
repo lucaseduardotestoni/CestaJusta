@@ -129,6 +129,24 @@
   padding: 96px 0;
 }
 
+/* ---- Section header block ---- */
+.landing .sec-head {
+  max-width: 640px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.landing .sec-head h2 {
+  font-size: clamp(30px, 3.4vw, 44px);
+  margin: 16px 0 0;
+}
+
+.landing .sec-head p {
+  color: var(--muted);
+  font-size: 18px;
+  margin-top: 16px;
+}
+
 /* ============================================================
    NAVIGATION — fixed top bar
    ============================================================ */
@@ -364,5 +382,90 @@
   .landing .glow {
     width: 360px;
     height: 360px;
+  }
+}
+
+/* ============================================================
+   COMO FUNCIONA — three-step timeline
+   ============================================================ */
+.landing .timeline {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  position: relative;
+}
+
+.landing .timeline::before {
+  content: "";
+  position: absolute;
+  top: 42px;
+  left: 14%;
+  right: 14%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--mint) 0 12px,
+    transparent 12px 22px
+  );
+  z-index: 0;
+}
+
+.landing .step {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.landing .step-num {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 22px;
+  border-radius: 26px;
+  background: #fff;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  box-shadow: 0 14px 30px -16px rgba(16, 35, 28, 0.3);
+  transition: transform 0.3s;
+}
+
+.landing .step:hover .step-num {
+  transform: translateY(-6px) rotate(-4deg);
+}
+
+.landing .step-num svg {
+  width: 34px;
+  height: 34px;
+}
+
+.landing .step .tag {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.landing .step h3 {
+  font-size: 21px;
+  margin: 6px 0 10px;
+}
+
+.landing .step p {
+  color: var(--muted);
+  font-size: 15px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ---- Mobile: stack to 1 column ---- */
+@media (max-width: 768px) {
+  .landing .timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .landing .timeline::before {
+    display: none;
   }
 }
