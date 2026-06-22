@@ -840,20 +840,20 @@
   flex-shrink: 0;
 }
 
-/* Status variants */
-.landing .den .status--resolvido {
+/* Status variants (alinhados aos status reais da denúncia) */
+.landing .den .status--aprovada {
   color: var(--primary);
   background: var(--primary-soft);
 }
 
-.landing .den .status--sinalizado {
-  color: var(--accent-deep);
-  background: #FBEAE2;
+.landing .den .status--pendente {
+  color: #B45309;
+  background: #FEF3C7;
 }
 
-.landing .den .status--em-analise {
-  color: #1B5FAA;
-  background: #E6F0FB;
+.landing .den .status--rejeitada {
+  color: #B42318;
+  background: #FEE4E2;
 }
 
 /* ---- Mobile: stack to 1 column at ≤768px ---- */

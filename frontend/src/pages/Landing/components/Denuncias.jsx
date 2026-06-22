@@ -25,7 +25,7 @@ export default function Denuncias() {
               <div className="n">
                 <span className="count" data-target="74" data-suffix="%">74%</span>
               </div>
-              <div className="l">resolvidas ou sinalizadas</div>
+              <div className="l">resolvidas pela comunidade</div>
             </div>
           </div>
 
@@ -57,9 +57,9 @@ export default function Denuncias() {
             </span>
             <div>
               <div className="t">Arroz 5kg a R$ 42,90</div>
-              <div className="d">Reportado por 23 pessoas · Centro</div>
+              <div className="d">Reportado por 23 pessoas · Supermercado Koch</div>
             </div>
-            <span className="status status--sinalizado">Sinalizado</span>
+            <span className="status status--pendente">Pendente</span>
           </div>
 
           {/* Card 2 — Resolvido */}
@@ -72,9 +72,9 @@ export default function Denuncias() {
             </span>
             <div>
               <div className="t">Óleo de soja +55% em uma semana</div>
-              <div className="d">Reportado por 18 pessoas · Zona Sul</div>
+              <div className="d">Reportado por 18 pessoas · Giassi Supermercados</div>
             </div>
-            <span className="status status--resolvido">Resolvido</span>
+            <span className="status status--aprovada">Aprovada</span>
           </div>
 
           {/* Card 3 — Em análise */}
@@ -86,10 +86,10 @@ export default function Denuncias() {
               </svg>
             </span>
             <div>
-              <div className="t">Feijão 1kg a R$ 16,50</div>
-              <div className="d">Reportado por 11 pessoas · Zona Leste</div>
+              <div className="t">Leite 1L a R$ 4,79</div>
+              <div className="d">Reportado por 4 pessoas · Top Supermercados</div>
             </div>
-            <span className="status status--em-analise">Em análise</span>
+            <span className="status status--rejeitada">Rejeitada</span>
           </div>
 
         </div>
