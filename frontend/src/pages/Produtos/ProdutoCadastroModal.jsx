@@ -9,7 +9,7 @@ import '../EnviarPreco/EnviarPrecoModal.css'
 const MIME_OK = ['image/jpeg', 'image/png']
 const TAMANHO_MAX = 5 * 1024 * 1024
 
-export default function ProdutoCadastroModal({ aberto, categorias, produto, onFechar, onSalvo }) {
+export default function ProdutoCadastroModal({ aberto, categorias, produto, onFechar, onSalvo, onInativar, onAtivar }) {
   const { mostrarToast } = useToast()
   const edicao = !!produto
   const [nome, setNome] = useState('')
@@ -124,6 +124,11 @@ export default function ProdutoCadastroModal({ aberto, categorias, produto, onFe
           <button type="button" className="ep-btn-enviar" onClick={salvar} disabled={enviando}>
             {enviando ? 'Salvando…' : 'Salvar'}
           </button>
+          {edicao && (produto.ativo
+            ? <button type="button" className="ep-btn-perigo" disabled={enviando}
+                      onClick={() => onInativar?.(produto)}>Inativar</button>
+            : <button type="button" className="ep-btn-secundario" disabled={enviando}
+                      onClick={() => onAtivar?.(produto)}>Reativar</button>)}
           <button type="button" className="ep-btn-cancelar" onClick={onFechar} disabled={enviando}>
             Cancelar
           </button>

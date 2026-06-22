@@ -1,6 +1,7 @@
 package org.furb.services;
 import org.furb.dto.usuario.UsuarioCadastroDTO;
 import org.furb.dto.usuario.UsuarioResponseDTO;
+import org.furb.dto.usuario.UsuarioUpdateDTO;
 import org.furb.enums.TipoUsuario;
 import org.furb.model.Usuario;
 import org.furb.repositories.UsuarioRepository;
@@ -91,6 +92,27 @@ public class UsuarioService {
         }
 
         usuario.setAtivo(true);
+        return toResponseDTO(usuarioRepository.save(usuario));
+    }
+
+    public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        if (!usuario.getEmail().equals(dto.getEmail())) {
+            usuarioRepository.findByEmail(dto.getEmail()).ifPresent(outro -> {
+                throw new BusinessException("Já existe um usuário cadastrado com este e-mail.");
+            });
+        }
+
+        Usuario autenticado = usuarioAutenticadoProvider.getUsuarioAutenticado();
+        if (autenticado.getId().equals(id) && dto.getTipoUsuario() != TipoUsuario.ADMIN) {
+            throw new BusinessException("Você não pode rebaixar o seu próprio papel de administrador.");
+        }
+
+        usuario.setNome(dto.getNome());
+        usuario.setEmail(dto.getEmail());
+        usuario.setTipoUsuario(dto.getTipoUsuario());
         return toResponseDTO(usuarioRepository.save(usuario));
     }
 

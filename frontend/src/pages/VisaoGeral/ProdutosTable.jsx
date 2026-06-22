@@ -5,8 +5,8 @@ export default function ProdutosTable({ produtos, onSelecionar }) {
     return <div className="vg-empty">Nenhum produto encontrado.</div>
   }
   return (
-    <div className="vg-tabela">
-      <table>
+    <div className="vg-tabela rt-wrap">
+      <table className="responsive-table">
         <thead>
           <tr>
             <th>Produto</th>

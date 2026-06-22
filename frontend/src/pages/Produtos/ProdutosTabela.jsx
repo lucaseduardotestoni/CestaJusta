@@ -1,12 +1,13 @@
 import { urlImagem } from '../../utils/urlImagem'
+import { isMobileViewport } from '../../utils/viewport'
 
 export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar, onAtivar, processandoId }) {
   if (!produtos.length) {
     return <div className="pr-empty">Nenhum produto encontrado.</div>
   }
   return (
-    <div className="pr-tabela">
-      <table>
+    <div className="pr-tabela rt-wrap">
+      <table className={`responsive-table ${isAdmin ? 'responsive-table-tappable' : ''}`}>
         <thead>
           <tr>
             <th>Produto</th>
@@ -17,7 +18,8 @@ export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar
         </thead>
         <tbody>
           {produtos.map(p => (
-            <tr key={p.id} className={p.ativo ? '' : 'pr-inativo'}>
+            <tr key={p.id} className={p.ativo ? '' : 'pr-inativo'}
+                onClick={isAdmin ? () => { if (isMobileViewport()) onEditar(p) } : undefined}>
               <td>
                 <div className="pr-produto-info">
                   {(p.thumbPath || p.imagemPath)
@@ -35,10 +37,10 @@ export default function ProdutosTabela({ produtos, isAdmin, onEditar, onInativar
                   </div>
                 </div>
               </td>
-              <td>{p.categoria || '—'}</td>
-              <td>{p.codigoBarras || '—'}</td>
+              <td data-label="Categoria">{p.categoria || '—'}</td>
+              <td data-label="Código de barras">{p.codigoBarras || '—'}</td>
               {isAdmin && (
-                <td>
+                <td data-label="Ações" className="rt-acoes">
                   <button type="button" className="pr-acao pr-acao-editar"
                           disabled={processandoId === p.id} onClick={() => onEditar(p)}>
                     Editar

@@ -15,7 +15,7 @@ const ITEMS = [
   { rota: '/usuarios',   rotulo: 'Usuários',    icone: 'usuarios', somenteAdmin: true },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ aberta = false, onNavegar }) {
   const [enviarAberto, setEnviarAberto] = useState(false)
   const { usuario } = useAuth()
   const isAdmin = usuario?.tipo === 'ADMIN'
@@ -26,7 +26,7 @@ export default function Sidebar() {
   )
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${aberta ? 'sidebar-aberta' : ''}`}>
       <div className="sidebar-logo">
         <img src="/logo.png" alt="CestaJusta" />
       </div>
@@ -57,6 +57,7 @@ export default function Sidebar() {
                         to={sub.rota}
                         end
                         className={({ isActive }) => `sidebar-subitem ${isActive ? 'ativo' : ''}`}
+                        onClick={() => onNavegar?.()}
                       >
                         {sub.rotulo}
                       </NavLink>
@@ -73,7 +74,10 @@ export default function Sidebar() {
               className={({ isActive }) =>
                 `sidebar-item ${isActive ? 'ativo' : ''} ${item.desabilitado ? 'desabilitado' : ''}`
               }
-              onClick={(e) => { if (item.desabilitado) e.preventDefault() }}
+              onClick={(e) => {
+                if (item.desabilitado) { e.preventDefault(); return }
+                onNavegar?.()
+              }}
             >
               <span className={`sidebar-icone sidebar-icone-${item.icone}`} aria-hidden="true" />
               <span>{item.rotulo}</span>
@@ -82,7 +86,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <button className="sidebar-cta" type="button" onClick={() => setEnviarAberto(true)}>
+      <button className="sidebar-cta" type="button" onClick={() => { setEnviarAberto(true); onNavegar?.() }}>
         Enviar preço
       </button>
 

@@ -6,6 +6,8 @@ import Tabs from '../../components/Tabs/Tabs'
 import Pagination from '../../components/Pagination/Pagination'
 import UsuariosTabela from './UsuariosTabela'
 import UsuarioCadastroModal from './UsuarioCadastroModal'
+import UsuarioEditModal from './UsuarioEditModal'
+import Fab from '../../components/Fab/Fab'
 import { ROTULO_PAPEL } from './papeis'
 import './Usuarios.css'
 
@@ -26,6 +28,8 @@ export default function UsuariosPage() {
   const [filtroAtivo, setFiltroAtivo] = useState('ativos')
   const [pagina, setPagina] = useState(0)
   const [cadastroAberto, setCadastroAberto] = useState(false)
+  const [emEdicao, setEmEdicao] = useState(null)
+  const [edicaoAberta, setEdicaoAberta] = useState(false)
   const [processandoId, setProcessandoId] = useState(null)
   const [recarregar, setRecarregar] = useState(0)
 
@@ -130,7 +134,8 @@ export default function UsuariosPage() {
         : <>
             <UsuariosTabela usuarios={visiveis}
                             onAlterarPapel={onAlterarPapel}
-                            onInativar={onInativar} onAtivar={onAtivar} processandoId={processandoId} />
+                            onInativar={onInativar} onAtivar={onAtivar} processandoId={processandoId}
+                            onEditar={(u) => { setEmEdicao(u); setEdicaoAberta(true) }} />
             <div className="us-rodape">
               <span className="us-contagem">
                 {filtrados.length === 0
@@ -144,6 +149,14 @@ export default function UsuariosPage() {
       <UsuarioCadastroModal aberto={cadastroAberto}
                             onFechar={() => setCadastroAberto(false)}
                             onSalvo={() => { setCadastroAberto(false); setRecarregar(n => n + 1) }} />
+
+      <UsuarioEditModal aberto={edicaoAberta} usuario={emEdicao}
+                        onFechar={() => { setEdicaoAberta(false); setEmEdicao(null) }}
+                        onSalvo={() => { setEdicaoAberta(false); setEmEdicao(null); setRecarregar(n => n + 1) }}
+                        onInativar={async (u) => { await onInativar(u); setEdicaoAberta(false); setEmEdicao(null) }}
+                        onAtivar={async (u) => { await onAtivar(u); setEdicaoAberta(false); setEmEdicao(null) }} />
+
+      <Fab label="Cadastrar usuário" onClick={() => setCadastroAberto(true)} />
     </>
   )
 }

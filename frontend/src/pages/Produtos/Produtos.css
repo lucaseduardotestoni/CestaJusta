@@ -64,3 +64,14 @@
   width: 96px; height: 96px; object-fit: contain; border-radius: var(--r-sm);
   background: var(--cor-surface); border: 1px solid var(--cor-border);
 }
+
+/* Mobile: bloco no fim do arquivo para vencer as regras-base por ordem de cascata. */
+@media (max-width: 768px) {
+  /* No mobile o cadastro vira FAB flutuante; esconde o botão de texto do cabeçalho. */
+  .pr-btn-cadastrar { display: none; }
+
+  /* Filtros: busca + botão de categoria na mesma linha; Ativos/Todos na linha de baixo. */
+  .pr-busca { min-width: 0; flex: 1 1 0; }
+  .pr-filtro-categoria { min-width: 0; flex: 0 0 150px; }
+  .pr-filtro-status { margin-left: 0; flex: 1 0 100%; }
+}

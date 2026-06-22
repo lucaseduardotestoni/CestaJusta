@@ -1,0 +1,86 @@
+/* Tabelas responsivas.
+   Adoção por página: wrapper recebe `rt-wrap`, a <table> recebe `responsive-table`,
+   cada <td> com rótulo recebe data-label="...", a célula de ações recebe `rt-acoes`.
+   Importado por último em main.jsx; seletores qualificados garantem precedência
+   sobre o CSS por página independentemente da ordem de injeção. */
+
+/* ---- Faixa tablet (768–1024px): mantém tabular, evita estouro horizontal ---- */
+@media (max-width: 1024px) {
+  /* dupla classe p/ vencer `.xx-tabela { overflow: hidden }` */
+  .rt-wrap.rt-wrap { overflow-x: auto; }
+}
+
+/* ---- Faixa mobile (≤768px): cada linha vira card ---- */
+@media (max-width: 768px) {
+  table.responsive-table thead { display: none; }
+
+  table.responsive-table,
+  table.responsive-table tbody,
+  table.responsive-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  /* cada linha = card */
+  table.responsive-table tr {
+    border: 1px solid var(--cor-border);
+    border-radius: var(--r-md);
+    background: var(--cor-surface);
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  table.responsive-table tr:last-child { margin-bottom: 0; }
+
+  /* cada célula = linha rótulo/valor */
+  table.responsive-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    border: none;
+    padding: var(--space-2) 0;
+    text-align: right;
+    font-size: var(--fs-sm);
+  }
+
+  /* rótulo via data-label */
+  table.responsive-table td[data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    text-align: left;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--cor-text-muted);
+  }
+
+  /* célula primária (sem data-label): largura total, alinhada à esquerda, com divisória */
+  table.responsive-table td:first-child:not([data-label]) {
+    text-align: left;
+    border-bottom: 1px solid var(--cor-border);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-1);
+  }
+
+  /* célula de ações: botões em linha, podendo quebrar */
+  table.responsive-table td.rt-acoes {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: var(--space-2);
+  }
+  table.responsive-table td.rt-acoes[data-label]::before { width: 100%; }
+
+  /* Cards tocáveis: o card inteiro abre o modal de edição (mobile).
+     Esconde a faixa de ações inline e mostra um chevron indicando que é tocável. */
+  table.responsive-table-tappable tr { position: relative; cursor: pointer; }
+  table.responsive-table-tappable td.rt-acoes { display: none; }
+  table.responsive-table-tappable tr::after {
+    content: '›';
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-3);
+    color: var(--cor-text-muted);
+    font-size: 22px;
+    line-height: 1;
+  }
+}

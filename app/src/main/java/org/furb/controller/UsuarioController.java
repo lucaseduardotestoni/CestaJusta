@@ -5,6 +5,7 @@ import org.furb.dto.usuario.AlterarPapelDTO;
 import org.furb.dto.usuario.UsuarioCadastroDTO;
 import org.furb.dto.usuario.UsuarioMeDTO;
 import org.furb.dto.usuario.UsuarioResponseDTO;
+import org.furb.dto.usuario.UsuarioUpdateDTO;
 import org.furb.model.Usuario;
 import org.furb.security.UsuarioAutenticadoProvider;
 import org.furb.services.UsuarioService;
@@ -63,5 +64,12 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponseDTO> ativar(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.ativar(id));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UsuarioResponseDTO> atualizar(@PathVariable Long id,
+                                                        @Valid @RequestBody UsuarioUpdateDTO dto) {
+        return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 }

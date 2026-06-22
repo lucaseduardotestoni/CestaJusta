@@ -1,10 +1,12 @@
+import { isMobileViewport } from '../../utils/viewport'
+
 export default function MercadosTabela({ mercados, isAdmin, onEditar, onInativar, onAtivar, processandoId }) {
   if (!mercados.length) {
     return <div className="mc-empty">Nenhum mercado encontrado.</div>
   }
   return (
-    <div className="mc-tabela">
-      <table>
+    <div className="mc-tabela rt-wrap">
+      <table className={`responsive-table ${isAdmin ? 'responsive-table-tappable' : ''}`}>
         <thead>
           <tr>
             <th>Nome fantasia</th>
@@ -15,15 +17,16 @@ export default function MercadosTabela({ mercados, isAdmin, onEditar, onInativar
         </thead>
         <tbody>
           {mercados.map(m => (
-            <tr key={m.id} className={m.ativo ? '' : 'mc-inativo'}>
+            <tr key={m.id} className={m.ativo ? '' : 'mc-inativo'}
+                onClick={isAdmin ? () => { if (isMobileViewport()) onEditar(m) } : undefined}>
               <td>
                 <span className="mc-nome">{m.nomeFantasia}</span>
                 {!m.ativo && <span className="mc-selo-inativo">Inativo</span>}
               </td>
-              <td>{m.cnpj || '—'}</td>
-              <td>{m.cidade ? `${m.cidade}${m.estado ? ` / ${m.estado}` : ''}` : (m.estado || '—')}</td>
+              <td data-label="CNPJ">{m.cnpj || '—'}</td>
+              <td data-label="Cidade / UF">{m.cidade ? `${m.cidade}${m.estado ? ` / ${m.estado}` : ''}` : (m.estado || '—')}</td>
               {isAdmin && (
-                <td>
+                <td data-label="Ações" className="rt-acoes">
                   <button type="button" className="mc-acao mc-acao-editar"
                           disabled={processandoId === m.id} onClick={() => onEditar(m)}>
                     Editar

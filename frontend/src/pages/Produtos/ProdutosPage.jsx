@@ -7,6 +7,8 @@ import Tabs from '../../components/Tabs/Tabs'
 import Pagination from '../../components/Pagination/Pagination'
 import ProdutosTabela from './ProdutosTabela'
 import ProdutoCadastroModal from './ProdutoCadastroModal'
+import Fab from '../../components/Fab/Fab'
+import { isMobileViewport } from '../../utils/viewport'
 import './Produtos.css'
 
 const PAGE_SIZE = 10
@@ -70,7 +72,7 @@ export default function ProdutosPage() {
   const visiveis = filtrados.slice(start, start + PAGE_SIZE)
 
   const opcoesCategoria = [
-    { value: '', label: 'Todas as categorias' },
+    { value: '', label: isMobileViewport() ? 'Categoria' : 'Todas as categorias' },
     ...categorias.map(c => ({ value: c.nome, label: c.nome })),
   ]
 
@@ -144,8 +146,12 @@ export default function ProdutosPage() {
       {isAdmin && (
         <ProdutoCadastroModal aberto={cadastroAberto} categorias={categorias} produto={emEdicao}
                               onFechar={() => { setCadastroAberto(false); setEmEdicao(null) }}
-                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }} />
+                              onSalvo={() => { setCadastroAberto(false); setEmEdicao(null); setRecarregar(n => n + 1) }}
+                              onInativar={async (p) => { await onInativar(p); setCadastroAberto(false); setEmEdicao(null) }}
+                              onAtivar={async (p) => { await onAtivar(p); setCadastroAberto(false); setEmEdicao(null) }} />
       )}
+
+      {isAdmin && <Fab label="Cadastrar produto" onClick={() => { setEmEdicao(null); setCadastroAberto(true) }} />}
     </>
   )
 }

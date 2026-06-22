@@ -1,5 +1,9 @@
 .us-cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
 .us-cabecalho h1 { margin: 0 0 var(--space-1); }
+@media (max-width: 768px) {
+  /* No mobile o cadastro vira FAB flutuante; esconde o botão de texto do cabeçalho. */
+  .us-btn-cadastrar { display: none; }
+}
 .us-btn-cadastrar {
   background: var(--cor-primary); color: #fff; border: none; border-radius: var(--r-md);
   padding: var(--space-3) var(--space-4); font-size: var(--fs-sm); font-weight: 600; cursor: pointer;
@@ -36,6 +40,12 @@
 }
 .us-papel-select:disabled { opacity: .5; cursor: default; }
 .us-papel-texto { font-weight: 600; }
+
+.us-papel-mobile { display: none; font-weight: 600; }
+@media (max-width: 768px) {
+  .us-papel-select { display: none; }
+  .us-papel-mobile { display: inline; }
+}
 
 .us-acao { border-radius: var(--r-sm); padding: var(--space-1) var(--space-3); font-size: var(--fs-xs); font-weight: 600; cursor: pointer; background: transparent; }
 .us-acao-inativar { border: 1px solid var(--cor-accent); color: var(--cor-accent); }

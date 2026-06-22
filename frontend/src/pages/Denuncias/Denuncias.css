@@ -42,3 +42,24 @@
 .dn-admin { border: 1px dashed var(--cor-secundaria, #EF6E35); border-radius: 10px; padding: 12px; background: #FFFBF8; }
 .dn-resolvida { color: #666; font-size: 14px; background: #f6f6f6; border-radius: 8px; padding: 10px 12px; }
 .dn-modal-foot { margin-top: 8px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+
+/* Inline vote buttons — mobile only */
+.dn-votos-mobile { display: none; }
+.dn-votebtn {
+  padding: var(--space-1, 4px) var(--space-3, 12px);
+  border-radius: var(--r-full, 999px);
+  border: 1px solid var(--cor-border, #ddd);
+  background: var(--cor-surface, #fff);
+  font-size: var(--fs-sm, 12px);
+  cursor: pointer;
+  min-height: 36px;
+  line-height: 1;
+}
+.dn-votebtn.ativo { border-color: var(--cor-primary, #0E7C42); color: var(--cor-primary, #0E7C42); }
+.dn-votebtn.no.ativo { border-color: var(--cor-accent, #EF6E35); color: var(--cor-accent, #EF6E35); }
+.dn-votebtn:disabled { opacity: .5; cursor: default; }
+
+@media (max-width: 768px) {
+  .dn-votos-desktop { display: none; }
+  .dn-votos-mobile { display: inline-flex; gap: var(--space-2, 8px); }
+}

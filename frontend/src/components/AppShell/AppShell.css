@@ -247,3 +247,52 @@
   flex: 1;
   padding: var(--space-6);
 }
+
+/* ---- Drawer mobile/tablet ---- */
+.header-hamburguer {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--cor-text);
+  cursor: pointer;
+  padding: var(--space-2);
+  margin-right: var(--space-2);
+}
+.shell-backdrop { display: none; }
+
+@media (max-width: 1024px) {
+  .shell { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    /* 100dvh = altura visível (desconta a barra dinâmica do Safari iOS);
+       padding-bottom respeita a safe area (indicador de home) para o CTA
+       "Enviar preço" não ficar escondido sob a barra inferior do iPhone. */
+    height: 100dvh;
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--shadow-md);
+  }
+  .sidebar.sidebar-aberta { transform: translateX(0); }
+
+  .header-hamburguer { display: inline-flex; align-items: center; }
+
+  .shell-drawer-aberto .shell-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 40;
+  }
+}
+
+/* No mobile, o botão de usuário mostra só avatar + seta (esconde o nome). */
+@media (max-width: 768px) {
+  .header-nome { display: none; }
+}
