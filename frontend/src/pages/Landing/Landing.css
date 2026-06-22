@@ -247,8 +247,10 @@
   }
 
   .landing-nav .nav-cta .btn-primary {
-    font-size: 14px;
-    padding: 10px 16px;
+    font-size: 13px;
+    padding: 9px 14px;
+    white-space: nowrap;
+    border-radius: 10px;
   }
 }
 
