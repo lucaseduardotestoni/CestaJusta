@@ -56,8 +56,8 @@ export default function Denuncias() {
               </svg>
             </span>
             <div>
-              <div className="t">Água 5L a R$ 18,90</div>
-              <div className="d">Reportado por 14 pessoas · Zona Norte</div>
+              <div className="t">Arroz 5kg a R$ 42,90</div>
+              <div className="d">Reportado por 23 pessoas · Centro</div>
             </div>
             <span className="status status--sinalizado">Sinalizado</span>
           </div>
@@ -71,8 +71,8 @@ export default function Denuncias() {
               </svg>
             </span>
             <div>
-              <div className="t">Botijão de gás +40% acima</div>
-              <div className="d">Reportado por 31 pessoas · Centro</div>
+              <div className="t">Óleo de soja +55% em uma semana</div>
+              <div className="d">Reportado por 18 pessoas · Zona Sul</div>
             </div>
             <span className="status status--resolvido">Resolvido</span>
           </div>
@@ -86,8 +86,8 @@ export default function Denuncias() {
               </svg>
             </span>
             <div>
-              <div className="t">Remédio sem tabela visível</div>
-              <div className="d">Reportado por 8 pessoas · Bairro Velha</div>
+              <div className="t">Feijão 1kg a R$ 16,50</div>
+              <div className="d">Reportado por 11 pessoas · Zona Leste</div>
             </div>
             <span className="status status--em-analise">Em análise</span>
           </div>
