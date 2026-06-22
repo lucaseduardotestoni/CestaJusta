@@ -17,13 +17,13 @@ export default function Denuncias() {
           <div className="den-stats">
             <div>
               <div className="n">
-                <span className="count" data-target="9240">9.240</span>
+                <span className="count" data-target="1380">1.380</span>
               </div>
               <div className="l">denúncias registradas</div>
             </div>
             <div>
               <div className="n">
-                <span className="count" data-target="87" data-suffix="%">87%</span>
+                <span className="count" data-target="74" data-suffix="%">74%</span>
               </div>
               <div className="l">resolvidas ou sinalizadas</div>
             </div>

@@ -18,28 +18,28 @@ export default function Comunidade() {
         <div className="comm-stats">
           <div className="cstat">
             <div className="n">
-              <span className="count" data-target="126" data-suffix=" mil">126 mil</span>
+              <span className="count" data-target="7800">7.800</span>
             </div>
             <div className="l">pessoas economizando juntas</div>
           </div>
 
           <div className="cstat">
             <div className="n o">
-              <span className="count" data-target="340">340</span>
+              <span className="count" data-target="62">62</span>
             </div>
             <div className="l">cidades cobertas</div>
           </div>
 
           <div className="cstat">
             <div className="n">
-              <span className="count" data-target="48" data-suffix=" mil">48 mil</span>
+              <span className="count" data-target="3100">3.100</span>
             </div>
             <div className="l">comparações nesta semana</div>
           </div>
 
           <div className="cstat">
             <div className="n o">
-              <span className="count" data-target="4.9" data-decimals="1">4,9</span>
+              <span className="count" data-target="4.7" data-decimals="1">4,7</span>
             </div>
             <div className="l">avaliação média do app</div>
           </div>

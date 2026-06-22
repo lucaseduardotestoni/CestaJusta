@@ -6,7 +6,7 @@ export default function Sobre() {
           <span className="eyebrow"><span className="dot"></span>Nosso propósito</span>
           <h2>Informação de preço não pode ser privilégio.</h2>
           <p className="lead">
-            A CestaJusta nasceu de uma ideia simples: quando todo mundo enxerga os preços, ninguém paga a mais sozinho.
+            A CestaJusta nasceu de uma ideia simples: centralizar os preços da cesta básica num único app, com informação clara e fácil de comparar — para que ninguém pague a mais sozinho.
           </p>
           <p>
             Reunimos os preços que as pessoas registram no dia a dia e devolvemos isso de forma clara, transparente e gratuita — para que economizar seja um direito de qualquer comunidade, não só de quem tem tempo de pesquisar.
@@ -14,11 +14,11 @@ export default function Sobre() {
         </div>
         <div className="stat-stack">
           <div className="stat-card">
-            <span className="num green count" data-target="312" data-prefix="R$ ">R$ 312</span>
+            <span className="num green count" data-target="148" data-prefix="R$ ">R$ 148</span>
             <div className="desc">de economia média por família, todo mês</div>
           </div>
           <div className="stat-card">
-            <span className="num orange count" data-target="1.4" data-decimals="1" data-suffix=" mi">1,4 mi</span>
+            <span className="num orange count" data-target="92" data-suffix=" mil">92 mil</span>
             <div className="desc">de preços comparados em todo o país</div>
           </div>
           <div className="stat-card">
