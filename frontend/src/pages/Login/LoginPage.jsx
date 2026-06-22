@@ -76,7 +76,7 @@ export default function LoginPage() {
               )}
             </button>
           </div>
-          <a href="/forgot-password" className="link-orange link-forgot">Esqueci minha senha</a>
+          <Link to="/forgot-password" className="link-orange link-forgot">Esqueci minha senha</Link>
         </div>
 
         {error && <p className="form-error">{error}</p>}
