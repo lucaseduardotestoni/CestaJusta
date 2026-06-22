@@ -1,0 +1,26 @@
+.hero-cesta {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  background: var(--cor-primary-soft);
+  border: 1px solid var(--cor-border);
+  border-radius: var(--r-lg);
+  padding: var(--space-5);
+  overflow: hidden;
+}
+.hero-cesta-info { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.hero-cesta-titulo { color: var(--cor-text-muted); font-size: var(--fs-sm); }
+.hero-cesta-valor { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -0.01em; }
+.hero-cesta-var { font-size: var(--fs-sm); font-weight: 600; }
+.hero-cesta-economia { font-size: var(--fs-sm); color: var(--cor-text); }
+.hero-cesta-cta {
+  margin-top: var(--space-2); align-self: flex-start;
+  background: var(--cor-primary); color: #fff; border: none;
+  border-radius: var(--r-md); padding: var(--space-3) var(--space-4);
+  font-weight: 600; font-size: var(--fs-sm); cursor: pointer;
+}
+.hero-cesta-cta:disabled { opacity: 0.55; cursor: not-allowed; }
+.hero-cesta-img { width: 160px; max-width: 40%; height: auto; object-fit: contain; flex: none; }
+
+@media (max-width: 768px) {
+  .hero-cesta { padding: var(--space-4); }
+  .hero-cesta-img { width: 110px; }
+}
