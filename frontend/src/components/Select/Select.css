@@ -30,6 +30,10 @@
   position: fixed; z-index: 200;
   margin: 0; padding: var(--space-1); list-style: none;
   max-height: 260px; overflow-y: auto;
+  /* Piso/teto de largura: garante legibilidade quando o controle é estreito
+     (ex.: botão de categoria compacto no mobile) sem estourar a viewport.
+     min-width vence o width inline definido pelo JS quando este é menor. */
+  min-width: 190px; max-width: calc(100vw - var(--space-4));
   background: #fff; border: 1px solid var(--cor-border);
   border-radius: var(--r-md); box-shadow: var(--shadow-md);
 }

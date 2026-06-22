@@ -8,6 +8,7 @@ import Pagination from '../../components/Pagination/Pagination'
 import ProdutosTabela from './ProdutosTabela'
 import ProdutoCadastroModal from './ProdutoCadastroModal'
 import Fab from '../../components/Fab/Fab'
+import { isMobileViewport } from '../../utils/viewport'
 import './Produtos.css'
 
 const PAGE_SIZE = 10
@@ -71,7 +72,7 @@ export default function ProdutosPage() {
   const visiveis = filtrados.slice(start, start + PAGE_SIZE)
 
   const opcoesCategoria = [
-    { value: '', label: 'Todas as categorias' },
+    { value: '', label: isMobileViewport() ? 'Categoria' : 'Todas as categorias' },
     ...categorias.map(c => ({ value: c.nome, label: c.nome })),
   ]
 
